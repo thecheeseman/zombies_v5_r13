@@ -399,10 +399,6 @@ addTextHud( name, x, y, alignX, alignY, alpha, fontScale, sort, label )
 
 doHud()
 {
-	self endon( "disconnect" );
-	self endon( "death" );
-	self endon( "spawn_spectator" );
-	
 	if ( self.pers[ "team" ] == "axis" )
 	{
 		rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
@@ -425,8 +421,12 @@ doHud()
 		self.hud[ "zombietype" ] setText( rank );
 		self.hud[ "zombierank" ] setText( lolrank.rankString );
 	}
+
+	self endon( "disconnect" );
+	self endon( "death" );
+	self endon( "spawned" );
 		
-	while ( isAlive( self ) )
+	while ( true )
 	{
 		self.hud[ "health" ] setValue( self.health );
 		
@@ -508,10 +508,6 @@ doHud()
 		else if ( self.pers[ "team" ] == "allies" )
 		{
 			self.hud[ "zombiekills" ] setValue( self.zomxp );
-			
-			if ( !isAlive( self ) ) {
-				break;
-			}
 			
 			if ( self.pers[ "weapon" ] == "springfield_mp" )
 			{

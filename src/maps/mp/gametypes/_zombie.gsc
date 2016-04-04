@@ -726,6 +726,7 @@ spawnPlayer()
 	self.nightvision = false;
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
+	self.specialmodel = false;
 	
 	if ( isDefined( self.spechud ) || isDefined( self.specnotice ) )
 	{
@@ -856,13 +857,16 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 				eAttacker.deaths += iDamage;
 
 				// grenade damage
-				if ( ( sMeansOfDeath == "MOD_GRENADE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" || sMeansOfDeath == "MOD_EXPLOSION" || sMeansOfDeath == "MOD_EXPLOSION_SPLASH" ) ) {
+				if ( sWeapon == "mk1britishfrag_mp" ) {
 					doit = true;
 
 					if ( ( self.immunity > 2 || self.exploarmor > 0 ) )
 						doit = false;
 
-					if ( randomInt( 100 ) > 25 )
+					y = randomInt( 100 );
+					iPrintLn( y );
+
+					if ( y < 75 )
 						doit = false;
 
 					if ( doit ) {
@@ -886,7 +890,9 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 				{
 					doit = true;
 
-					if ( sMeansOfDeath != "MOD_GRENADE" && sMeansOfDeath != "MOD_GRENADE_SPLASH" && sMeansOfDeath != "MOD_EXPLOSION" && sMeansOfDeath != "MOD_EXPLOSION_SPLASH" )
+					if ( sWeapon == "mk1britishfrag_mp" ) {
+						doit = false;
+					} else 
 					{
 						if ( iDamage < 100 && self.immunity > 1 )
 							doit = false;
@@ -906,8 +912,9 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 				{
 					doit = true;
 
-					if ( sMeansOfDeath != "MOD_GRENADE" && sMeansOfDeath != "MOD_GRENADE_SPLASH" && sMeansOfDeath != "MOD_EXPLOSION" && sMeansOfDeath != "MOD_EXPLOSION_SPLASH" )
-					{
+					if ( sWeapon == "mk1britishfrag_mp" ) {
+						doit = false;
+					} else {
 						if ( iDamage < 100 && self.immunity > 1 )
 							doit = false;
 						if ( iDamage < 200 && iDamage >= 100 && self.immunity > 2 )

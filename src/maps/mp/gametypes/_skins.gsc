@@ -171,8 +171,8 @@ init() {
     german_wehrmacht_gear[ 5 ] = "gear_german_load5_w";
     precacheModelArray( german_wehrmacht_gear );
 
-    addPlayerModel( "german",    "playerbody_german_wehrmacht",              "normal",      "viewmodel_hands_whermact",             axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
-    addPlayerModel( "german",    "playerbody_german_wehrmacht_winter",       "winter",      "viewmodel_hands_whermact_winter",      axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
+    addPlayerModel( "german",    "playerbody_german_wehrmacht",              "normal",      "viewmodel_hands_wehrmacht",            axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
+    addPlayerModel( "german",    "playerbody_german_wehrmacht_winter",       "winter",      "viewmodel_hands_wehrmacht_winter",     axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
 // german wehrmacht
 
 // russian conscript
@@ -260,6 +260,9 @@ getPlayerModelByBodyName( bodyname ) {
 
 addPlayerModel( nationality, body, weather, viewmodel, headlist, hatlist, gearlist ) {
     if ( !isDefined( getPlayerModelByBodyName( body ) ) ) {
+        precacheModel( "xmodel/" + body );
+        precacheModel( "xmodel/" + viewmodel );
+
         s = spawnstruct();
         s.nationality = nationality;
         s.bodyname = body;
@@ -269,8 +272,7 @@ addPlayerModel( nationality, body, weather, viewmodel, headlist, hatlist, gearli
         s.hatlist = hatlist;
         s.gearlist = gearlist;
 
-        precacheModel( "xmodel/" + body );
-        precacheModel( "xmodel/" + viewmodel );
+        level.playermodels[ level.playermodels.size ] = s;
     }
 }
 
@@ -286,15 +288,20 @@ setPlayerModel( models ) {
     }
 
     mymodel = models[ randomInt( models.size ) ];
-    self setModel( mymodel.bodyname );
-    self attach( mymodel.headlist[ randomInt( mymodel.headlist.size ) ] );
-    self.hatmodel = mymodel.hatlist[ randomInt( mymode.hatlist.size ) ];
-    self attach( self.hatmodel );
-    self setViewModel( mymodel.viewmodel );
+    self setModel( "xmodel/" + mymodel.bodyname );
+    self.headmodel = "xmodel/" + mymodel.headlist[ randomInt( mymodel.headlist.size ) ];
+    self attach( self.headmodel );
+    self setViewModel( "xmodel/" + mymodel.viewmodel );
     self.nationality = mymodel.nationality;
 
-    if ( randomInt( 100 ) > 50 ) {
-        self attach( mymodel.gearlist[ randomInt( mymodel.gearlist.size ) ] );
+    // no hats or gear for zombies ;)
+    if ( self.pers[ "team" ] == "axis" ) {
+        self.hatmodel = "xmodel/" + mymodel.hatlist[ randomInt( mymodel.hatlist.size ) ];
+        self attach( self.hatmodel );
+
+        if ( randomInt( 100 ) > 50 ) {
+            self attach( "xmodel/" + mymodel.gearlist[ randomInt( mymodel.gearlist.size ) ] );
+        }
     }
 }
 
