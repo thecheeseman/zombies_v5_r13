@@ -48,7 +48,7 @@ fog()
 
 dofog( mapname )
 {
-	min = 400;
+	min = 600;
 	max = 2200;
 	r = 0;
 	g = 0;
@@ -68,7 +68,7 @@ dofog( mapname )
 		case "mp_powcamp":
 		case "simon_hai":
 		case "goldeneye_bunker":
-			max = 1800;
+			max = 2200;
 			break;
 		
 		case "mp_vok_final_night":

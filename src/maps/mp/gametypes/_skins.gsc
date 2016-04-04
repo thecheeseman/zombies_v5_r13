@@ -211,7 +211,14 @@ init() {
     // crazypanzer
     precacheModel( "xmodel/head_Pavlov" );
     precacheModel( "xmodel/equipment_pavlov_ushanka" );
-    
+
+    // fade
+    precacheModel( "xmodel/head_ingram" );
+
+    // spartan
+    precacheModel( "xmodel/head_Elder" );
+    precacheModel( "xmodel/gear_US_helmet_net" );    
+    precacheModel( "xmodel/gear_US_Elder" );
 }
 
 precacheModelArray( array ) {
@@ -316,10 +323,11 @@ main() {
                 self.specialmodel = true;
 
                 self setModel( "xmodel/playerbody_british_commando" );
-                self attach( "xmodel/head_Price" );
+                self.headmodel = "xmodel/head_Price";
+                self attach( self.headmodel );
                 self.hatmodel = "xmodel/equipment_british_beret_red";
                 self attach( self.hatmodel );
-                self setViewmodel( "xmodel/viewmodel_hands_british" );
+                self setViewModel( "xmodel/viewmodel_hands_british" );
                 self attach( "xmodel/gear_british_price" );
                 self.nationality = "british";
                 break;
@@ -328,14 +336,40 @@ main() {
                 self.specialmodel = true;
 
                 self setModel( "xmodel/playerbody_russian_conscript" );
-                self attach( "xmodel/head_Pavlov" );
+                self.headmodel = "xmodel/head_Pavlov";
+                self attach( self.headmodel );
                 self.hatmodel = "xmodel/equipment_pavlov_ushanka";
                 self attach( self.hatmodel );
-                self setViewmodel( "xmodel/viewmodel_hands_russian" );
+                self setViewModel( "xmodel/viewmodel_hands_russian" );
                 self attach( "xmodel/gear_russian_load_ocoat" );
                 self attach( "xmodel/gear_russian_ppsh_ocoat" );
                 self attach( "xmodel/gear_russian_pack_ocoat" );
                 self.nationality = "russian";
+                break;
+            // fade
+            case 4196:
+                self.specialmodel = true;
+
+                self setModel( "xmodel/playerbody_british_commando" );
+                self.headmodel = "xmodel/head_ingram";
+                self attach( self.headmodel );
+                self.hatmodel = "xmodel/equipment_british_beret_green";
+                self attach( self.hatmodel );
+                self setViewModel( "xmodel/viewmodel_hands_british" );
+                self.nationality = "british";
+                break;
+            // spartan
+            case 4204:
+                self.specialmodel = true;
+
+                self setModel( "xmodel/playerbody_american_airborne" );
+                self.headmodel = "xmodel/head_Elder";
+                self attach( self.headmodel );
+                self.hatmodel = "xmodel/gear_US_helmet_net";
+                self attach( self.hatmodel );
+                self setViewModel( "viewmodel_hands_us");
+                self attach( "xmodel/gear_US_Elder" );
+                self.nationality = "american";
                 break;
             // everyone else
             default:

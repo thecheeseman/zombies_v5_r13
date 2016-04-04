@@ -670,7 +670,6 @@ spawnPlayer()
 	self.maxhealth = 100;
 	self.health = self.maxhealth;
 	
-	maps\mp\gametypes\_zombie::setPlayerModel();
 	maps\mp\gametypes\_teams::loadout();
 	
 	self giveWeapon(self.pers["weapon"]);

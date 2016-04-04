@@ -301,7 +301,7 @@ getMyStats() {
 			value = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ 1 ] ), "alphanumeric" );
 
 			if ( field == fnv && field != "eof" ) {
-				fse( "invalid formatting in file " + lutname );
+				//fse( "invalid formatting in file " + lutname );
 				[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- invalid formatting in file " + lutname );
 				break;
 			}
@@ -313,7 +313,7 @@ getMyStats() {
 
 			fieldstruct = getStatField( field );
 			if ( !isDefined( fieldstruct ) ) {
-				fse( "invalid stat field: " + field + " in file " + lutname );
+				//fse( "invalid stat field: " + field + " in file " + lutname );
 				[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- invalid stat field: " + field + " in file " + lutname );
 				break;
 			}

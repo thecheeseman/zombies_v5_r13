@@ -14,9 +14,23 @@ You can probably try and get this working without CoDExtended -- I'm only really
 
 Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/id/thecheeseman999/) if you have any questions, comments, suggestions, or hate mail.
 
+# To-do
+
+- [ ] Add classes: recon, support, medic, sniper, engineer
+    - [ ] Recon: double jump
+    - [ ] Support: mobile ammobox
+    - [ ] Medic: mobile medic bag
+    - [ ] Sniper: something interesting
+    - [ ] Engineer: turrets
+- [ ] Breakable barricades and turrets
+- [ ] Some new buy menu features?
+- [ ] ????
+- [ ] Profit
+
 # Changelog
 
 #### Legend:
+    
     +   new feature
     -   removal
     *   change
@@ -25,6 +39,11 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.07
 #### 03/04/16
 
+    * Increase Last Hunter's health by +250
+    * Increased M1Carbine's max ammo
+    # Fixed a bug where if someone had a special skin, it would be overridden by the default last hunter skin
+    * Lasthunter now has updated moveSpeedScale
+    # Forgot to remove some debug prints, so those are gone now
     * Upped dynamic timelimit from 12 -> 16 max players to encourage more hunter wins
     + Added Indy's chat commands system
     # Fixed a bug with getBest() function

@@ -739,6 +739,8 @@ spawnPlayer()
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
 	self.specialmodel = false;
+
+	maps\mp\gametypes\_zombie::setPlayerModel();
 	
 	if ( isDefined( self.spechud ) || isDefined( self.specnotice ) )
 	{
@@ -878,8 +880,6 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 						doit = false;
 
 					y = randomInt( 100 );
-					iPrintLn( y );
-
 					if ( y < 75 )
 						doit = false;
 
@@ -1110,7 +1110,7 @@ lastHunter()
 	self.lasthunterhud.archive = true;
 	self.lasthunterhud.sort = 20;
 	
-	self.maxhealth += 50;
+	self.maxhealth += 250;
 	self.health = self.maxhealth;
 	
 	self setClientCvar( "scr_showweapontab", "1" );
@@ -1156,6 +1156,18 @@ lastHunter()
 		self giveMaxAmmo( "colt_mp" );
 
 		self switchToWeapon( self.pers[ "weapon" ] );
+
+		switch ( self.pers[ "weapon" ] ) {
+			case "mosin_nagant_mp":
+				self setMoveSpeedScale( 1.35 );
+				break;
+			case "ppsh_mp":
+				self setMoveSpeedScale( 1.5 );
+				break;
+			case "mosin_nagant_sniper_mp":
+				self setMoveSpeedScale( 1.2 );
+				break;
+		}
 	}
 	
 	if ( isDefined( self.lasthunterhud ) )
@@ -2219,7 +2231,7 @@ getWeaponMaxWeaponAmmo( weapon )
 		case "m1garand_mp": 
 			return 96; break;
 		case "m1carbine_mp": 
-			return 120; break;
+			return 180; break;
 		case "bar_mp": 
 			return 120; break;
 		case "luger_mp": 
