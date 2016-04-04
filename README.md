@@ -22,6 +22,15 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
+#### Revision 13.07
+#### 03/04/16
+
+    # Fixed a crash caused by Zombies changing weapons
+    + Flattened all moveSpeedScales in weapon files in favour of using CoDExtended's moveSpeedScale
+    + Rewrote and reimplemented old skin system from v5r12 - custom skins for unique player IDs are now in place
+    + Redid the CoD skin system for a more varied collection of hunters and zombies
+    # Fixed direct grenade hit 25% chance not working
+
 #### Revision 13.06
 #### 02/04/16
 

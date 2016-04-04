@@ -18,4 +18,5 @@
 
 init() {
     // just add other things externally here
+    thread zombies\_chat::init();
 }

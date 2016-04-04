@@ -402,64 +402,76 @@ endGame( winner )
 		wait 3;
 
 		guy = getBest( "hunter" );
-		centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
-		cleanScreen();
-		iPrintlnBold( "^2Best Hunter: " );
-		iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
+			cleanScreen();
+			iPrintlnBold( "^2Best Hunter: " );
+			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
 
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 
 		guy = getBest( "zombie" );
-		centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
-		cleanScreen();
-		iPrintlnBold( "^1Best Zombie: " );
-		iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
+			cleanScreen();
+			iPrintlnBold( "^1Best Zombie: " );
+			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
 
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 		
 		guy = getMost( "kills" );
-		centerImage thread fadeIn( 0.5, "killicondied" );
-		cleanScreen();
-		iPrintlnBold( "^3Most Kills: " );
-		iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
-		
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "killicondied" );
+			cleanScreen();
+			iPrintlnBold( "^3Most Kills: " );
+			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
+			
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 
 		guy = getMost( "assists" );
-		centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
-		cleanScreen();
-		iPrintlnBold( "^4Most Assists: " );
-		iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
-		
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
+			cleanScreen();
+			iPrintlnBold( "^4Most Assists: " );
+			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
+			
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 
 		guy = getMost( "bashes" );
-		centerImage thread fadeIn( 0.5, "killiconmelee" );
-		cleanScreen();
-		iPrintlnBold( "^5Most Bashes: " );
-		iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "killiconmelee" );
+			cleanScreen();
+			iPrintlnBold( "^5Most Bashes: " );
+			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
 
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 
 		guy = getMost( "headshots" );
-		centerImage thread fadeIn( 0.5, "killiconheadshot" );
-		cleanScreen();
-		iPrintlnBold( "^6Most Headshots: " );
-		iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
-		
-		wait 2.5;
-		centerImage thread fadeOut( 0.5 );
-		wait 0.5;
+		if ( isDefined( guy ) ) {
+			centerImage thread fadeIn( 0.5, "killiconheadshot" );
+			cleanScreen();
+			iPrintlnBold( "^6Most Headshots: " );
+			iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
+			
+			wait 2.5;
+			centerImage thread fadeOut( 0.5 );
+			wait 0.5;
+		}
 		
 		centerImage destroy();
 		cleanScreen();
