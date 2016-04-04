@@ -171,8 +171,8 @@ init() {
     german_wehrmacht_gear[ 5 ] = "gear_german_load5_w";
     precacheModelArray( german_wehrmacht_gear );
 
-    addPlayerModel( "german",    "playerbody_german_wehrmacht",              "normal",      "viewmodel_hands_wehrmacht",            axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
-    addPlayerModel( "german",    "playerbody_german_wehrmacht_winter",       "winter",      "viewmodel_hands_wehrmacht_winter",     axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
+    addPlayerModel( "german",    "playerbody_german_wehrmacht",              "normal",      "viewmodel_hands_whermact",             axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
+    addPlayerModel( "german",    "playerbody_german_wehrmacht_winter",       "winter",      "viewmodel_hands_whermact_winter",      axis_faces,     german_wehrmacht_hats,          german_wehrmacht_gear );
 // german wehrmacht
 
 // russian conscript

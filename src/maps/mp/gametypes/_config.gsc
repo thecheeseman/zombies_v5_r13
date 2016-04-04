@@ -20,7 +20,7 @@ main()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_config.gsc::main()", true );
 
-	precacheString( &"^1zomb^7ies ^2rev^713.06" );
+	precacheString( &"^1zomb^7ies ^2rev^713.07" );
 	precacheString( &"mod by ^3cheese" );
 	precacheString( &"steam^2:^7 thecheeseman999" );
 	
@@ -44,7 +44,7 @@ logo()
 	while ( 1 )
 	{
 		level.logo.alpha = 0;
-		level.logo setText( &"^1zomb^7ies ^2rev^713.06" );
+		level.logo setText( &"^1zomb^7ies ^2rev^713.07" );
 		level.logo fadeOverTime( 2 );
 		level.logo.alpha = 1;
 		

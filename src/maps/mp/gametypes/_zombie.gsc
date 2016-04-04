@@ -743,6 +743,8 @@ spawnPlayer()
 			self.iszombie = false;
 			self.zombietype = "none";
 		}
+
+		self setupClasses();
 		
 		self thread ammoLimiting();
 		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
@@ -1846,24 +1848,52 @@ killstreakShiz()
 
 setupClasses()
 {
-	switch ( self.pers[ "weapon" ] )
-	{
-		case "enfield_mp":
-			self.zombietype = "jumper";
-			self thread superJump();
-			break;
-		case "sten_mp":
-			self.zombietype = "fast";
-			self thread fastZombie();
-			break;
-		case "bren_mp":
-			self.zombietype = "poison";
-			self thread poisonZombie();
-			break;
-		case "springfield_mp":
-			self.zombietype = "fire";
-			self thread fireZombie();
-			break;
+	if ( self.pers[ "team" ] == "axis" ) {
+		switch ( self.pers[ "weapon" ] ) {
+			case "kar98k_mp":
+			case "m1garand_mp":
+				self setMoveSpeedScale( 1.15 );
+				break;
+			case "mp40_mp":
+			case "thompson_mp":
+				self setMoveSpeedScale( 1.3 );
+				break;
+			case "mp44_mp":
+			case "bar_mp":
+				self setMoveSpeedScale( 1.0 );
+				break;
+			case "kar98k_sniper_mp":
+			case "springfield_mp":
+				self setMoveSpeedScale( 1.05 );
+				break;
+			case "m1carbine_mp":
+				self setMoveSpeedScale( 1.5 );
+				break;
+		}
+		
+	} else {
+		switch ( self.pers[ "weapon" ] ) {
+			case "enfield_mp":
+				self.zombietype = "jumper";
+				self setMoveSpeedScale( 1.15 );
+				self thread superJump();
+				break;
+			case "sten_mp":
+				self.zombietype = "fast";
+				self setMoveSpeedScale( 1.75 );
+				self thread fastZombie();
+				break;
+			case "bren_mp":
+				self.zombietype = "poison";
+				self setMoveSpeedScale( 1.0 );
+				self thread poisonZombie();
+				break;
+			case "springfield_mp":
+				self.zombietype = "fire";
+				self setMoveSpeedScale( 1.15 );
+				self thread fireZombie();
+				break;
+		}
 	}
 }
 

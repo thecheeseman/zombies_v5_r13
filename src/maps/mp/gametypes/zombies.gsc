@@ -323,6 +323,9 @@ Callback_PlayerConnect()
 			}
 			else
 			{
+				if ( self.pers[ "team" ] == "allies" )
+					self suicide();
+				
 				oldweap = self.pers[ "weapon" ];
 				self.pers["weapon"] = weapon;
 
@@ -339,6 +342,8 @@ Callback_PlayerConnect()
 						self.changeweapon = false;	
 						
 						self switchToWeapon( self.pers[ "weapon" ] );
+
+						self maps\mp\gametypes\_zombie::setupClasses();
 					}
 					else
 					{
