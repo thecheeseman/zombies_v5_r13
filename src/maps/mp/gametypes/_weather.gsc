@@ -118,6 +118,26 @@ debugfog()
 	}
 }
 
+isWinterMap( map ) {
+	if ( !isDefined( map ) ) {
+		return false;
+	}
+
+	switch ( map ) {
+		case "mp_harbor":
+		case "mp_hurtgen":
+		case "mp_pavlov":
+		case "mp_railyard":
+		case "mp_rocket":
+		case "mp_stalingrad":
+			return true;
+			break;
+		default:
+			return false;
+			break;
+	}
+}
+
 lightning()
 {
 	level endon( "intermission" );

@@ -39,8 +39,8 @@ Main()
 	thread maps\mp\gametypes\_hud::init();
 	thread maps\mp\gametypes\_stats::main();
 	thread maps\mp\gametypes\_ranks::init();
+    thread maps\mp\gametypes\_skins::init();
 	thread zombies\modules::init();
-	thread zombies\skins::init();
 	
 	thread weaponremoval();
 
@@ -214,7 +214,7 @@ startGame()
 	level.clock.alignY = "middle";
 	level.clock.font = "bigfixed";
 	level.clock.color = ( 1, 1, 1 );
-	level.clock setTimer( 45 );
+	level.clock setTimer( level.cvars[ "PREGAME_TIME" ] );
 	level.clock fadeOverTime( level.cvars[ "PREGAME_TIME" ] );
 	level.clock.color = ( 1, 0, 0 );
 	
@@ -659,6 +659,7 @@ onConnect()
 	self.immunity = 0;
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
+	self.specialmodel = false;
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -780,8 +781,6 @@ spawnPlayer()
 	
 	if ( level.debug )
 		self thread showpos();
-		
-	self thread zombies\skins::main();
 }
 
 spawnSpectator()
@@ -1056,7 +1055,7 @@ lastHunter()
 	if ( isDefined( self.darkness ) )
 		self.darkness destroy();
 		
-	if ( !self.isadmin && !self.modelchanged )
+	if ( !self.isadmin && !self.modelchanged && !self.specialmodel )
 	{
 		self detachall();
 		self setModel( "xmodel/playerbody_russian_veteran" );
@@ -3110,28 +3109,7 @@ getMapWeather()
 
 setPlayerModel()
 {
-	self detachAll();
-	
-	if(self.pers["team"] == "allies")
-	{
-		self [[game["allies_model"] ]]();
-		self.nationality = "british";
-	}
-	else if(self.pers["team"] == "axis")
-	{
-		if ( _randomInt( 100 ) > 50 )
-		{
-			self [[game["axis_model"] ]]();
-			self.nationality = "german";
-		}
-		else
-		{
-			self [[game["axis_model2"] ]]();
-			self.nationality = "american";
-		}
-	}
-
-	self.pers["savedmodel"] = maps\mp\_utility::saveModel();
+	self maps\mp\gametypes\_skins::main();
 }
 
 fadeIn( time, image )

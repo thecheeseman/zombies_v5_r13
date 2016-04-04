@@ -118,7 +118,6 @@ Callback_StartGameType()
 	precacheHeadIcon(game["headicon_axis"]);
 	precacheItem("item_health");
 
-	maps\mp\gametypes\_teams::modeltype();
 	maps\mp\gametypes\_teams::precache();
 	maps\mp\gametypes\_teams::scoreboard();
 	maps\mp\gametypes\_teams::initGlobalCvars();
@@ -666,11 +665,7 @@ spawnPlayer()
 	self.maxhealth = 100;
 	self.health = self.maxhealth;
 	
-	if(!isdefined(self.pers["savedmodel"]))
-		maps\mp\gametypes\_zombie::setPlayerModel();
-	else
-		maps\mp\_utility::loadModel(self.pers["savedmodel"]);
-
+	maps\mp\gametypes\_zombie::setPlayerModel();
 	maps\mp\gametypes\_teams::loadout();
 	
 	self giveWeapon(self.pers["weapon"]);
