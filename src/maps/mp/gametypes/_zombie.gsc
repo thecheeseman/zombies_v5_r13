@@ -72,6 +72,9 @@ precache()
 	precacheShader( "gfx/impact/flesh_hit2.tga" );
 	precacheShader( "gfx/hud/hud@health_back.dds" );
 	precacheShader( "gfx/hud/hud@health_bar.dds" );
+
+	precacheStatusIcon( "gfx/hud/hud@health_cross.tga" );
+	precacheStatusIcon( "gfx/hud/hud@death_m1carbine.tga" );
 	
 	precacheItem( "fg42_mp" );
 	precacheItem( "panzerfaust_mp" );
@@ -80,40 +83,8 @@ precache()
 	
 	precacheShellshock( "default" );
 	precacheShellshock( "groggy" );
-	
-	precacheModel( "xmodel/playerbody_russian_veteran" );
-	precacheModel( "xmodel/sovietequipment_helmet" );
-	precacheModel( "xmodel/viewmodel_hands_russian_vetrn" );
-	precacheModel( "xmodel/gear_russian_load_coat" );
-	precacheModel( "xmodel/gear_russian_ppsh_coat" );
-	precacheModel( "xmodel/gear_russian_pack_ocoat" );
-	
-	precacheModel( "xmodel/playerbody_russian_conscript" );
-	precacheModel( "xmodel/head_pavlov" );
-	precacheModel( "xmodel/equipment_pavlov_ushanka" );
-	precacheModel( "xmodel/viewmodel_hands_russian" );
-	precacheModel( "xmodel/gear_russian_commisar" );
-	precacheModel( "xmodel/playerbody_german_kriegsmarine" );
-	precacheModel( "xmodel/head_price" );
-	precacheModel( "xmodel/equipment_british_beret_green" );
-	precacheModel( "xmodel/viewmodel_hands_kriegsmarine" );
-	precacheModel( "xmodel/gear_british_price" );
-	precacheModel( "xmodel/playerbody_american_airborne" );
-	precacheModel( "xmodel/head_moody" );
-	precacheModel( "xmodel/equipment_us_helmet_scrim" );
-	precacheModel( "xmodel/viewmodel_hands_us" );
-	precacheModel( "xmodel/gear_us_moody" );
 
-	if ( getMapWeather() == "winter" )
-	{
-		mptype\american_airborne_winter::precache();
-		game["axis_model2"] = mptype\american_airborne_winter::main;
-	}
-	else
-	{
-		mptype\american_airborne::precache();
-		game["axis_model2"] = mptype\american_airborne::main;
-	}
+	precacheModel( "xmodel/health_large" );
 	
 	level._effect[ "zombieFire" ] = loadFx( "fx/fire/tinybon.efx" );
 	level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
@@ -672,6 +643,7 @@ onConnect()
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
 	self.specialmodel = false;
+	self.lasthittime = 0;
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -739,6 +711,7 @@ spawnPlayer()
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
 	self.specialmodel = false;
+	self.lasthittime = 0;
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	
@@ -948,6 +921,8 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 				self shellshock( "groggy", 3 );
 			
 			eAttacker thread showhit();
+
+			self.lasthittime = getTime();
 			
 			inarray = false;
 			for ( i = 0; i < self.lastattackers.size; i++ )
@@ -1880,7 +1855,12 @@ setupClasses()
 				break;
 			case "mp40_mp":
 			case "thompson_mp":
+				self.statusicon = "gfx/hud/hud@health_cross.tga";
+				self.headicon = "gfx/hud/hud@health_cross.tga";
 				self setMoveSpeedScale( 1.3 );
+
+				self thread regen_health();
+				self thread healthbag();
 				break;
 			case "mp44_mp":
 			case "bar_mp":
@@ -1890,8 +1870,12 @@ setupClasses()
 			case "springfield_mp":
 				self setMoveSpeedScale( 1.05 );
 				break;
+			// recon
 			case "m1carbine_mp":
-				self setMoveSpeedScale( 1.5 );
+				self.statusicon = "gfx/hud/hud@death_m1carbine.tga";
+				self setMoveSpeedScale( 1.4 );
+
+				self thread recon();
 				break;
 		}
 		
@@ -1919,6 +1903,117 @@ setupClasses()
 				break;
 		}
 	}
+}
+
+recon() {
+	doublejumped = false;
+    self.jumpblocked = false;
+    airjumps = 0;
+
+    self endon( "death" );
+    self endon( "disconnect" );
+    self endon( "spawned" );
+	while ( true ) {
+		if ( self useButtonPressed() && !self.jumpblocked && !self isOnGround() ) 
+        {
+            if ( !self isOnGround() )
+                airjumps++;
+                
+            if ( airjumps == 1 ) {
+                airjumps = 0;
+                self thread blockjump();
+            }
+
+			for ( i = 0; i < 2; i++ ) 
+            {
+				self.health += 100;
+				self finishPlayerDamage(self, self, 100, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize(self.origin - (self.origin + (0,0,-1))), "none");
+			}
+			wait 1;
+		}
+		wait 0.05;
+	}
+}
+
+regen_health()
+{   
+	self endon( "death" );
+	self endon( "disconnected" );
+	self endon( "spawned" );
+
+    while ( true ) {
+        // got hurt somehow
+        if ( self.health < self.maxhealth && self.lasthittime + 3000 < gettime() )
+            self.health++;
+            
+        wait 0.5;
+    }
+}
+
+healthbag()
+{
+    mypack = spawn( "script_model", self getOrigin() );
+    mypack setModel( "xmodel/health_large" );
+    
+    self thread dohealing( mypack );
+    
+    while ( isAlive( self ) )
+    {  
+        wait 0.05;
+        
+        mypack hide();
+        
+        if ( self getCurrentWeapon() != "mk1britishfrag_mp" )
+            continue;
+
+        mypack show();
+        traceDir = anglesToForward( self.angles );
+        traceEnd = self.origin + ( 0, 0, 36 );
+        traceEnd += [[ level.call ]]( "vector_scale", traceDir, 16 );
+        trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mypack );
+
+        pos = trace[ "position" ];
+        mypack moveto( pos, 0.05 );
+        mypack.angles = self.angles;
+    }
+
+    mypack delete();
+}
+
+dohealing( mypack )
+{
+    while ( isAlive( self ) )
+    {
+        wait 0.25;
+        
+        if ( self getCurrentWeapon() != "mk1britishfrag_mp" )
+            continue;
+            
+        players = [[ level.call ]]( "get_good_players" );
+        for ( i = 0; i < players.size; i++ )
+        {
+            if ( players[ i ].pers[ "team" ] == "axis" && distance( mypack.origin, players[ i ].origin ) < 56 )
+            {
+                if ( isDefined( players[ i ].ispoisoned ) )
+                {
+                    players[ i ].ispoisoned = undefined;
+                    self.stats[ "infectionsHealed" ]++;
+                }
+                if ( isDefined( players[ i ].onfire ) )
+                {
+                    players[ i ].onfire = undefined;
+                    players[ i ] thread medic_fire_timeout();
+                    self.stats[ "firesPutOut" ]++;
+                }
+                    
+                if ( players[ i ] != self && players[ i ].health < players[ i ].maxhealth )
+                {
+                    players[ i ].health++;
+                    self.stats[ "healPoints" ]++;
+                }
+            }
+        } 
+    }
 }
 
 superJump()
