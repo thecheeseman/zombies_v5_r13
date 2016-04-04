@@ -229,9 +229,9 @@ startGame()
 	wait 2;
 
 	players = getEntArray( "player", "classname" );
-	timeshift = (float) ( (float) players.size / (float) 12 );
+	timeshift = (float) ( (float) players.size / (float) 16 );
 	if ( timeshift > 1 )	timeshift = 1;
-	if ( timeshift < 0.4 )	timeshift = 0.4;
+	if ( timeshift < 0.3 )	timeshift = 0.3;
 
 	level.timelimit *= timeshift;
 	

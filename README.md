@@ -25,6 +25,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.07
 #### 03/04/16
 
+    * Upped dynamic timelimit from 12 -> 16 max players to encourage more hunter wins
+    + Added Indy's chat commands system
+    # Fixed a bug with getBest() function
     # Fixed a crash caused by Zombies changing weapons
     + Flattened all moveSpeedScales in weapon files in favour of using CoDExtended's moveSpeedScale
     + Rewrote and reimplemented old skin system from v5r12 - custom skins for unique player IDs are now in place
