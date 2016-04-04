@@ -343,7 +343,9 @@ Callback_PlayerConnect()
 						
 						self switchToWeapon( self.pers[ "weapon" ] );
 
-						self maps\mp\gametypes\_zombie::setupClasses();
+						if ( !level.gamestarted ) {
+							self maps\mp\gametypes\_classes::setup();
+						}
 					}
 					else
 					{
