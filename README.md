@@ -38,6 +38,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 
 #### Revision 13.08
     
+    * Upped the Sten's melee time so you can now do 6 bashes per second as opposed to 3
+    # Fixed Recon's double jump from applying as last hunter
+    # Fixed Medic's health regen from applying to other classes / last hunter
     + Added classes from v6 : Recon, Support, Medic
     - Removed the ability to change weapons during the game
     + Added Indy's chat commands
