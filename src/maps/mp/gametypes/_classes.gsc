@@ -25,12 +25,14 @@ setup() {
         switch ( self.pers[ "weapon" ] ) {
             case "kar98k_mp":
             case "m1garand_mp":
+                self.class = "engineer";
+
                 self setMoveSpeedScale( 1.15 );
                 break;
             case "mp40_mp":
             case "thompson_mp":
-                //self.statusicon = "gfx/hud/hud@health_cross.tga";
-                //self.headicon = "gfx/hud/hud@health_cross.tga";
+                self.class = "medic";
+
                 self setMoveSpeedScale( 1.3 );
 
                 self detach( self.hatmodel );
@@ -42,15 +44,22 @@ setup() {
                 break;
             case "mp44_mp":
             case "bar_mp":
+                self.class = "support";
+
                 self setMoveSpeedScale( 1.0 );
+
+                self thread ammobox();
                 break;
             case "kar98k_sniper_mp":
             case "springfield_mp":
+                self.class = "sniper";
+
                 self setMoveSpeedScale( 1.05 );
                 break;
             // recon
             case "m1carbine_mp":
-                //self.statusicon = "gfx/hud/hud@death_m1carbine.tga";
+                self.class = "recon";
+
                 self setMoveSpeedScale( 1.4 );
 
                 self thread recon();
@@ -136,7 +145,7 @@ healthbag()
     
     self thread dohealing( mypack );
     
-    while ( isAlive( self ) )
+    while ( isAlive( self ) && self.class == "medic" )
     {  
         wait 0.05;
         
@@ -158,11 +167,13 @@ healthbag()
         mypack.angles = self.angles;
     }
 
+    self notify( "remove healthbag" );
     mypack delete();
 }
 
 dohealing( mypack )
 {
+    self endon( "remove healthbag" );
     while ( isAlive( self ) )
     {
         wait 0.25;
@@ -203,6 +214,122 @@ medic_fire_timeout()
     self.firetimeout = true;
     wait 1;
     self.firetimeout = undefined;
+}
+
+ammobox()
+{  
+    boxmodels = [];
+    //boxmodels[ 0 ] = "xmodel/crate_misc1";
+    //boxmodels[ 1 ] = "xmodel/crate_misc_red1";
+    //boxmodels[ 2 ] = "xmodel/crate_misc_green1";
+    boxmodels[ 0 ] = "xmodel/crate_champagne3";
+    modeli = 0;
+    
+    mybox = spawn( "script_model", self getOrigin() );
+    mybox setModel( boxmodels[ modeli ] );
+    
+    self thread ammobox_think( mybox );
+    
+    while ( isAlive( self ) && self.class == "support" )
+    {  
+        wait 0.05;
+        
+        mybox hide();
+        
+        if ( self getCurrentWeapon() != "stielhandgranate_mp" ) {
+            mybox.origin = self.origin;
+            continue;
+        }
+
+        mybox show();
+        traceDir = anglesToForward( self.angles );
+        traceEnd = self.origin + ( 0, 0, 36 );
+        traceEnd += maps\mp\_utility::vectorscale( traceDir, 48 );
+        trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mybox );
+
+        pos = trace[ "position" ];
+        mybox moveto( pos, 0.05 );
+        mybox.angles = self.angles;
+    }
+    
+    self notify( "remove ammobox" );
+    mybox delete();
+}
+
+ammobox_think( box )
+{
+    self endon( "remove ammobox" );
+    
+    while ( isAlive( self ) )
+    {
+        wait 0.5;
+        
+        if ( self getCurrentWeapon() != "stielhandgranate_mp" )
+            continue;
+            
+        players = getEntArray( "player", "classname" );
+        for ( i = 0; i < players.size; i++ )
+        {
+            if ( distance( box.origin, players[ i ].origin ) < 64 && players[ i ].pers[ "team" ] == "axis" && players[ i ].sessionstate == "playing" )
+            {
+                // stolen from kill3r's mod
+                // this way is better suited for this version of zombies, since we're not actually giving health anymore
+                oldamountpri = players[ i ] getWeaponSlotAmmo( "primary" );
+                oldamountprib = players[ i ] getWeaponSlotAmmo( "primaryb" );
+                oldamountpistol = players[ i ] getWeaponSlotAmmo( "pistol" );
+                oldamountgrenade = players[ i ] getWeaponSlotAmmo( "grenade" );
+                
+                maxpri = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) );
+                maxprib = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) );
+                maxpistol = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) );
+                maxgrenade = players[ i ] maps\mp\gametypes\_zombie::getHunterNadeAmmo();
+
+                if ( players[ i ].class == "engineer" || players[ i ].class == "medic" || players[ i ].class == "support" || !level.gamestarted )
+                    maxgrenade = oldamountgrenade;
+
+                bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
+
+                maxpri += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) ) * bonus;
+                maxprib += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) ) * bonus;
+                maxpistol += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) ) * bonus;
+               
+                // do we even need ammo?
+                if ( oldamountpri >= maxpri && oldamountprib >= maxprib && oldamountpistol >= maxpistol && oldamountgrenade >= maxgrenade )
+                    continue;
+                
+                players[ i ] playlocalsound( "weap_pickup" );
+                self playlocalsound( "weap_pickup" );
+
+                if ( oldamountpri < maxpri )
+                {
+                    if ( players[ i ] getWeaponSlotWeapon( "primary" ) != "panzerfaust_mp" ) 
+                        players[ i ] setWeaponSlotAmmo( "primary", ( oldamountpri + 5 ) );
+                    else
+                        players[ i ] setWeaponSlotAmmo( "primary", ( oldamountpri + 1 ) );
+                }
+                if ( oldamountprib < maxprib )
+                    players[ i ] setWeaponSlotAmmo( "primaryb", ( oldamountprib + 5 ) );
+                if ( oldamountpistol < maxpistol )
+                    players[ i ] setWeaponSlotAmmo( "pistol", ( oldamountpistol + 5 ) );
+                if ( oldamountgrenade < maxgrenade )
+                    players[ i ] setWeaponSlotAmmo( "grenade", ( oldamountgrenade + 1 ) );
+                    
+                newamountpri = players[ i ] getWeaponSlotAmmo( "primary" );
+                newamountprib = players[ i ] getWeaponSlotAmmo( "primaryb" );
+                newamountpistol = players[ i ] getWeaponSlotAmmo( "pistol" );
+                
+                ammogiven = ( newamountpri - oldamountpri ) + ( newamountprib - oldamountprib ) + ( newamountpistol - oldamountpistol );
+                if ( players[ i ] getWeaponSlotWeapon( "primary" ) == "panzerfaust_mp" )
+                    ammogiven -= ( newamountpri - oldamountpri );
+                    
+                if ( players[ i ] != self )
+                {
+                    //self.stats[ "ammoPoints" ] += (int)( ammogiven / 5 );
+                    //self.stats[ "ammoGivenOut" ] += ammogiven;
+                }
+            }
+        }
+    }
 }
 
 superJump()

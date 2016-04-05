@@ -645,6 +645,7 @@ onConnect()
 	self.ammobonus = 0;
 	self.specialmodel = false;
 	self.lasthittime = 0;
+	self.class = "default";
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -713,6 +714,7 @@ spawnPlayer()
 	self.ammobonus = 0;
 	self.specialmodel = false;
 	self.lasthittime = 0;
+	self.class = "default";
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	
@@ -1803,7 +1805,7 @@ rankUp( newrank )
 	{
 		self.changeweapon = true;
 		
-		self iPrintLn( "^2You can change your weapon." );
+		//self iPrintLn( "^2You can change your weapon." );
 		
 		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 		
@@ -1939,16 +1941,14 @@ ammoLimiting()
 	
 	primarymax = getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
 	pistolmax = getWeaponMaxWeaponAmmo( "luger_mp" );
-	primaryclip = getWeaponMaxClipAmmo( self.pers[ "weapon" ] );
-	pistolclip = getWeaponMaxClipAmmo( "luger_mp" );
 	
 	bonus = self getAmmoBonusForRank();
 	
-	addprimary = getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
-	addpistol = getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
+	primarymax += getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
+	pistolmax += getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
 	
-	self setWeaponSlotAmmo( "primary", primarymax + addprimary );
-	self setWeaponSlotAmmo( "pistol", pistolmax + addpistol );
+	self setWeaponSlotAmmo( "primary", primarymax );
+	self setWeaponSlotAmmo( "pistol", pistolmax );
 	
 	if ( !level.gamestarted )
 		self setWeaponSlotAmmo( "grenade", 0 );

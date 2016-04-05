@@ -333,19 +333,19 @@ Callback_PlayerConnect()
 				
 				if ( self.pers[ "team" ] == "axis" )
 				{
-					if ( self.changeweapon || self.rank > 7 )
+					if ( !level.gamestarted )
 					{
 						self setWeaponSlotWeapon( "primary", self.pers[ "weapon" ] );
 						primarymax = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
-						max = ( primarymax / 4 ) + ( primarymax / 2 );
-						self setWeaponSlotAmmo( "primary", max );
-						self.changeweapon = false;	
+						bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
+						primarymax += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
+
+						self setWeaponSlotAmmo( "primary", primarymax );
+						self.changeweapon = false;
 						
 						self switchToWeapon( self.pers[ "weapon" ] );
 
-						if ( !level.gamestarted ) {
-							self maps\mp\gametypes\_classes::setup();
-						}
+						self maps\mp\gametypes\_classes::setup();
 					}
 					else
 					{
