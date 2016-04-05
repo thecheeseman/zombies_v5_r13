@@ -373,7 +373,7 @@ giveHunterRankPerks()
 		self.ammobonus = thesePerks.ammobonus;
 		
 		if ( level.lasthunter ) 
-			newhealth += 50;
+			newhealth += 250;
 			
 		self.maxhealth = newhealth;
 		

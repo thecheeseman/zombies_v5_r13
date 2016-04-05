@@ -17,9 +17,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 # To-do
 
 - [ ] Add classes: recon, support, medic, sniper, engineer
-    - [ ] Recon: double jump
-    - [ ] Support: mobile ammobox
-    - [ ] Medic: mobile medic bag
+    - [X] Recon: double jump
+    - [X] Support: mobile ammobox
+    - [X] Medic: mobile medic bag
     - [ ] Sniper: something interesting
     - [ ] Engineer: turrets
 - [ ] Breakable barricades and turrets
@@ -35,6 +35,12 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     -   removal
     *   change
     #   fix
+
+#### Revision 13.08
+    
+    + Added classes from v6 : Recon, Support, Medic
+    - Removed the ability to change weapons during the game
+    + Added Indy's chat commands
 
 #### Revision 13.07
 #### 03/04/16
