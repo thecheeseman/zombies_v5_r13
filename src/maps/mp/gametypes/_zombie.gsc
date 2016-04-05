@@ -856,20 +856,18 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 						doit = false;
 
 					y = randomInt( 100 );
-					if ( y < 75 )
-						doit = false;
 
 					if ( doit ) {
-						if ( eAttacker.zombietype == "poison" && !self.ispoisoned ) {
+						if ( eAttacker.zombietype == "poison" && !self.ispoisoned && y > 75 ) {
 							self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
-						} else if ( eAttacker.zombietype == "fire" && !self.onfire ) {
+						} else if ( eAttacker.zombietype == "fire" && !self.onfire && y > 75 ) {
 							self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
-						} else if ( eAttacker.zombietype == "jumper" ) {
+						} else if ( eAttacker.zombietype == "jumper" && y > 50) {
 							// apply velocity here
 							//self setVelocity( vectornormalize( eAttacker.origin - self.origin ) );
 							self.health += 2000;
 							self finishPlayerDamage( eAttacker, eAttacker, 2000, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize( self.origin - eAttacker.origin ), "none" );
-						} else if ( eAttacker.zombietype == "fast" ) {
+						} else if ( eAttacker.zombietype == "fast" && y > 50 ) {
 							// apply slow speed here
 							self shellshock( "groggy", 2 );
 						}

@@ -101,7 +101,7 @@ recon() {
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "spawned" );
-    while ( true ) {
+    while ( !level.lasthunter ) {
         if ( self useButtonPressed() && !self.jumpblocked && !self isOnGround() ) 
         {
             if ( !self isOnGround() )
@@ -129,7 +129,7 @@ regen_health()
     self endon( "disconnected" );
     self endon( "spawned" );
 
-    while ( true ) {
+    while ( !level.lasthunter && self.class == "medic" ) {
         // got hurt somehow
         if ( self.health < self.maxhealth && self.lasthittime + 3000 < gettime() )
             self.health++;
@@ -145,7 +145,7 @@ healthbag()
     
     self thread dohealing( mypack );
     
-    while ( isAlive( self ) && self.class == "medic" )
+    while ( isAlive( self ) && self.class == "medic" && !level.lasthunter )
     {  
         wait 0.05;
         
@@ -174,7 +174,8 @@ healthbag()
 dohealing( mypack )
 {
     self endon( "remove healthbag" );
-    while ( isAlive( self ) )
+
+    while ( isAlive( self ) && self.class == "medic" )
     {
         wait 0.25;
         
@@ -230,7 +231,7 @@ ammobox()
     
     self thread ammobox_think( mybox );
     
-    while ( isAlive( self ) && self.class == "support" )
+    while ( isAlive( self ) && self.class == "support" && !level.lasthunter )
     {  
         wait 0.05;
         

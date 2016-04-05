@@ -471,6 +471,9 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 				if ( i > rndchance )
 					doit = false;
 			}
+
+			if ( self.pers[ "team" ] == "allies" && self.zombietype == "fast" )
+				doit = false;
 				
 			// instakill vs. half the health
 			if ( doit )
