@@ -106,7 +106,7 @@ main() {
 
 		arr = maps\mp\gametypes\_zombie::explode( data, "," );
 		for ( i = 0; i < arr.size; i++ ) {
-			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "alphanumeric" );
+			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "numeric" );
 			level.statsLUT[ level.statsLUT.size ] = guid;
 		}
 	} else {
