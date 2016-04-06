@@ -703,7 +703,7 @@ endgamehud()
 		player.stat_shotsfired.sort = 9001;
 		player.stat_shotsfired.label = &"Shots Fired: ";
 		player.stat_shotsfired.fontscale = 0.9;	
-		player.stat_shotsfired setValue( player.shotsfired );
+		player.stat_shotsfired setValue( player.stats[ "shotsFired" ] );
 		
 		player.stat_shotshit = newClientHudElem( player );
 		player.stat_shotshit.alpha = 1;
@@ -712,7 +712,7 @@ endgamehud()
 		player.stat_shotshit.sort = 9001;
 		player.stat_shotshit.label = &"Shots Hit: ";
 		player.stat_shotshit.fontscale = 0.9;	
-		player.stat_shotshit setValue( player.shotshit );
+		player.stat_shotshit setValue( player.stats[ "shotsHit" ] );
 		
 		player.stat_accuracy = newClientHudElem( player );
 		player.stat_accuracy.alpha = 1;
@@ -721,8 +721,8 @@ endgamehud()
 		player.stat_accuracy.sort = 9001;
 		player.stat_accuracy.label = &"Accuracy: ";
 		player.stat_accuracy.fontscale = 0.9;	
-		if ( player.shotshit > 0 ) {
-			player.stat_accuracy setValue( ( player.shotsfired / player.shotshit ) );
+		if ( player.stats[ "shotsHit" ] > 0 ) {
+			player.stat_accuracy setValue( (float)( (float)player.stats[ "shotsFired" ] / (float)player.stats[ "shotsHit" ] ) * 100 );
 		} else {
 			player.stat_accuracy setValue( 0 );
 		}
