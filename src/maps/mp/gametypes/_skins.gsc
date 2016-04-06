@@ -215,6 +215,11 @@ init() {
     // fade
     precacheModel( "xmodel/head_ingram" );
 
+    // majdrew
+    precacheModel( "xmodel/head_Foley" );
+    precacheModel( "xmodel/gear_US_helmet_scrim" );
+    precacheModel( "xmodel/gear_US_Foley" );
+
     // spartan
     precacheModel( "xmodel/head_Elder" );
     precacheModel( "xmodel/gear_US_helmet_net" );    
@@ -358,6 +363,19 @@ main() {
                 self setViewModel( "xmodel/viewmodel_hands_british" );
                 self.nationality = "british";
                 break;
+            // majdrew
+            case 3863:
+                self.specialmodel = true;
+
+                self setModel( "xmodel/playerbody_american_airborne" );
+                self.headmodel = "xmodel/head_Foley";
+                self attach( self.headmodel );
+                self.hatmodel = "xmodel/gear_US_helmet_scrim";
+                self attach( self.hatmodel );
+                self setViewModel( "xmodel/viewmodel_hands_us" );
+                self attach( "xmodel/gear_US_Foley" );
+                self.nationality = "american";
+                break;
             // spartan
             case 4204:
                 self.specialmodel = true;
@@ -367,7 +385,7 @@ main() {
                 self attach( self.headmodel );
                 self.hatmodel = "xmodel/gear_US_helmet_net";
                 self attach( self.hatmodel );
-                self setViewModel( "viewmodel_hands_us");
+                self setViewModel( "xmodel/viewmodel_hands_us");
                 self attach( "xmodel/gear_US_Elder" );
                 self.nationality = "american";
                 break;
