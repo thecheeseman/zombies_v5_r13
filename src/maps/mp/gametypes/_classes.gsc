@@ -142,7 +142,7 @@ healthbag()
 {
     mypack = spawn( "script_model", self getOrigin() );
     mypack setModel( "xmodel/health_large" );
-    mypack notsolid();
+    mypack setContents( 0 );
     
     self thread dohealing( mypack );
     
@@ -229,7 +229,7 @@ ammobox()
     
     mybox = spawn( "script_model", self getOrigin() );
     mybox setModel( boxmodels[ modeli ] );
-    mybox notsolid();
+    mybox setContents( 0 );
     
     self thread ammobox_think( mybox );
     
