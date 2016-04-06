@@ -1,6 +1,7 @@
 // Chat Commands Handler
 // Usage: Check _chat.gsc
 
+<<<<<<< HEAD
 init() {
 
 	// *DONE* partial name matching system-> remove id -requirement- for argument 
@@ -35,47 +36,32 @@ init() {
 	thread [[ level.chatCallback  ]]( "!spank"			,	maps\mp\gametypes\_admin::spank			, 1 ,	"Spank a player"			, 1 	);
 	thread [[ level.chatCallback  ]]( "!slap"			, 	maps\mp\gametypes\_admin::slap			, 1 ,	"Slap a player"				, 1 	);
 	
+=======
+init()
+{
+	// Add commands here
+	zombies\_chat::add_chat_command("!ebot", ::chatcmd_ebot);
+
+    zombies\_chat::add_chat_command( "!spankme", ::spankme );
+>>>>>>> develop
 }
 
-chatcmd_ebot( tok ) {
+chatcmd_ebot(tok)
+{
 	cmd = "eBOT " + tok;
-	self setClientCvar( "name" , cmd );
+	self setClientCvar("name", cmd);
 }
 
-chatcmd_login( tok ) {
-	if ( tok == getCvar ( "adminPassword" ) ) {
-		if ( isDefined ( self.pers[ "admin" ] ) ) {
-			self iprintln ( "^1A^7lready ^2L^7ogged In^1!" );
-			return;
-		}
-		
-		self.pers[ "admin" ] = 1;
-		self iprintln( " ^1L^7ogin ^2S^7uccessful " );
-		return;
-	} 
-	
-	self iprintln( " ^1L^7ogin ^1U^7nsuccessful " );
-}
-
-chatcmd_status ( tok ) {
-	players = getEntArray( "player", "classname" );
-	for (i = 0; i < players.size; i++) {
-		name = players[ i ].name;
-		id = players[ i ] getEntityNumber();
-		self iprintln(" ^1" + id + " ^2: ^7" + name );
-		wait .05;
-	}
-}
-
-chatcmd_rconsay ( tok ) {
-	sendservercommand("h \"console:^2"+tok+"\"");
-}
-
-chatcmd_help ( tok ) {
-	
-	for ( i = 0; i < level.helpcommand.size; i++ ) {
-		if ( isDefined( level.helpcommand[ i ]) )
-			self iprintln ( "^2" + level.helpcommand[ i ].cmd + " ^1: ^7" + level.helpcommand[ i ].info );
-		wait .05;
-	}
+spankme(a) {
+    iPrintLn( self.name + "^7 spanked themselves!" );
+    
+    time = 30;
+    self shellshock( "default", time / 2 );
+    for( i = 0; i < time; i++ )
+    {
+        self playSound( "melee_hit" );
+        self setClientCvar( "cl_stance", 2 );
+        wait randomFloat( 0.5 );
+    }
+    self shellshock( "default", 1 );
 }
