@@ -272,6 +272,7 @@ ammobox_think( box )
 {
     self endon( "remove ammobox" );
     
+    healamount = 0;
     while ( isAlive( self ) )
     {
         wait 0.5;
@@ -336,6 +337,13 @@ ammobox_think( box )
                     
                 if ( players[ i ] != self )
                 {
+                    healamount++;
+                    if ( healamount % 10 == 0 ) {
+                        self.xp += level.xpvalues[ "support_heal" ];
+                        self.score += level.xpvalues[ "support_heal" ];
+                        iPrintLn( "^3+" + level.xpvalues[ "support_heal" ] + " XP!" );
+                        self thread maps\mp\gametypes\_zombie::checkRank();
+                    }
                     //self.stats[ "ammoPoints" ] += (int)( ammogiven / 5 );
                     //self.stats[ "ammoGivenOut" ] += ammogiven;
                 }

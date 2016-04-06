@@ -187,10 +187,17 @@ startGame()
 	level.clock.font = "bigfixed";
 	level.clock.color = ( 1, 1, 1 );
 	level.clock setTimer( level.cvars[ "PREGAME_TIME" ] );
-	level.clock fadeOverTime( level.cvars[ "PREGAME_TIME" ] );
-	level.clock.color = ( 1, 0, 0 );
+	if ( level.cvars[ "PREGAME_TIME" ] > 60 ) {
+		wait level.cvars[ "PREGAME_TIME" ] - 60;
+		level.clock fadeOverTime( 60 );
+		level.clock.color = ( 1, 0, 0 );
+		wait 60;
+	} else {
+		level.clock fadeOverTime( level.cvars[ "PREGAME_TIME" ] );
+		level.clock.color = ( 1, 0, 0 );
 	
-	wait ( level.cvars[ "PREGAME_TIME" ] );
+		wait ( level.cvars[ "PREGAME_TIME" ] );
+	}
 	
 	level.clock destroy();
 	level.gamestarted = true;
@@ -611,6 +618,14 @@ onConnect()
 	self.stats[ "totalassists" ] = 0;
 	self.stats[ "totalshotsfired" ] = 0;
 	self.stats[ "totalshotshit" ] = 0;
+	self.stats[ "jumperzombiekills" ] = 0;
+	self.stats[ "fastzombiekills" ] = 0;
+	self.stats[ "poisonzombiekills" ] = 0;
+	self.stats[ "firezombiekills" ] = 0;
+	self.stats[ "killsasjumperzombie" ] = 0;
+	self.stats[ "killsasfastzombie" ] = 0;
+	self.stats[ "killsaspoisonzombie" ] = 0;
+	self.stats[ "killsasfirezombie" ] = 0;
 	
 	self thread maps\mp\gametypes\_stats::getMyStats();
 	
@@ -994,6 +1009,13 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker giveXP( sMeansOfDeath, self, self.lastattackers );
 			attacker.killstreak++;
 			attacker thread killstreakShiz();
+
+			switch ( self.zombietype ) {
+				case "jumper":	attacker.stats[ "jumperzombiekills" ]++;	break;
+				case "fast":	attacker.stats[ "fastzombiekills" ]++;		break;
+				case "poison":	attacker.stats[ "poisonzombiekills" ]++;	break;
+				case "fire":	attacker.stats[ "firezombiekills" ]++;		break;
+			}
 		}
 		
 		if ( attacker.pers[ "team" ] == "allies" )
@@ -1001,6 +1023,13 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker.zomxp++;
 			attacker.zomscore++;
 			attacker thread checkRank();
+
+			switch ( attacker.zombietype ) {
+				case "jumper":	attacker.stats[ "killsasjumperzombie" ]++;	break;
+				case "fast":	attacker.stats[ "killsasfastzombie" ]++;	break;
+				case "poison":	attacker.stats[ "killsaspoisonzombie" ]++;	break;
+				case "fire":	attacker.stats[ "killsasfirezombie" ]++;	break;
+			}
 		}
 			
 		attacker.stats[ "kills" ]++;
