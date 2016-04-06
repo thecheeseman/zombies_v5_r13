@@ -115,6 +115,7 @@ setupValues()
 	level.xpvalues[ "springfield_mp" ] = 		( (int)cvardef( "zom_xp_springfield_mp", 20, 0, 100000, "int" ) ) 	* increase;
 	level.xpvalues[ "colt_mp" ] = 				( (int)cvardef( "zom_xp_colt_mp", 10, 0, 100000, "int" ) ) 			* increase;
 	level.xpvalues[ "mk1britishfrag_mp" ] = 	( (int)cvardef( "zom_xp_mk1britishfrag_mp", 10, 0, 100000, "int" ) )* increase;
+    level.xpvalues[ "medic_heal" ] =            ( (int)cvardef( "zom_xp_medic_heal", 10, 0, 100000, "int" ) )       * increase;
 	
 	level.pointvalues[ "KILL" ] = 				( (int)cvardef( "zom_point_kill", 10, 0, 100000, "int" ) ) 			* increase;
 	level.pointvalues[ "ASSISTS" ] = 			( (int)cvardef( "zom_point_assists", 5, 0, 100000, "int" ) ) 		* increase;

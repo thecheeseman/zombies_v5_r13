@@ -46,7 +46,7 @@ setup() {
             case "bar_mp":
                 self.class = "support";
 
-                self setMoveSpeedScale( 1.0 );
+                self setMoveSpeedScale( 1.1 );
 
                 self thread ammobox();
                 break;
@@ -54,7 +54,7 @@ setup() {
             case "springfield_mp":
                 self.class = "sniper";
 
-                self setMoveSpeedScale( 1.05 );
+                self setMoveSpeedScale( 1.2 );
                 break;
             // recon
             case "m1carbine_mp":
@@ -70,7 +70,7 @@ setup() {
         switch ( self.pers[ "weapon" ] ) {
             case "enfield_mp":
                 self.zombietype = "jumper";
-                self setMoveSpeedScale( 1.15 );
+                self setMoveSpeedScale( 1.3 );
                 self thread superJump();
                 break;
             case "sten_mp":
@@ -80,12 +80,12 @@ setup() {
                 break;
             case "bren_mp":
                 self.zombietype = "poison";
-                self setMoveSpeedScale( 1.0 );
+                self setMoveSpeedScale( 1.1 );
                 self thread poisonZombie();
                 break;
             case "springfield_mp":
                 self.zombietype = "fire";
-                self setMoveSpeedScale( 1.15 );
+                self setMoveSpeedScale( 1.2 );
                 self thread fireZombie();
                 break;
         }
@@ -101,7 +101,7 @@ recon() {
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "spawned" );
-    while ( !level.lasthunter ) {
+    while ( !level.lasthunter & self.class == "recon" ) {
         if ( self useButtonPressed() && !self.jumpblocked && !self isOnGround() ) 
         {
             if ( !self isOnGround() )
@@ -176,6 +176,7 @@ dohealing( mypack )
 {
     self endon( "remove healthbag" );
 
+    healamount = 0;
     while ( isAlive( self ) && self.class == "medic" )
     {
         wait 0.25;
@@ -204,6 +205,14 @@ dohealing( mypack )
                 if ( players[ i ] != self && players[ i ].health < players[ i ].maxhealth )
                 {
                     players[ i ].health++;
+                    healamount++;
+
+                    if ( healamount % 25 == 0 ) {
+                        self.xp += level.xpvalues[ "medic_heal" ];
+                        self.score += level.xpvalues[ "medic_heal" ];
+                        iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
+                        self thread maps\mp\gametypes\_zombie::checkRank();
+                    }
                     //self.stats[ "healPoints" ]++;
                 }
             }
@@ -563,8 +572,6 @@ firemonitor( dude )
     self endon( "stopfire" );
     self endon( "spawn_spectator" );
     
-    self.onfire = true;
-    
     if ( self.pers[ "team" ] == "axis" )
         self thread firedeath( dude );
     
@@ -585,6 +592,10 @@ firemonitor( dude )
 
 firedeath( dude )
 {
+    if ( self.onfire )
+        return;
+    
+    self.onfire = true;
     self iPrintLnBold( "You are on ^1fire^7!" );
     
     while ( isAlive( self ) )

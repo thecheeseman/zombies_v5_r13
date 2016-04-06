@@ -37,7 +37,13 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.08
+#### 04/04/16 - 05/04/16
     
+    * Changed move speeds of Zombie classes to make them a bit faster
+    + Medic now gains XP per 25 health restored
+    + Added gained XP message
+    * Updated Ammoboxes so they don't give you grenades if you're Medic, Support, or Engineer
+    # Fixed bug where you could be a Medic with Recon abilities
     * Upped the Sten's melee time so you can now do 6 bashes per second as opposed to 3
     # Fixed Recon's double jump from applying as last hunter
     # Fixed Medic's health regen from applying to other classes / last hunter

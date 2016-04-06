@@ -1701,17 +1701,19 @@ giveXP( sMeansOfDeath, player, assisters )
 
 	if ( self.health < ( self.maxhealth * 0.25 ) )
 		xp += 20;
-		
-	switch ( player.pers[ "weapon" ] )
-	{
-		case "enfield_mp":
-		case "sten_mp":
-		case "bren_mp":
-		case "springfield_mp":
-		case "colt_mp":
-		case "mk1britishfrag_mp":
-			xp += level.xpvalues[ player.pers[ "weapon" ] ];
-			break;
+	
+	if ( isDefined( player ) ) {
+		switch ( player.pers[ "weapon" ] )
+		{
+			case "enfield_mp":
+			case "sten_mp":
+			case "bren_mp":
+			case "springfield_mp":
+			case "colt_mp":
+			case "mk1britishfrag_mp":
+				xp += level.xpvalues[ player.pers[ "weapon" ] ];
+				break;
+		}
 	}
 	
 	if ( self.rocketattack )
@@ -1724,6 +1726,8 @@ giveXP( sMeansOfDeath, player, assisters )
 	self.score += xp;
 	self.points += level.pointvalues[ "KILL" ];
 	self.pointscore += level.pointvalues[ "KILL" ];
+
+	self iPrintLn( "^3+" + xp + " XP!" );
 	
 	self thread checkRank();
 	
