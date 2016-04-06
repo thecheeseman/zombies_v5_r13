@@ -39,6 +39,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.08
 #### 04/04/16 - 05/04/16
     
+    + Added new stats: timePlayed, joins, hpHealed, ammoHealed
+    # Fixed a crash that occured when two players joined, the timer started, and left
+    # Fixed a crash that occured when game tried to force everyone into a gamecam with no last killer
     * Changed move speeds of Zombie classes to make them a bit faster
     + Medic now gains XP per 25 health restored
     + Added gained XP message

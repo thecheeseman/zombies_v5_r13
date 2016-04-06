@@ -27,8 +27,8 @@ main()
 
 fog()
 {
-	if ( level.debug )
-		debugfog();
+	//if ( level.debug )
+	//	debugfog();
 		
 	mapname = maps\mp\gametypes\_zombie::toLower( getCvar( "mapname" ) );
 	

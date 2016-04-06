@@ -169,7 +169,7 @@ startGame()
 	while ( 1 )
 	{
 		ePlayers = getPlayersOnTeam( "axis" );
-		if ( ePlayers.size > 1 )
+		if ( ePlayers.size > 1 || level.debug )
 			break;
 			
 		wait 1;
@@ -248,6 +248,11 @@ pickZombie()
 	zom = undefined;
 	guys = getPlayersOnTeam( "axis" );
 	lasthunter = getCvar( "lasthunter" );
+
+	// no hunters?
+	if ( guys.size == 0 ) {
+		return;
+	}
 	
 	for ( i = 0; i < guys.size; i++ )
 	{
@@ -331,145 +336,147 @@ endGame( winner )
 		setCvar( "lasthunter", "" );
 	
 	players = getentarray( "player", "classname" );
-	
-	if ( winner == "zombies" )
-	{
-		for(i = 0; i < players.size; i++)
+	if ( players.size > 0 ) {
+		if ( winner == "zombies" && isDefined( level.lastkiller ) )
 		{
-			player = players[i];
-			player closeMenu();
-			player setClientCvar( "g_scriptMainMenu", "main" );
-			player thread GameCam( level.lastKiller getEntityNumber(), 2 );
+			for(i = 0; i < players.size; i++)
+			{
+				player = players[i];
+				player closeMenu();
+				player setClientCvar( "g_scriptMainMenu", "main" );
+				player thread GameCam( level.lastKiller getEntityNumber(), 2 );
+			}
+			
+			wait 4.5;
+			
+			slowMo( 3.5 );
+		}
+
+		for ( i = 0; i < players.size; i++ )
+		{
+			if ( isAlive( players[ i ] ) ) {
+				players[ i ] thread gameCamRemove();
+			}
+			
+			players[ i ] maps\mp\gametypes\zombies::spawnSpectator();
+			players[ i ].org = spawn( "script_origin", players[ i ].origin );
+			players[ i ] linkto( players[ i ].org );
 		}
 		
-		wait 4.5;
+		if ( !level.nuked )
+			setCullFog( 0, 7500, 0, 0, 0, 3 );
 		
-		slowMo( 3.5 );
+		thread maps\mp\gametypes\_stats::saveAll();
+		thread maps\mp\gametypes\_hud::endgamehud();
+
+		centerImage = newHudElem();
+		centerImage.x = 320;
+		centerImage.y = 105;
+		centerImage.alignX = "center";
+		centerImage.alignY = "middle";
+		centerImage.alpha = 0;
+		centerImage.sort = 10;
+
+		// look, i know this doesn't need to be in its own scope
+		// but it makes me sleep better at night, okay?
+		{
+			cleanScreen();
+			iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
+			
+			wait 3;
+
+			guy = getBest( "hunter" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
+				cleanScreen();
+				iPrintlnBold( "^2Best Hunter: " );
+				iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getBest( "zombie" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
+				cleanScreen();
+				iPrintlnBold( "^1Best Zombie: " );
+				iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+			
+			guy = getMost( "kills" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killicondied" );
+				cleanScreen();
+				iPrintlnBold( "^3Most Kills: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "assists" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
+				cleanScreen();
+				iPrintlnBold( "^4Most Assists: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "bashes" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killiconmelee" );
+				cleanScreen();
+				iPrintlnBold( "^5Most Bashes: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "headshots" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killiconheadshot" );
+				cleanScreen();
+				iPrintlnBold( "^6Most Headshots: " );
+				iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+			
+			centerImage destroy();
+			cleanScreen();
+		}
+		
+		thread maps\mp\gametypes\_mapvote::Initialize();
+		level waittill( "VotingComplete" );
+			
+		thread maps\mp\gametypes\_hud::endgamehud_cleanup();
+		
+		game[ "state" ] = "intermission";
+		
+		players = getEntArray( "player", "classname" );
+		for ( i = 0; i < players.size; i++ )
+			players[ i ] maps\mp\gametypes\zombies::spawnIntermission();
+			
+		setCullFog( 0, 1, 0, 0, 0, 7 );
+		
+		wait 10;
 	}
 
-	for ( i = 0; i < players.size; i++ )
-	{
-		if ( isAlive( players[ i ] ) ) {
-			players[ i ] thread gameCamRemove();
-		}
-		
-		players[ i ] maps\mp\gametypes\zombies::spawnSpectator();
-		players[ i ].org = spawn( "script_origin", players[ i ].origin );
-		players[ i ] linkto( players[ i ].org );
-	}
-	
-	if ( !level.nuked )
-		setCullFog( 0, 7500, 0, 0, 0, 3 );
-	
-	thread maps\mp\gametypes\_stats::saveAll();
-	thread maps\mp\gametypes\_hud::endgamehud();
-
-	centerImage = newHudElem();
-	centerImage.x = 320;
-	centerImage.y = 105;
-	centerImage.alignX = "center";
-	centerImage.alignY = "middle";
-	centerImage.alpha = 0;
-	centerImage.sort = 10;
-
-	// look, i know this doesn't need to be in its own scope
-	// but it makes me sleep better at night, okay?
-	{
-		cleanScreen();
-		iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
-		
-		wait 3;
-
-		guy = getBest( "hunter" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
-			cleanScreen();
-			iPrintlnBold( "^2Best Hunter: " );
-			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getBest( "zombie" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
-			cleanScreen();
-			iPrintlnBold( "^1Best Zombie: " );
-			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-		
-		guy = getMost( "kills" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killicondied" );
-			cleanScreen();
-			iPrintlnBold( "^3Most Kills: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "assists" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
-			cleanScreen();
-			iPrintlnBold( "^4Most Assists: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "bashes" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killiconmelee" );
-			cleanScreen();
-			iPrintlnBold( "^5Most Bashes: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "headshots" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killiconheadshot" );
-			cleanScreen();
-			iPrintlnBold( "^6Most Headshots: " );
-			iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-		
-		centerImage destroy();
-		cleanScreen();
-	}
-	
-	thread maps\mp\gametypes\_mapvote::Initialize();
-	level waittill( "VotingComplete" );
-		
-	thread maps\mp\gametypes\_hud::endgamehud_cleanup();
-	
-	game[ "state" ] = "intermission";
-	
-	players = getEntArray( "player", "classname" );
-	for ( i = 0; i < players.size; i++ )
-		players[ i ] maps\mp\gametypes\zombies::spawnIntermission();
-		
-	setCullFog( 0, 1, 0, 0, 0, 7 );
-	
-	wait 10;
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::endGame( " + winner + " ) -- exiting level", true );
 	exitLevel( false );
 }
@@ -602,32 +609,10 @@ onConnect()
 	self.zomrank = 0;
 	self.zomxp = 0;
 	self.points = 0;
-	
-	self.stats = [];
-	self.stats[ "kills" ] = 0;
-	self.stats[ "deaths" ] = 0;
-	self.stats[ "bashes" ] = 0;
-	self.stats[ "damage" ] = 0;
-	self.stats[ "headshots" ] = 0;
-	self.stats[ "assists" ] = 0;
-	self.stats[ "totalkills" ] = 0;
-	self.stats[ "totaldeaths" ] = 0;
-	self.stats[ "totalbashes" ] = 0;
-	self.stats[ "totaldamage" ] = 0;
-	self.stats[ "totalheadshots" ] = 0;
-	self.stats[ "totalassists" ] = 0;
-	self.stats[ "totalshotsfired" ] = 0;
-	self.stats[ "totalshotshit" ] = 0;
-	self.stats[ "jumperzombiekills" ] = 0;
-	self.stats[ "fastzombiekills" ] = 0;
-	self.stats[ "poisonzombiekills" ] = 0;
-	self.stats[ "firezombiekills" ] = 0;
-	self.stats[ "killsasjumperzombie" ] = 0;
-	self.stats[ "killsasfastzombie" ] = 0;
-	self.stats[ "killsaspoisonzombie" ] = 0;
-	self.stats[ "killsasfirezombie" ] = 0;
-	
-	self thread maps\mp\gametypes\_stats::getMyStats();
+
+	self.timejoined = gettime();
+
+	self maps\mp\gametypes\_stats::setupPlayer();
 	
 	self.iszombie = false;
 	self.zombietype = "none";
@@ -651,8 +636,6 @@ onConnect()
 	self.damagearmor = 0;
 	self.ammoboxuses = 0;
 	self.megajump = 0;
-	self.shotsfired = 0;
-	self.shotshit = 0;
 	self.zomscore = 0;
 	self.pointscore = 0;
 	self.immunity = 0;
@@ -721,8 +704,6 @@ spawnPlayer()
 	self.damagearmor = 0;
 	self.ammoboxuses = 0;
 	self.megajump = 0;
-	self.shotsfired = 0;
-	self.shotshit = 0;
 	self.immunity = 0;
 	self.nightvision = false;
 	self.zomnadeammo = 0;
@@ -857,7 +838,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 		if ( eAttacker != self )
 		{
 			eAttacker.stats[ "damage" ] += iDamage;
-			eAttacker.shotshit++;
+			eAttacker.stats[ "shotsHit" ]++;
 		
 			if ( eAttacker.iszombie )
 			{
@@ -1524,7 +1505,7 @@ shotsfired()
 			
 		if ( self attackButtonPressed() )
 		{
-			self.shotsfired++;
+			self.stats[ "shotsFired" ]++;
 			
 			if ( current == "fg42_mp" || current == "fg42_semi_mp" )
 			{
@@ -2378,6 +2359,11 @@ strreplacer( sString, sType ) {
             out = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             bIgnoreExtraChars = false;
             break;
+        case "onlynumbers":
+        	in = "0123456789";
+        	out = "0123456789";
+        	bIgnoreExtraChars = true;
+        	break;
         case "numeric":
             in = "0123456789.-";
             out = "0123456789.-";
