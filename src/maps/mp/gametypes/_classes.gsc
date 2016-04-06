@@ -210,7 +210,7 @@ dohealing( mypack )
                     if ( healamount % 25 == 0 ) {
                         self.xp += level.xpvalues[ "medic_heal" ];
                         self.score += level.xpvalues[ "medic_heal" ];
-                        iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
+                        self iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
                         self thread maps\mp\gametypes\_zombie::checkRank();
                     }
                     //self.stats[ "healPoints" ]++;
@@ -341,7 +341,7 @@ ammobox_think( box )
                     if ( healamount % 10 == 0 ) {
                         self.xp += level.xpvalues[ "support_heal" ];
                         self.score += level.xpvalues[ "support_heal" ];
-                        iPrintLn( "^3+" + level.xpvalues[ "support_heal" ] + " XP!" );
+                        self iPrintLn( "^3+" + level.xpvalues[ "support_heal" ] + " XP!" );
                         self thread maps\mp\gametypes\_zombie::checkRank();
                     }
                     //self.stats[ "ammoPoints" ] += (int)( ammogiven / 5 );
