@@ -472,7 +472,7 @@ bePoisoned( dude )
     
     self iPrintLnBold( "You have been ^2poisoned^7!" );
     
-    while ( isAlive( self ) )
+    while ( isAlive( self ) && self.ispoisoned )
     {
         oldhealth = self.health;
         
@@ -571,11 +571,13 @@ firemonitor( dude )
     self endon( "end_respawn" );
     self endon( "stopfire" );
     self endon( "spawn_spectator" );
+
+    self.onfire = true;
     
     if ( self.pers[ "team" ] == "axis" )
         self thread firedeath( dude );
     
-    while ( 1 )
+    while ( self.onfire )
     {
         playFx( level._effect[ "zombieFire" ], self.origin + ( 0, 0, 32 ) );
         
@@ -592,13 +594,9 @@ firemonitor( dude )
 
 firedeath( dude )
 {
-    if ( self.onfire )
-        return;
-    
-    self.onfire = true;
     self iPrintLnBold( "You are on ^1fire^7!" );
     
-    while ( isAlive( self ) )
+    while ( self.onfire )
     {
         oldhealth = self.health;
         

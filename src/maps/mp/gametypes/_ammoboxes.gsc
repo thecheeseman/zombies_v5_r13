@@ -463,7 +463,7 @@ getammo( box )
 					self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
 				
 				if ( level.gamestarted ) {
-					if ( players[ i ].class != "engineer" && players[ i ].class != "medic" && players[ i ].class != "support" ) 
+					if ( self.class != "engineer" && self.class != "medic" && self.class != "support" ) 
 						self setWeaponSlotAmmo( "grenade", self.stickynades );
 				
 					if ( self.healthpacks < self.maxhealthpacks )
