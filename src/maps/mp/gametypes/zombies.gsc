@@ -424,8 +424,23 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		return;
 	}
 		
-	if ( isPlayer( eAttacker ) && eAttacker != self && eAttacker.pers[ "team" ] == self.pers[ "team" ] )
+	if ( isPlayer( eAttacker ) && eAttacker != self && eAttacker.pers[ "team" ] == self.pers[ "team" ] ) {
+		if ( sWeapon == "stielhandgranate_mp" && eAttacker.class == "medic" ) {
+			if ( self.health < self.maxhealth ) {
+				eAttacker iPrintLn( "You healed " + self.name + "^7 for ^225^7 HP!" );
+				self.health += 25;
+				if ( self.health > self.maxhealth )
+					self.health = self.maxhealth;
+
+				eAttacker.stats[ "hpHealed" ] += 25;
+				eAttacker.xp += level.xpvalues[ "medic_heal" ];
+                eAttacker.score += level.xpvalues[ "medic_heal" ];
+                eAttacker iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
+                eAttacker thread maps\mp\gametypes\_zombie::checkRank();
+			}
+		}
 		return;
+	}
 
 	if ( isPlayer( eInflictor ) && eInflictor != self && eInflictor.pers[ "team" ] == self.pers[ "team" ] )
 		return;

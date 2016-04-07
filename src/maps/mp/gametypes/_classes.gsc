@@ -179,7 +179,7 @@ dohealing( mypack )
     healamount = 0;
     while ( isAlive( self ) && self.class == "medic" )
     {
-        wait 0.25;
+        wait 1;
         
         if ( self getCurrentWeapon() != "stielhandgranate_mp" )
             continue;
@@ -204,8 +204,14 @@ dohealing( mypack )
                     
                 if ( players[ i ] != self && players[ i ].health < players[ i ].maxhealth )
                 {
-                    players[ i ].health++;
-                    healamount++;
+                    players[ i ].health += 5;
+                    if ( players[ i ].health > players[ i ].maxhealth )
+                        players[ i ].health = players[ i ].maxhealth;
+
+                    healamount += 5;
+                    self.stats[ "hpHealed" ] += 5;
+
+                    self iPrintLn( "You healed " + players[ i ].name + "^7 for ^25^7 HP!" );
 
                     if ( healamount % 25 == 0 ) {
                         self.xp += level.xpvalues[ "medic_heal" ];
@@ -334,9 +340,12 @@ ammobox_think( box )
                 ammogiven = ( newamountpri - oldamountpri ) + ( newamountprib - oldamountprib ) + ( newamountpistol - oldamountpistol );
                 if ( players[ i ] getWeaponSlotWeapon( "primary" ) == "panzerfaust_mp" )
                     ammogiven -= ( newamountpri - oldamountpri );
-                    
+                     
                 if ( players[ i ] != self )
                 {
+                    self iPrintLn( "You gave ^2" + ammogiven + "^7 to " + players[ i ].name + "^7!" );
+                    self.stats[ "ammoHealed" ] += ammogiven;
+
                     healamount++;
                     if ( healamount % 10 == 0 ) {
                         self.xp += level.xpvalues[ "support_heal" ];
