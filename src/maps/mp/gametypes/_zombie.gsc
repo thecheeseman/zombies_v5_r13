@@ -39,6 +39,7 @@ Main()
 	thread maps\mp\gametypes\_hud::init();
 	thread maps\mp\gametypes\_stats::main();
 	thread maps\mp\gametypes\_ranks::init();
+	thread maps\mp\gametypes\_classes::init();
     thread maps\mp\gametypes\_skins::init();
 	thread zombies\modules::init();
 	
@@ -72,6 +73,9 @@ precache()
 	precacheShader( "gfx/impact/flesh_hit2.tga" );
 	precacheShader( "gfx/hud/hud@health_back.dds" );
 	precacheShader( "gfx/hud/hud@health_bar.dds" );
+
+	precacheStatusIcon( "gfx/hud/hud@health_cross.tga" );
+	precacheStatusIcon( "gfx/hud/hud@death_m1carbine.tga" );
 	
 	precacheItem( "fg42_mp" );
 	precacheItem( "panzerfaust_mp" );
@@ -80,40 +84,8 @@ precache()
 	
 	precacheShellshock( "default" );
 	precacheShellshock( "groggy" );
-	
-	precacheModel( "xmodel/playerbody_russian_veteran" );
-	precacheModel( "xmodel/sovietequipment_helmet" );
-	precacheModel( "xmodel/viewmodel_hands_russian_vetrn" );
-	precacheModel( "xmodel/gear_russian_load_coat" );
-	precacheModel( "xmodel/gear_russian_ppsh_coat" );
-	precacheModel( "xmodel/gear_russian_pack_ocoat" );
-	
-	precacheModel( "xmodel/playerbody_russian_conscript" );
-	precacheModel( "xmodel/head_pavlov" );
-	precacheModel( "xmodel/equipment_pavlov_ushanka" );
-	precacheModel( "xmodel/viewmodel_hands_russian" );
-	precacheModel( "xmodel/gear_russian_commisar" );
-	precacheModel( "xmodel/playerbody_german_kriegsmarine" );
-	precacheModel( "xmodel/head_price" );
-	precacheModel( "xmodel/equipment_british_beret_green" );
-	precacheModel( "xmodel/viewmodel_hands_kriegsmarine" );
-	precacheModel( "xmodel/gear_british_price" );
-	precacheModel( "xmodel/playerbody_american_airborne" );
-	precacheModel( "xmodel/head_moody" );
-	precacheModel( "xmodel/equipment_us_helmet_scrim" );
-	precacheModel( "xmodel/viewmodel_hands_us" );
-	precacheModel( "xmodel/gear_us_moody" );
 
-	if ( getMapWeather() == "winter" )
-	{
-		mptype\american_airborne_winter::precache();
-		game["axis_model2"] = mptype\american_airborne_winter::main;
-	}
-	else
-	{
-		mptype\american_airborne::precache();
-		game["axis_model2"] = mptype\american_airborne::main;
-	}
+	precacheModel( "xmodel/health_large" );
 	
 	level._effect[ "zombieFire" ] = loadFx( "fx/fire/tinybon.efx" );
 	level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
@@ -197,7 +169,7 @@ startGame()
 	while ( 1 )
 	{
 		ePlayers = getPlayersOnTeam( "axis" );
-		if ( ePlayers.size > 1 )
+		if ( ePlayers.size > 1 || level.debug )
 			break;
 			
 		wait 1;
@@ -215,10 +187,17 @@ startGame()
 	level.clock.font = "bigfixed";
 	level.clock.color = ( 1, 1, 1 );
 	level.clock setTimer( level.cvars[ "PREGAME_TIME" ] );
-	level.clock fadeOverTime( level.cvars[ "PREGAME_TIME" ] );
-	level.clock.color = ( 1, 0, 0 );
+	if ( level.cvars[ "PREGAME_TIME" ] > 60 ) {
+		wait level.cvars[ "PREGAME_TIME" ] - 60;
+		level.clock fadeOverTime( 60 );
+		level.clock.color = ( 1, 0, 0 );
+		wait 60;
+	} else {
+		level.clock fadeOverTime( level.cvars[ "PREGAME_TIME" ] );
+		level.clock.color = ( 1, 0, 0 );
 	
-	wait ( level.cvars[ "PREGAME_TIME" ] );
+		wait ( level.cvars[ "PREGAME_TIME" ] );
+	}
 	
 	level.clock destroy();
 	level.gamestarted = true;
@@ -269,6 +248,11 @@ pickZombie()
 	zom = undefined;
 	guys = getPlayersOnTeam( "axis" );
 	lasthunter = getCvar( "lasthunter" );
+
+	// no hunters?
+	if ( guys.size == 0 ) {
+		return;
+	}
 	
 	for ( i = 0; i < guys.size; i++ )
 	{
@@ -352,145 +336,147 @@ endGame( winner )
 		setCvar( "lasthunter", "" );
 	
 	players = getentarray( "player", "classname" );
-	
-	if ( winner == "zombies" )
-	{
-		for(i = 0; i < players.size; i++)
+	if ( players.size > 0 ) {
+		if ( winner == "zombies" && isDefined( level.lastkiller ) )
 		{
-			player = players[i];
-			player closeMenu();
-			player setClientCvar( "g_scriptMainMenu", "main" );
-			player thread GameCam( level.lastKiller getEntityNumber(), 2 );
+			for(i = 0; i < players.size; i++)
+			{
+				player = players[i];
+				player closeMenu();
+				player setClientCvar( "g_scriptMainMenu", "main" );
+				player thread GameCam( level.lastKiller getEntityNumber(), 2 );
+			}
+			
+			wait 4.5;
+			
+			slowMo( 3.5 );
+		}
+
+		for ( i = 0; i < players.size; i++ )
+		{
+			if ( isAlive( players[ i ] ) ) {
+				players[ i ] thread gameCamRemove();
+			}
+			
+			players[ i ] maps\mp\gametypes\zombies::spawnSpectator();
+			players[ i ].org = spawn( "script_origin", players[ i ].origin );
+			players[ i ] linkto( players[ i ].org );
 		}
 		
-		wait 4.5;
+		if ( !level.nuked )
+			setCullFog( 0, 7500, 0, 0, 0, 3 );
 		
-		slowMo( 3.5 );
+		thread maps\mp\gametypes\_stats::saveAll();
+		thread maps\mp\gametypes\_hud::endgamehud();
+
+		centerImage = newHudElem();
+		centerImage.x = 320;
+		centerImage.y = 105;
+		centerImage.alignX = "center";
+		centerImage.alignY = "middle";
+		centerImage.alpha = 0;
+		centerImage.sort = 10;
+
+		// look, i know this doesn't need to be in its own scope
+		// but it makes me sleep better at night, okay?
+		{
+			cleanScreen();
+			iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
+			
+			wait 3;
+
+			guy = getBest( "hunter" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
+				cleanScreen();
+				iPrintlnBold( "^2Best Hunter: " );
+				iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getBest( "zombie" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
+				cleanScreen();
+				iPrintlnBold( "^1Best Zombie: " );
+				iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+			
+			guy = getMost( "kills" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killicondied" );
+				cleanScreen();
+				iPrintlnBold( "^3Most Kills: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "assists" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
+				cleanScreen();
+				iPrintlnBold( "^4Most Assists: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "bashes" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killiconmelee" );
+				cleanScreen();
+				iPrintlnBold( "^5Most Bashes: " );
+				iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
+
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+
+			guy = getMost( "headshots" );
+			if ( isDefined( guy ) ) {
+				centerImage thread fadeIn( 0.5, "killiconheadshot" );
+				cleanScreen();
+				iPrintlnBold( "^6Most Headshots: " );
+				iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
+				
+				wait 2.5;
+				centerImage thread fadeOut( 0.5 );
+				wait 0.5;
+			}
+			
+			centerImage destroy();
+			cleanScreen();
+		}
+		
+		thread maps\mp\gametypes\_mapvote::Initialize();
+		level waittill( "VotingComplete" );
+			
+		thread maps\mp\gametypes\_hud::endgamehud_cleanup();
+		
+		game[ "state" ] = "intermission";
+		
+		players = getEntArray( "player", "classname" );
+		for ( i = 0; i < players.size; i++ )
+			players[ i ] maps\mp\gametypes\zombies::spawnIntermission();
+			
+		setCullFog( 0, 1, 0, 0, 0, 7 );
+		
+		wait 10;
 	}
 
-	for ( i = 0; i < players.size; i++ )
-	{
-		if ( isAlive( players[ i ] ) ) {
-			players[ i ] thread gameCamRemove();
-		}
-		
-		players[ i ] maps\mp\gametypes\zombies::spawnSpectator();
-		players[ i ].org = spawn( "script_origin", players[ i ].origin );
-		players[ i ] linkto( players[ i ].org );
-	}
-	
-	if ( !level.nuked )
-		setCullFog( 0, 7500, 0, 0, 0, 3 );
-	
-	thread maps\mp\gametypes\_stats::saveAll();
-	thread maps\mp\gametypes\_hud::endgamehud();
-
-	centerImage = newHudElem();
-	centerImage.x = 320;
-	centerImage.y = 105;
-	centerImage.alignX = "center";
-	centerImage.alignY = "middle";
-	centerImage.alpha = 0;
-	centerImage.sort = 10;
-
-	// look, i know this doesn't need to be in its own scope
-	// but it makes me sleep better at night, okay?
-	{
-		cleanScreen();
-		iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
-		
-		wait 3;
-
-		guy = getBest( "hunter" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
-			cleanScreen();
-			iPrintlnBold( "^2Best Hunter: " );
-			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.score );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getBest( "zombie" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
-			cleanScreen();
-			iPrintlnBold( "^1Best Zombie: " );
-			iPrintlnBold( cleanString( guy.name ) + " ^7- ^1" + guy.deaths );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-		
-		guy = getMost( "kills" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killicondied" );
-			cleanScreen();
-			iPrintlnBold( "^3Most Kills: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "kills" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "assists" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
-			cleanScreen();
-			iPrintlnBold( "^4Most Assists: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "assists" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "bashes" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killiconmelee" );
-			cleanScreen();
-			iPrintlnBold( "^5Most Bashes: " );
-			iPrintlnBold( cleanString( guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
-
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-
-		guy = getMost( "headshots" );
-		if ( isDefined( guy ) ) {
-			centerImage thread fadeIn( 0.5, "killiconheadshot" );
-			cleanScreen();
-			iPrintlnBold( "^6Most Headshots: " );
-			iPrintlnBold( cleanString( guy.name ) + " - " + guy.stats[ "headshots" ] );
-			
-			wait 2.5;
-			centerImage thread fadeOut( 0.5 );
-			wait 0.5;
-		}
-		
-		centerImage destroy();
-		cleanScreen();
-	}
-	
-	thread maps\mp\gametypes\_mapvote::Initialize();
-	level waittill( "VotingComplete" );
-		
-	thread maps\mp\gametypes\_hud::endgamehud_cleanup();
-	
-	game[ "state" ] = "intermission";
-	
-	players = getEntArray( "player", "classname" );
-	for ( i = 0; i < players.size; i++ )
-		players[ i ] maps\mp\gametypes\zombies::spawnIntermission();
-		
-	setCullFog( 0, 1, 0, 0, 0, 7 );
-	
-	wait 10;
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::endGame( " + winner + " ) -- exiting level", true );
 	exitLevel( false );
 }
@@ -623,24 +609,10 @@ onConnect()
 	self.zomrank = 0;
 	self.zomxp = 0;
 	self.points = 0;
-	
-	self.stats = [];
-	self.stats[ "kills" ] = 0;
-	self.stats[ "deaths" ] = 0;
-	self.stats[ "bashes" ] = 0;
-	self.stats[ "damage" ] = 0;
-	self.stats[ "headshots" ] = 0;
-	self.stats[ "assists" ] = 0;
-	self.stats[ "totalkills" ] = 0;
-	self.stats[ "totaldeaths" ] = 0;
-	self.stats[ "totalbashes" ] = 0;
-	self.stats[ "totaldamage" ] = 0;
-	self.stats[ "totalheadshots" ] = 0;
-	self.stats[ "totalassists" ] = 0;
-	self.stats[ "totalshotsfired" ] = 0;
-	self.stats[ "totalshotshit" ] = 0;
-	
-	self thread maps\mp\gametypes\_stats::getMyStats();
+
+	self.timejoined = gettime();
+
+	self maps\mp\gametypes\_stats::setupPlayer();
 	
 	self.iszombie = false;
 	self.zombietype = "none";
@@ -664,14 +636,14 @@ onConnect()
 	self.damagearmor = 0;
 	self.ammoboxuses = 0;
 	self.megajump = 0;
-	self.shotsfired = 0;
-	self.shotshit = 0;
 	self.zomscore = 0;
 	self.pointscore = 0;
 	self.immunity = 0;
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
 	self.specialmodel = false;
+	self.lasthittime = 0;
+	self.class = "default";
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -732,13 +704,13 @@ spawnPlayer()
 	self.damagearmor = 0;
 	self.ammoboxuses = 0;
 	self.megajump = 0;
-	self.shotsfired = 0;
-	self.shotshit = 0;
 	self.immunity = 0;
 	self.nightvision = false;
 	self.zomnadeammo = 0;
 	self.ammobonus = 0;
 	self.specialmodel = false;
+	self.lasthittime = 0;
+	self.class = "default";
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	
@@ -758,7 +730,7 @@ spawnPlayer()
 			self.zombietype = "none";
 		}
 
-		self setupClasses();
+		self maps\mp\gametypes\_classes::setup();
 		
 		self thread ammoLimiting();
 		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
@@ -779,7 +751,7 @@ spawnPlayer()
 		self setWeaponSlotClipAmmo( "primary", 0 );
 		self setWeaponSlotClipAmmo( "pistol", 0 );
 		
-		self setupClasses();
+		self maps\mp\gametypes\_classes::setup();
 
 		if ( self.headicon != "" )
 		{
@@ -861,12 +833,12 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 	if ( iDamage < 1 )
 		iDamage = 1;
 	
-	if ( isPlayer( eAttacker ) && eAttacker != self )
+	if ( isPlayer( eAttacker ) )
 	{
 		if ( eAttacker != self )
 		{
 			eAttacker.stats[ "damage" ] += iDamage;
-			eAttacker.shotshit++;
+			eAttacker.stats[ "shotsHit" ]++;
 		
 			if ( eAttacker.iszombie )
 			{
@@ -880,20 +852,18 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 						doit = false;
 
 					y = randomInt( 100 );
-					if ( y < 75 )
-						doit = false;
 
 					if ( doit ) {
-						if ( eAttacker.zombietype == "poison" && !self.ispoisoned ) {
-							self thread bePoisoned( eAttacker );
-						} else if ( eAttacker.zombietype == "fire" && !self.onfire ) {
-							self thread firemonitor( eAttacker );
-						} else if ( eAttacker.zombietype == "jumper" ) {
+						if ( eAttacker.zombietype == "poison" && !self.ispoisoned && y > 75 ) {
+							self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
+						} else if ( eAttacker.zombietype == "fire" && !self.onfire && y > 75 ) {
+							self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
+						} else if ( eAttacker.zombietype == "jumper" && y > 50) {
 							// apply velocity here
 							//self setVelocity( vectornormalize( eAttacker.origin - self.origin ) );
 							self.health += 2000;
 							self finishPlayerDamage( eAttacker, eAttacker, 2000, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize( self.origin - eAttacker.origin ), "none" );
-						} else if ( eAttacker.zombietype == "fast" ) {
+						} else if ( eAttacker.zombietype == "fast" && y > 50 ) {
 							// apply slow speed here
 							self shellshock( "groggy", 2 );
 						}
@@ -919,7 +889,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 					}
 					
 					if ( doit )
-						self thread bePoisoned( eAttacker );
+						self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
 				}
 				
 				if ( eAttacker.zombietype == "fire" && !self.onfire )
@@ -940,7 +910,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 					}
 					
 					if ( doit )
-						self thread firemonitor( eAttacker );
+						self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
 				}
 			}
 			
@@ -971,6 +941,8 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 		self thread bloodsplatter();
 		self thread painsound();
 	}
+
+	self.lasthittime = getTime();
 	
 	if ( isPlayer( eAttacker ) && eAttacker != self )
 	{
@@ -1018,6 +990,13 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker giveXP( sMeansOfDeath, self, self.lastattackers );
 			attacker.killstreak++;
 			attacker thread killstreakShiz();
+
+			switch ( self.zombietype ) {
+				case "jumper":	attacker.stats[ "jumperzombiekills" ]++;	break;
+				case "fast":	attacker.stats[ "fastzombiekills" ]++;		break;
+				case "poison":	attacker.stats[ "poisonzombiekills" ]++;	break;
+				case "fire":	attacker.stats[ "firezombiekills" ]++;		break;
+			}
 		}
 		
 		if ( attacker.pers[ "team" ] == "allies" )
@@ -1025,6 +1004,13 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker.zomxp++;
 			attacker.zomscore++;
 			attacker thread checkRank();
+
+			switch ( attacker.zombietype ) {
+				case "jumper":	attacker.stats[ "killsasjumperzombie" ]++;	break;
+				case "fast":	attacker.stats[ "killsasfastzombie" ]++;	break;
+				case "poison":	attacker.stats[ "killsaspoisonzombie" ]++;	break;
+				case "fire":	attacker.stats[ "killsasfirezombie" ]++;	break;
+			}
 		}
 			
 		attacker.stats[ "kills" ]++;
@@ -1454,9 +1440,9 @@ extraKeys()
 					if ( self.pers[ "team" ] == "allies" )
 					{
 						if ( self.zombietype == "fire" )
-							self thread firebomb();
+							self thread maps\mp\gametypes\_classes::firebomb();
 						else if ( self.zombietype == "poison" )
-							self thread poisonbomb();
+							self thread maps\mp\gametypes\_classes::poisonbomb();
 					}
 					break;
 				default:
@@ -1519,7 +1505,7 @@ shotsfired()
 			
 		if ( self attackButtonPressed() )
 		{
-			self.shotsfired++;
+			self.stats[ "shotsFired" ]++;
 			
 			if ( current == "fg42_mp" || current == "fg42_semi_mp" )
 			{
@@ -1725,17 +1711,19 @@ giveXP( sMeansOfDeath, player, assisters )
 
 	if ( self.health < ( self.maxhealth * 0.25 ) )
 		xp += 20;
-		
-	switch ( player.pers[ "weapon" ] )
-	{
-		case "enfield_mp":
-		case "sten_mp":
-		case "bren_mp":
-		case "springfield_mp":
-		case "colt_mp":
-		case "mk1britishfrag_mp":
-			xp += level.xpvalues[ player.pers[ "weapon" ] ];
-			break;
+	
+	if ( isDefined( player ) ) {
+		switch ( player.pers[ "weapon" ] )
+		{
+			case "enfield_mp":
+			case "sten_mp":
+			case "bren_mp":
+			case "springfield_mp":
+			case "colt_mp":
+			case "mk1britishfrag_mp":
+				xp += level.xpvalues[ player.pers[ "weapon" ] ];
+				break;
+		}
 	}
 	
 	if ( self.rocketattack )
@@ -1748,6 +1736,8 @@ giveXP( sMeansOfDeath, player, assisters )
 	self.score += xp;
 	self.points += level.pointvalues[ "KILL" ];
 	self.pointscore += level.pointvalues[ "KILL" ];
+
+	self iPrintLn( "^3+" + xp + " XP!" );
 	
 	self thread checkRank();
 	
@@ -1827,7 +1817,7 @@ rankUp( newrank )
 	{
 		self.changeweapon = true;
 		
-		self iPrintLn( "^2You can change your weapon." );
+		//self iPrintLn( "^2You can change your weapon." );
 		
 		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 		
@@ -1868,327 +1858,6 @@ killstreakShiz()
 	gavepowerup = false;
 	
 	self maps\mp\gametypes\_killstreaks::checkPowerup();
-}
-
-setupClasses()
-{
-	if ( self.pers[ "team" ] == "axis" ) {
-		switch ( self.pers[ "weapon" ] ) {
-			case "kar98k_mp":
-			case "m1garand_mp":
-				self setMoveSpeedScale( 1.15 );
-				break;
-			case "mp40_mp":
-			case "thompson_mp":
-				self setMoveSpeedScale( 1.3 );
-				break;
-			case "mp44_mp":
-			case "bar_mp":
-				self setMoveSpeedScale( 1.0 );
-				break;
-			case "kar98k_sniper_mp":
-			case "springfield_mp":
-				self setMoveSpeedScale( 1.05 );
-				break;
-			case "m1carbine_mp":
-				self setMoveSpeedScale( 1.5 );
-				break;
-		}
-		
-	} else {
-		switch ( self.pers[ "weapon" ] ) {
-			case "enfield_mp":
-				self.zombietype = "jumper";
-				self setMoveSpeedScale( 1.15 );
-				self thread superJump();
-				break;
-			case "sten_mp":
-				self.zombietype = "fast";
-				self setMoveSpeedScale( 1.75 );
-				self thread fastZombie();
-				break;
-			case "bren_mp":
-				self.zombietype = "poison";
-				self setMoveSpeedScale( 1.0 );
-				self thread poisonZombie();
-				break;
-			case "springfield_mp":
-				self.zombietype = "fire";
-				self setMoveSpeedScale( 1.15 );
-				self thread fireZombie();
-				break;
-		}
-	}
-}
-
-superJump()
-{
-	self endon( "death" );
-	self endon( "disconnect" );
-	self endon( "end_respawn" );
-	
-	self iPrintLn( "Zombie perk: ^2Super jump" );
-	
-	self.maxhealth = 800;
-	self.health = self.maxhealth;
-	
-	wait 1;
-
-    doublejumped = false;
-    self.jumpblocked = false;
-    airjumps = 0;
-	while ( isAlive( self ) ) {
-		if ( self useButtonPressed() && !self.jumpblocked ) 
-        {
-            if ( !self isOnGround() )
-                airjumps++;
-                
-            if ( airjumps == 2 ) {
-                airjumps = 0;
-                self thread blockjump();
-            }
-
-			for ( i = 0; i < 2; i++ ) 
-            {
-				self.health += level.cvars[ "JUMPER_DAMAGE" ];
-				self finishPlayerDamage(self, self, level.cvars[ "JUMPER_DAMAGE" ], 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize(self.origin - (self.origin + (0,0,-1))), "none");
-			}
-			wait 1;
-		}
-		wait 0.05;
-	}
-}
-
-blockjump() 
-{
-    self.jumpblocked = true;
-    
-    while ( isAlive( self ) && !self isOnGround() )
-        wait 0.05;
-        
-    self.jumpblocked = false;
-}
-
-fastZombie()
-{
-	self iPrintLn( "Zombie perk: ^2Super speed/bash" );
-	
-	self.maxhealth = 500;
-	self.health = self.maxhealth;
-	self.missmines = true;
-}
-
-poisonZombie()
-{
-	self iPrintLn( "Zombie perk: ^2Poison" );
-	
-	self.maxhealth = 1000;
-	self.health = self.maxhealth;
-}
-
-poisonbomb()
-{
-	if ( !self.poisonbombready )
-	{
-		self iPrintLn( "^1You cannot activate Poison Bomb at this time." );
-		wait 1;
-		return;
-	}
-	
-	self thread poisonbombwait();
-	
-	self suicide();
-	
-	scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
-	earthquake( 0.5, 3, self.origin + ( 0, 0, 12 ), 386 );
-	playFx( level._effect[ "aftermath" ], self.origin );
-	thread playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 );
-
-	players = getEntArray( "player", "classname" );
-	for ( i = 0; i < players.size; i++ )
-	{
-		if ( players[ i ] != self && ( distance( self.origin, players[ i ].origin ) < 256 && players[ i ].pers[ "team" ] == "axis" && !players[ i ].ispoisoned && !players[ i ].immune ) )
-		{
-			trace = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 16 ), false, undefined );
-			trace2 = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 40 ), false, undefined );
-			trace3 = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 60 ), false, undefined );
-			if ( trace[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace3[ "fraction" ] != 1 )
-				continue;
-				
-			players[ i ] thread bePoisoned( self );
-		}
-	}
-}
-
-poisonbombwait()
-{
-	self endon( "disconnect" );
-	
-	self.poisonbombready = false;
-	wait ( level.cvars[ "BOMB_TIME" ] * 60 );
-	self.poisonbombready = true;
-}
-
-bePoisoned( dude )
-{
-	if ( self.bodyarmor > 0 )
-		return;
-
-	if ( self.ispoisoned )
-		return;
-
-	self.ispoisoned = true;
-		
-	self.poisonhud = newClientHudElem( self );
-	self.poisonhud.x = 0;
-	self.poisonhud.y = 0;
-	self.poisonhud setShader( "white", 640, 480 );
-	self.poisonhud.color = ( 0, 1, 0 );
-	self.poisonhud.alpha = 0.1;
-	self.poisonhud.sort = 1;
-	
-	self iPrintLnBold( "You have been ^2poisoned^7!" );
-	
-	while ( isAlive( self ) )
-	{
-		oldhealth = self.health;
-		
-		dmg = (int)( 5 * dude.damagemult );
-		
-		self finishPlayerDamage( dude, dude, dmg, 0, "MOD_MELEE", "bren_mp", self.origin, ( 0, 0, 0 ), "none" );
-		
-		wait 2;
-		
-		if ( self.health > oldhealth )
-			break;
-	}
-	
-	if ( isDefined( self.poisonhud ) )
-		self.poisonhud destroy();
-
-	self.ispoisoned = false;
-}
-
-fireZombie()
-{
-	self endon( "disconnect" );
-	self endon( "end_respawn" );
-	
-	self iPrintLn( "Zombie perk: ^2Fire" );
-	
-	self.maxhealth = 700;
-	self.health = self.maxhealth;
-	
-	self thread firemonitor( self );
-	
-	self waittill( "death" );
-	
-	if ( self.firebombed )
-		return;
-	
-	scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 192, 75, 20, self );
-	earthquake( 0.25, 3, self.origin + ( 0, 0, 12 ), 192 );
-	playFx( level._effect[ "zombieExplo" ], self.origin );
-}
-
-firebomb()
-{
-	if ( !self.firebombready )
-	{
-		self iPrintLn( "^1You cannot activate Fire Bomb at this time." );
-		wait 1;
-		return;
-	}
-		
-	self.firebombed = true;
-	
-	self thread firebombwait();
-	
-	self suicide();
-	
-	scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
-	earthquake( 0.5, 3, self.origin + ( 0, 0, 12 ), 386 );
-	playFx( level._effect[ "zombieExplo" ], self.origin );
-	
-	players = getEntArray( "player", "classname" );
-	for ( i = 0; i < players.size; i++ )
-	{
-		if ( players[ i ] != self && ( distance( self.origin, players[ i ].origin ) < 256 && players[ i ].pers[ "team" ] == "axis" && !players[ i ].onfire && !players[ i ].immune ) )
-		{
-			trace = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 16 ), false, undefined );
-			trace2 = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 40 ), false, undefined );
-			trace3 = bullettrace( self.origin, players[ i ].origin + ( 0, 0, 60 ), false, undefined );
-			if ( trace[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace3[ "fraction" ] != 1 )
-				continue;
-				
-			players[ i ] thread firemonitor( self );
-		}
-	}
-}
-
-firebombwait()
-{
-	self endon( "disconnect" );
-	
-	self.firebombready = false;
-	wait ( level.cvars[ "BOMB_TIME" ] * 60 );
-	self.firebombready = true;
-}
-
-firemonitor( dude )
-{
-	if ( self.bodyarmor > 0 )
-		return;
-
-	if ( self.onfire )
-		return;
-		
-	self endon( "death" );
-	self endon( "disconnect" );
-	self endon( "end_respawn" );
-	self endon( "stopfire" );
-	self endon( "spawn_spectator" );
-	
-	self.onfire = true;
-	
-	if ( self.pers[ "team" ] == "axis" )
-		self thread firedeath( dude );
-	
-	while ( 1 )
-	{
-		playFx( level._effect[ "zombieFire" ], self.origin + ( 0, 0, 32 ) );
-		
-		players = getEntArray( "player", "classname" );
-		for ( i = 0; i < players.size; i++ )
-		{
-			if ( players[ i ] != self && ( distance( self.origin, players[ i ].origin ) < 36 && !players[ i ].onfire && !players[ i ].immune ) )
-				players[ i ] thread firemonitor( dude );
-		}
-		
-		wait 0.2;
-	}
-}
-
-firedeath( dude )
-{
-	self iPrintLnBold( "You are on ^1fire^7!" );
-	
-	while ( isAlive( self ) )
-	{
-		oldhealth = self.health;
-		
-		dmg = (int)( 3 * dude.damagemult );
-		
-		self finishPlayerDamage( dude, dude, dmg, 0, "MOD_MELEE", "springfield_mp", self.origin, ( 0, 0, 0 ), "none" );
-		
-		wait 1;
-		
-		if ( self.health > oldhealth )
-			break;
-	}
-	
-	self notify( "stopfire" );
-	self.onfire = false;
 }
 
 cleanUpHud()
@@ -2284,16 +1953,14 @@ ammoLimiting()
 	
 	primarymax = getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
 	pistolmax = getWeaponMaxWeaponAmmo( "luger_mp" );
-	primaryclip = getWeaponMaxClipAmmo( self.pers[ "weapon" ] );
-	pistolclip = getWeaponMaxClipAmmo( "luger_mp" );
 	
 	bonus = self getAmmoBonusForRank();
 	
-	addprimary = getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
-	addpistol = getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
+	primarymax += getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
+	pistolmax += getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
 	
-	self setWeaponSlotAmmo( "primary", primarymax + addprimary );
-	self setWeaponSlotAmmo( "pistol", pistolmax + addpistol );
+	self setWeaponSlotAmmo( "primary", primarymax );
+	self setWeaponSlotAmmo( "pistol", pistolmax );
 	
 	if ( !level.gamestarted )
 		self setWeaponSlotAmmo( "grenade", 0 );
@@ -2692,6 +2359,11 @@ strreplacer( sString, sType ) {
             out = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             bIgnoreExtraChars = false;
             break;
+        case "onlynumbers":
+        	in = "0123456789";
+        	out = "0123456789";
+        	bIgnoreExtraChars = true;
+        	break;
         case "numeric":
             in = "0123456789.-";
             out = "0123456789.-";

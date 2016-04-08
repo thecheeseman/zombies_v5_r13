@@ -115,6 +115,8 @@ setupValues()
 	level.xpvalues[ "springfield_mp" ] = 		( (int)cvardef( "zom_xp_springfield_mp", 20, 0, 100000, "int" ) ) 	* increase;
 	level.xpvalues[ "colt_mp" ] = 				( (int)cvardef( "zom_xp_colt_mp", 10, 0, 100000, "int" ) ) 			* increase;
 	level.xpvalues[ "mk1britishfrag_mp" ] = 	( (int)cvardef( "zom_xp_mk1britishfrag_mp", 10, 0, 100000, "int" ) )* increase;
+    level.xpvalues[ "medic_heal" ] =            ( (int)cvardef( "zom_xp_medic_heal", 25, 0, 100000, "int" ) )       * increase;
+    level.xpvalues[ "support_heal" ] =          ( (int)cvardef( "zom_xp_support_heal", 10, 0, 100000, "int" ) )     * increase;
 	
 	level.pointvalues[ "KILL" ] = 				( (int)cvardef( "zom_point_kill", 10, 0, 100000, "int" ) ) 			* increase;
 	level.pointvalues[ "ASSISTS" ] = 			( (int)cvardef( "zom_point_assists", 5, 0, 100000, "int" ) ) 		* increase;
@@ -133,7 +135,7 @@ setupValues()
 
 	level.cvars[ "BLOOD_SPLATTER" ] =			(int)cvardef( "zom_bloodsplatter", 4, 0, 10, "int" );
 
-	level.cvars[ "PREGAME_TIME" ] =				(int)cvardef( "zom_pregame_time", 60, 0, 120, "int" );
+	level.cvars[ "PREGAME_TIME" ] =				(int)cvardef( "zom_pregame_time", 60, 0, 300, "int" );
 
 	level.cvars[ "SERVERMESSAGE_TIME" ] = 		(int)cvardef( "zom_servermessage_time", 60, 20, 300, "int" );
 }

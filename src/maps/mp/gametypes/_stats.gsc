@@ -106,7 +106,7 @@ main() {
 
 		arr = maps\mp\gametypes\_zombie::explode( data, "," );
 		for ( i = 0; i < arr.size; i++ ) {
-			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "alphanumeric" );
+			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "onlynumbers" );
 			level.statsLUT[ level.statsLUT.size ] = guid;
 		}
 	} else {
@@ -124,20 +124,54 @@ main() {
 	level.statsvalidfields = [];
 
 	addStatField( "guid" );
-	addStatField( "playername", "string" );
+	addStatField( "playerName", "string" );
+
+	// server related
+	addStatField( "joins" );
+	addStatField( "timePlayed" );
+
+	// old system holdovers
 	addStatField( "xp" );
 	addStatField( "rank" );
 	addStatField( "points" );
-	addStatField( "zombiexp" );
-	addStatField( "zombierank" );
+	// old system holdovers
+
+	// rank related
+	addStatField( "hunterXP" );
+	addStatField( "hunterRank" );
+	addStatField( "hunterPoints" );
+	addStatField( "zombieXP" );
+	addStatField( "zombieRank" );
+	
+	// general statistics
 	addStatField( "kills" );
 	addStatField( "deaths" );
 	addStatField( "bashes" );
 	addStatField( "damage" );
 	addStatField( "headshots" );
 	addStatField( "assists" );
-	addStatField( "shotsfired" );
-	addStatField( "shotshit" );
+	addStatField( "shotsFired" );
+	addStatField( "shotsHit" );
+	addStatField( "totalKills" );
+	addStatField( "totalDeaths" );
+	addStatField( "totalBashes" );
+	addStatField( "totalDamage" );
+	addStatField( "totalHeadshots" );
+	addStatField( "totalAssists" );
+	addStatField( "totalShotsFired" );
+	addStatField( "totalShotsHit" );
+
+	// class related
+	addStatField( "jumperZombieKills" );
+	addStatField( "fastZombieKills" );
+	addStatField( "poisonZombieKills" );
+	addStatField( "fireZombieKills" );
+	addStatField( "killsAsJumperZombie" );
+	addStatField( "killsAsFastZombie" );
+	addStatField( "killsAsPoisonZombie" );
+	addStatField( "killsAsFireZombie" );
+	addStatField( "hpHealed" );
+	addStatField( "ammoHealed" );
 	addStatField( "eof" );
 }
 
@@ -148,7 +182,7 @@ addStatField( fieldname, type ) {
 	}
 
 	if ( !isDefined( type ) ) {
-		type = "string";
+		type = "int";
 	}
 
 	id = level.statsvalidfields.size;
@@ -156,6 +190,7 @@ addStatField( fieldname, type ) {
 	field = spawnstruct();
 	field.id = id;
 	field.name = fieldname;
+	field.datname = datname;
 	field.type = type;
 
 	level.statsvalidfields[ id ] = field;
@@ -164,7 +199,7 @@ addStatField( fieldname, type ) {
 getStatField( fieldname ) {
 	for ( i = 0; i < level.statsvalidfields.size; i++ ) {
 		field = level.statsvalidfields[ i ];
-		if ( field.name == fieldname ) {
+		if ( maps\mp\gametypes\_zombie::toLower( field.name ) == maps\mp\gametypes\_zombie::toLower( fieldname ) ) {
 			return field;
 		}
 	}
@@ -235,31 +270,81 @@ saveMyStats() {
 		return;
 	}
 
-	self.stats[ "totalkills" ] += self.stats[ "kills" ];
-	self.stats[ "totaldeaths" ] += self.stats[ "deaths" ];
-	self.stats[ "totalbashes" ] += self.stats[ "bashes" ];
-	self.stats[ "totaldamage" ] += self.stats[ "damage" ];
-	self.stats[ "totalheadshots" ] += self.stats[ "headshots" ];
-	self.stats[ "totalassists" ] += self.stats[ "assists" ];
-	self.stats[ "totalshotsfired" ] += self.shotsfired;
-	self.stats[ "totalshotshit" ] += self.shotshit;
+	self.stats[ "totalKills" ] += self.stats[ "kills" ];
+	self.stats[ "totalDeaths" ] += self.stats[ "deaths" ];
+	self.stats[ "totalBashes" ] += self.stats[ "bashes" ];
+	self.stats[ "totalDamage" ] += self.stats[ "damage" ];
+	self.stats[ "totalHeadshots" ] += self.stats[ "headshots" ];
+	self.stats[ "totalAssists" ] += self.stats[ "assists" ];
+	self.stats[ "totalShotsFired" ] += self.stats[ "shotsFired" ];
+	self.stats[ "totalShotsHit" ] += self.stats[ "shotsHit" ];
 
-	data = 	"guid: " + 			self.guid + ",\n";
-	data += "xp: " + 			self.xp + ",\n";
-	data += "rank: " + 			self.rank + ",\n";
-	data += "points: " + 		self.points + ",\n";
-	data += "zombiexp: " + 		self.zomxp + ",\n";
-	data += "zombierank: " + 	self.zomrank + ",\n";
-	data += "kills: " +			self.stats[ "totalkills" ] + ",\n";
-	data += "deaths: " +		self.stats[ "totaldeaths" ] + ",\n";
-	data += "bashes: " +		self.stats[ "totalbashes" ] + ",\n";
-	data += "damage: " +		self.stats[ "totaldamage" ] + ",\n";
-	data += "headshots: " +		self.stats[ "totalheadshots" ] + ",\n";
-	data += "assists: " +		self.stats[ "totalassists" ] + ",\n";
-	data += "shotsfired: " +	self.stats[ "totalshotsfired" ] + ",\n";
-	data += "shotshit: " +		self.stats[ "totalshotshit" ] + ",\n";
+	self.stats[ "timePlayed" ] += (gettime() - self.timejoined) / 1000;
+
+	self.stats[ "guid" ] = self.guid;
+	self.stats[ "hunterXP" ] = self.xp;
+	self.stats[ "hunterRank" ] = self.rank;
+	self.stats[ "hunterPoints" ] = self.points;
+	self.stats[ "zombieXP" ] = self.zomxp;
+	self.stats[ "zombieRank" ] = self.zomrank;
+
+	data = "";
+
+	for ( i = 0; i < level.statsvalidfields.size; i++ ) {
+		s = level.statsvalidfields[ i ];
+
+		if ( s.name == "eof" )
+			break;
+
+		switch ( s.name ) {
+			// skip
+			case "xp":
+			case "rank":
+			case "points":
+			case "kills":
+			case "deaths":
+			case "bashes":
+			case "damage":
+			case "headshots":
+			case "assists":
+			case "shotsFired":
+			case "shotsHit":
+			case "playerName":
+				continue;
+				break;
+		}
+
+		data += s.name + ": " + self.stats[ s.name ] + ",\n";
+	}
+
 	data += "eof\n";
-
+/*
+	data = 	"guid: " + 					self.guid + ",\n";
+	data += "xp: " + 					self.xp + ",\n";
+	data += "rank: " + 					self.rank + ",\n";
+	data += "points: " + 				self.points + ",\n";
+	data += "zombieXP: " + 				self.zomxp + ",\n";
+	data += "zombieRank: " + 			self.zomrank + ",\n";
+	data += "kills: " +					self.stats[ "totalkills" ] + ",\n";
+	data += "deaths: " +				self.stats[ "totaldeaths" ] + ",\n";
+	data += "bashes: " +				self.stats[ "totalbashes" ] + ",\n";
+	data += "damage: " +				self.stats[ "totaldamage" ] + ",\n";
+	data += "headshots: " +				self.stats[ "totalheadshots" ] + ",\n";
+	data += "assists: " +				self.stats[ "totalassists" ] + ",\n";
+	data += "shotsFired: " +			self.stats[ "totalshotsfired" ] + ",\n";
+	data += "shotsHit: " +				self.stats[ "totalshotshit" ] + ",\n";
+	data += "jumperZombieKills: " +		self.stats[ "jumperzombiekills" ] + ",\n";
+	data += "fastZombieKills: " +		self.stats[ "fastzombiekills" ] + ",\n";
+	data += "poisonZombieKills: " +		self.stats[ "poisonzombiekills" ] + ",\n";
+	data += "fireZombieKills: " +		self.stats[ "firezombiekills" ] + ",\n";
+	data += "killsAsJumperZombie: " +	self.stats[ "killsasjumperzombie" ] + ",\n";
+	data += "killsAsFastZombie: " +		self.stats[ "killsasfastzombie" ] + ",\n";
+	data += "killsAsPoisonZombie: " +	self.stats[ "killsaspoisonzombie" ] + ",\n";
+	data += "killsAsFireZombie: " +		self.stats[ "killsasfirezombie" ] + ",\n";
+	data += "hpHealed: " +				self.stats[ "hphealed" ] + ",\n";
+	data += "ammoHealed: " +			self.stats[ "ammohealed" ] + ",\n";
+	data += "eof\n";
+*/
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- write data to file " + lutname, true );
 	fwrite( data, handle );
 
@@ -296,11 +381,14 @@ getMyStats() {
 		for ( i = 0; i < fieldsnvalues.size; i++ ) {
 			fnv = fieldsnvalues[ i ];
 
+			if ( fnv == "" )
+				continue;
+
 			arr = maps\mp\gametypes\_zombie::explode( fnv, ":" );
 			field = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ 0 ] ), "alphanumeric" );
 			value = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ 1 ] ), "alphanumeric" );
 
-			if ( field == fnv && field != "eof" ) {
+			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );
 				[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- invalid formatting in file " + lutname );
 				break;
@@ -309,6 +397,11 @@ getMyStats() {
 			// reached end of file
 			if ( field == "eof" ) {
 				break;
+			}
+
+			// comments are allowed
+			if ( field.size > 0 && field[ 0 ] == "#" ) {
+				continue;
 			}
 
 			fieldstruct = getStatField( field );
@@ -324,27 +417,71 @@ getMyStats() {
 			}
 
 			switch ( field ) {
-			/*
-				guid, playername, xp, rank, points, zombiexp, zombierank,
-				kills, deaths, damage, bashes, headshots, assists,
-				shotsfired, shotshit, eof
-			*/
-				case "xp":			self.xp = 							(int) value; break;
-				case "rank":		self.rank = 						(int) value; break;
-				case "points":		self.points = 						(int) value; break;
-				case "zombiexp":	self.zomxp = 						(int) value; break;
-				case "zombierank":	self.zomrank = 						(int) value; break;
-				case "kills":		self.stats[ "totalkills" ] =		(int) value; break;
-				case "deaths":		self.stats[ "totaldeaths" ] =		(int) value; break;
-				case "bashes":		self.stats[ "totalbashes" ] =		(int) value; break;
-				case "damage":		self.stats[ "totaldamage" ] =		(int) value; break;
-				case "headshots":	self.stats[ "totalheadshots" ] =	(int) value; break;
-				case "assists":		self.stats[ "totalassists" ] =		(int) value; break;
-				case "shotsfired":	self.stats[ "totalshotsfired" ] =	(int) value; break;
-				case "shotshit":	self.stats[ "totalshotshit" ] =		(int) value; break;
+				// transition from old system
+				case "xp":					self.stats[ "hunterXP" ] = 				(int) value; break;
+				case "rank":				self.stats[ "hunterRank" ] = 			(int) value; break;
+				case "points":				self.stats[ "hunterPoints" ] = 			(int) value; break;
+				case "kills":				self.stats[ "totalKills" ] =			(int) value; break;
+				case "deaths":				self.stats[ "totalDeaths" ] =			(int) value; break;
+				case "bashes":				self.stats[ "totalBashes" ] =			(int) value; break;
+				case "damage":				self.stats[ "totalDamage" ] =			(int) value; break;
+				case "headshots":			self.stats[ "totalHeadshots" ] =		(int) value; break;
+				case "assists":				self.stats[ "totalAssists" ] =			(int) value; break;
+				case "shotsfired":			self.stats[ "totalShotsFired" ] =		(int) value; break;
+				case "shotshit":			self.stats[ "totalShotsHit" ] =			(int) value; break;
+
+				// new system
+				default:
+					switch ( fieldstruct.type ) {
+						case "int":
+							self.stats[ fieldstruct.name ] = (int) value;
+							break;
+						case "float":
+							self.stats[ fieldstruct.name ] = (float) value;
+							break;
+						default:
+							self.stats[ fieldstruct.name ] = value;
+							break;
+					}
+					break;
+			}
+/*
+			switch ( field ) {
+				case "xp":					self.xp = 								(int) value; break;
+				case "rank":				self.rank = 							(int) value; break;
+				case "points":				self.points = 							(int) value; break;
+				case "zombiexp":			self.zomxp = 							(int) value; break;
+				case "zombierank":			self.zomrank = 							(int) value; break;
+				case "kills":				self.stats[ "totalkills" ] =			(int) value; break;
+				case "deaths":				self.stats[ "totaldeaths" ] =			(int) value; break;
+				case "bashes":				self.stats[ "totalbashes" ] =			(int) value; break;
+				case "damage":				self.stats[ "totaldamage" ] =			(int) value; break;
+				case "headshots":			self.stats[ "totalheadshots" ] =		(int) value; break;
+				case "assists":				self.stats[ "totalassists" ] =			(int) value; break;
+				case "shotsfired":			self.stats[ "totalshotsfired" ] =		(int) value; break;
+				case "shotshit":			self.stats[ "totalshotshit" ] =			(int) value; break;
+				case "jumperzombiekills":	self.stats[ "jumperzombiekills" ] =		(int) value; break;
+				case "fastzombiekills":		self.stats[ "fastzombiekills" ] =		(int) value; break;
+				case "poisonzombiekills":	self.stats[ "poisonzombiekills" ] =		(int) value; break;
+				case "firezombiekills":		self.stats[ "firezombiekills" ] =		(int) value; break;
+				case "killsasjumperzombie":	self.stats[ "killsasjumperzombie" ] = 	(int) value; break;
+				case "killsasfastzombie":	self.stats[ "killsasfastzombie" ] = 	(int) value; break;
+				case "killsaspoisonzombie":	self.stats[ "killsaspoisonzombie" ] = 	(int) value; break;
+				case "killsasfirezombie":	self.stats[ "killsasfirezombie" ] = 	(int) value; break;
+				case "hphealed":			self.stats[ "hphealed" ] =				(int) value; break;
 				default:										 				 	 break;
 			}
+*/
 		}
+
+		self.stats[ "playerName" ] = self.name;
+		self.xp = self.stats[ "hunterXP" ];
+		self.rank = self.stats[ "hunterRank" ];
+		self.points = self.stats[ "hunterPoints" ];
+		self.zomxp = self.stats[ "zombieXP" ];
+		self.zomrank = self.stats[ "zombieRank" ];
+
+		self.stats[ "joins" ]++;
 	} else {
 		fse( "problem opening file " + lutname );
 		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- problem opening file " + lutname, true );
@@ -353,6 +490,28 @@ getMyStats() {
 
 resetStatsVars() {
 
+}
+
+setupPlayer() {
+	self.stats = [];
+
+	for ( i = 0; i < level.statsvalidfields.size; i++ ) {
+		s = level.statsvalidfields[ i ];
+
+		if ( s.name == "eof" ) 
+			continue;
+
+		switch ( s.type ) {
+			case "string":
+				self.stats[ s.name ] = "";
+				break;
+			default:
+				self.stats[ s.name ] = 0;
+				break;
+		}
+	}
+
+	self thread getMyStats();
 }
 
 // file system error

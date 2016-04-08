@@ -33,11 +33,17 @@ init()
 	precacheString( &"^3Total Kills^7: " );
 	//precacheString( &"^1Assists^7: " );
 	
+	precacheString( &"^6Class^7: " );
 	precacheString( &"^2XP^7: " );
 	precacheString( &"^3Points^7: " );
 	precacheString( &"^1Rank^7: " );
 	precacheString( &"^4Proximity Charges^7: " );
 	precacheString( &"^5Health Packs^7: " );
+
+	precacheString( &"Medic" );
+	precacheString( &"Support" );
+	precacheString( &"Recon" );
+	precacheString( &"None" );
 	
 	precacheString( &"Jumper" );
 	precacheString( &"Fast" );
@@ -90,6 +96,7 @@ init()
 cleanUpHud()
 {
 	if ( isDefined( self.hud ) ) {
+		if ( isDefined( self.hud[ "class" ] ) )			self.hud[ "class" ] destroy();
 		if ( isDefined( self.hud[ "health" ] ) )		self.hud[ "health" ] destroy();
 		if ( isDefined( self.hud[ "rank" ] ) )			self.hud[ "rank" ] destroy();
 		if ( isDefined( self.hud[ "xp" ] ) )			self.hud[ "xp" ] destroy();
@@ -186,6 +193,7 @@ runHud()
 	
 	if ( self.pers[ "team" ] == "axis" )
 	{
+		self addTextHud( "class", 630, 320, "right", "middle", 1, 1, 10, &"^6Class^7: " );
 		self addTextHud( "xp", 630, 340, "right", "middle", 1, 1, 10, &"^2XP^7: " );
 		self addTextHud( "points", 630, 360, "right", "middle", 1, 1, 10, &"^3Points^7: " );
 		self addTextHud( "rank", 630, 380, "right", "middle", 1, 1, 10, &"^1Rank^7: " );
@@ -425,6 +433,8 @@ doHud()
 	self endon( "disconnect" );
 	self endon( "death" );
 	self endon( "spawned" );
+
+	class = "none";
 		
 	while ( true )
 	{
@@ -432,6 +442,18 @@ doHud()
 		
 		if ( self.pers[ "team" ] == "axis" )
 		{
+			if ( class != self.class ) {
+				classstring = &"None";
+				switch ( self.class ) {
+					case "medic":	class = "medic"; 	classstring = &"Medic"; break;
+					case "support":	class = "support"; 	classstring = &"Support"; break;
+					case "recon":	class = "recon"; 	classstring = &"Recon"; break;
+					default: 		class = "default"; 	break;
+				}
+
+				self.hud[ "class" ] setText( classstring );
+			}
+
 			self.hud[ "xp" ] setValue( self.xp );
 			self.hud[ "stickies" ] setValue( self.stickynades );
 			self.hud[ "healthpacks" ] setValue( self.healthpacks );
@@ -681,7 +703,7 @@ endgamehud()
 		player.stat_shotsfired.sort = 9001;
 		player.stat_shotsfired.label = &"Shots Fired: ";
 		player.stat_shotsfired.fontscale = 0.9;	
-		player.stat_shotsfired setValue( player.shotsfired );
+		player.stat_shotsfired setValue( player.stats[ "shotsFired" ] );
 		
 		player.stat_shotshit = newClientHudElem( player );
 		player.stat_shotshit.alpha = 1;
@@ -690,7 +712,7 @@ endgamehud()
 		player.stat_shotshit.sort = 9001;
 		player.stat_shotshit.label = &"Shots Hit: ";
 		player.stat_shotshit.fontscale = 0.9;	
-		player.stat_shotshit setValue( player.shotshit );
+		player.stat_shotshit setValue( player.stats[ "shotsHit" ] );
 		
 		player.stat_accuracy = newClientHudElem( player );
 		player.stat_accuracy.alpha = 1;
@@ -699,8 +721,8 @@ endgamehud()
 		player.stat_accuracy.sort = 9001;
 		player.stat_accuracy.label = &"Accuracy: ";
 		player.stat_accuracy.fontscale = 0.9;	
-		if ( player.shotshit > 0 ) {
-			player.stat_accuracy setValue( ( player.shotsfired / player.shotshit ) );
+		if ( player.stats[ "shotsHit" ] > 0 ) {
+			player.stat_accuracy setValue( (float)( (float)player.stats[ "shotsFired" ] / (float)player.stats[ "shotsHit" ] ) * 100 );
 		} else {
 			player.stat_accuracy setValue( 0 );
 		}

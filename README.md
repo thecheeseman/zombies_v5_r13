@@ -17,9 +17,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 # To-do
 
 - [ ] Add classes: recon, support, medic, sniper, engineer
-    - [ ] Recon: double jump
-    - [ ] Support: mobile ammobox
-    - [ ] Medic: mobile medic bag
+    - [X] Recon: double jump
+    - [X] Support: mobile ammobox
+    - [X] Medic: mobile medic bag
     - [ ] Sniper: something interesting
     - [ ] Engineer: turrets
 - [ ] Breakable barricades and turrets
@@ -35,6 +35,24 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     -   removal
     *   change
     #   fix
+
+#### Revision 13.08
+#### 04/04/16 - 05/04/16
+    
+    + Added new stats: timePlayed, joins, hpHealed, ammoHealed
+    # Fixed a crash that occured when two players joined, the timer started, and left
+    # Fixed a crash that occured when game tried to force everyone into a gamecam with no last killer
+    * Changed move speeds of Zombie classes to make them a bit faster
+    + Medic now gains XP per 25 health restored
+    + Added gained XP message
+    * Updated Ammoboxes so they don't give you grenades if you're Medic, Support, or Engineer
+    # Fixed bug where you could be a Medic with Recon abilities
+    * Upped the Sten's melee time so you can now do 6 bashes per second as opposed to 3
+    # Fixed Recon's double jump from applying as last hunter
+    # Fixed Medic's health regen from applying to other classes / last hunter
+    + Added classes from v6 : Recon, Support, Medic
+    - Removed the ability to change weapons during the game
+    + Added Indy's chat commands
 
 #### Revision 13.07
 #### 03/04/16
