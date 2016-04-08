@@ -147,7 +147,7 @@ buymenu( response )
 		{		
 			self iprintlnbold( "You bought ^2" + level.pointsnames[ response ] + "^7 for " + level.points[ response ] + " points." );
 			self.points -= level.points[ response ];
-		}
+		} 
 	}
 }
 
@@ -237,7 +237,11 @@ doItem( response )
 			if ( level.barricades > level.cvars[ "MAX_BARRICADES" ] )
 			{
 				self iPrintLnBold( "Too many barricades in map." );
-				self.points += level.points[ response ];
+				return false;
+			}
+
+			if ( isDefined( self.insidebarricade ) ) {
+				self iPrintLnBold( "Please move out of your barricade before placing a new one." );
 				return false;
 			}
 			
@@ -259,12 +263,16 @@ doItem( response )
 			self switchToWeapon( "panzerfaust_mp" );
 			break;
 		case "buy_flashnades":
+			self.flashbangs = true;
 			self setWeaponSlotWeapon( "grenade", "fraggrenade_mp" );
 			if ( level.gamestarted ) 
 				self setWeaponSlotAmmo( "grenade", self.stickynades );
 			self switchToWeapon( "fraggrenade_mp" );
 			break;
 		case "buy_nightvision":
+			self iPrintLn( "Nightvision is dumb, so don't use it" );
+			return false;
+			/*
 			if ( self.nightvision )
 			{
 				self iPrintLnBold( "You already have Nightvision!" );
@@ -273,6 +281,7 @@ doItem( response )
 			}
 			
 			self thread maps\mp\gametypes\_hud::nightvision();
+			*/
 			break;
 	}
 	
@@ -292,44 +301,7 @@ doRandom()
 			break;
 		}
 	}
-/*
-	if ( i < 7875 )
-		resp = "nothing";
-	else if ( i >= 7875 && i < 8000 )
-		resp = "buy_healthpack";
-	else if ( i >= 8000 && i < 8125 )
-		resp = "buy_proxy";
-	else if ( i >= 8125 && i < 8250 )
-		resp = "airstrike";
-	else if ( i >= 8250 && i < 8375 )
-		resp = "carpetbomb";
-	else if ( i >= 8375 && i < 8500 )
-		resp = "buy_damage_10";
-	else if ( i >= 8500 && i < 8625 )
-		resp = "buy_damage_25";
-	else if ( i >= 8625 && i < 8750 )
-		resp = "buy_armor_10";
-	else if ( i >= 8750 && i < 8875 )
-		resp = "buy_armor_25";
-	else if ( i >= 8875 && i < 9000 )
-		resp = "buy_armor_50";
-	else if ( i >= 9000 && i < 9125 )
-		resp = "buy_explo_10";
-	else if ( i >= 9125 && i < 9250 )
-		resp = "buy_explo_25";
-	else if ( i >= 9250 && i < 9375 )
-		resp = "buy_explo_50";
-	else if ( i >= 9375 && i < 9500 )
-		resp = "rocket";
-	else if ( i >= 9500 && i < 9625 )
-		resp = "mortar";
-	else if ( i >= 9625 && i < 9750 )
-		resp = "artillery";
-	else if ( i >= 9750 && i < 9950 )
-		resp = "gatlin";
-	else if ( i >= 9950 && i < 10000 )
-		resp = "nuke";
-*/
+
 	self iPrintLnBold( "^2" + level.pointsnames[ won ] + "!" );
 		
 	if ( won != "nothing" )
@@ -371,9 +343,18 @@ spawn_barricade( model, clip, trigdistance )
 	self.barricades[ num ] = spawnstruct();
 	self.barricades[ num ].model = spawn( "script_model", org );
 	self.barricades[ num ].model setModel( model );
-	self.barricades[ num ].model enablelinkto();
+	//self.barricades[ num ].model enablelinkto();
 	wait 0.05;
-	
+
+	switch ( model ) {
+		case "xmodel/barrel_black1":
+			self.barricades[ num ].model setBounds( 4, 40 );
+			break;
+		case "xmodel/crate_misc_red2":
+			self.barricades[ num ].model setBounds( 4, 24 );
+			break;
+	}
+/*	
 	self.barricades[ num ].clip = [];
 	
 	for ( i = 0; i < clip.size; i++ )
@@ -385,17 +366,22 @@ spawn_barricade( model, clip, trigdistance )
 		totalmodels++;
 		wait 0.05;
 	}
-	
+	*/
 	level.barricades += totalmodels;
 	
 	self.barricades[ num ].model thread maps\mp\gametypes\_physics::doPhysics();
+
+	self.insidebarricade = true;
 	
 	while ( distance( self.origin, org ) < trigdistance )
 		wait 0.05;
+
+	self.insidebarricade = undefined;
 		
 	self.barricades[ num ].model setContents( 1 );
-	for ( i = 0; i < clip.size; i++ )
-		self.barricades[ num ].clip[ i ] setContents( 1 );
+	self.barricades[ num ].model thread beDestroyed( self, model );
+	//for ( i = 0; i < clip.size; i++ )
+	//	self.barricades[ num ].clip[ i ] setContents( 1 );
 }
 
 cleanUp()
@@ -403,16 +389,87 @@ cleanUp()
 	totalmodels = 0;
 	for ( i = 0; i < self.barricades.size; i++ )
 	{
-		self.barricades[ i ] notify( "stop_physics" );
-		self.barricades[ i ].model delete();
+		if ( isDefined( self.barricades[ i ] ) ) {
+			self.barricades[ i ] notify( "stop_physics" );
+			self.barricades[ i ] notify( "stop destroy" );
+
+			if ( isDefined( self.barricades[ i ].model ) )
+				self.barricades[ i ].model delete();
+		}
+
 		totalmodels++;
 		
-		for ( j = 0; j < self.barricades[ i ].clip.size; j++ )
+		/*for ( j = 0; j < self.barricades[ i ].clip.size; j++ )
 		{
 			self.barricades[ i ].clip[ j ] delete();
 			totalmodels++;
-		}
+		}*/
 	}
 	
 	level.barricades -= totalmodels;
+}
+
+beDestroyed( owner, type ) {
+	self endon( "stop destroy" );
+
+	self.health = 2000;
+	if ( type == "xmodel/barrel_black1" )
+		self.health = 5000;
+
+	attacker = undefined;
+	while ( self.health > 0 ) {
+		wait 0.05;
+
+		doHit = false;
+    	attackerweapon = "enfield_mp";
+	    players = getEntArray( "player", "classname" );
+	    for ( i = 0; i < players.size; i++ ) {
+	        if ( distance( self.origin, players[ i ].origin ) < 32 ) {
+	            //if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
+	        	if ( players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
+	                attacker = players[ i ];
+	                attacker thread maps\mp\gametypes\_classes::meleedowntrack();
+	                attackerweapon = players[ i ] getCurrentWeapon();
+	                doHit = true;
+	                break;
+	            }
+	        }
+	    }
+    
+	    if ( doHit ) {
+	        damage = 0;
+	        switch ( attackerweapon ) {
+	            case "sten_mp":             damage = 35; break;
+	            case "colt_mp":         
+	            case "mk1britishfrag_mp":   damage = 50; break;
+	            case "enfield_mp":  
+	            case "springfield_mp":      damage = 150; break;
+	            case "bren_mp":             damage = 200; break;
+	            case "kar98k_mp":			damage = 200; break;
+	        }
+
+	        if ( damage == 0 )
+	        	continue;
+
+            self playSound( "melee_hit" );
+            attacker thread maps\mp\gametypes\_zombie::showhit();
+            
+	        self.health -= damage * attacker.damagemult;
+
+			attacker iPrintLn( "You did ^1" + (int)damage + "^7 damage to that barricade!" );
+	        owner iPrintLn( attacker.name + "^7 did ^1" + (int)damage + "^7 damage to your barricade (^2" + self.health + "^7 HP remaining)!" );
+
+	        if ( self.health < 0 )
+	            self.health = 0;
+
+	        if ( self.health == 0 ) {
+	        	break;
+	        }
+	    }
+	}
+
+	if ( isDefined( attacker ) )
+		iPrintLn( attacker.name + " ^7destroyed a barricade!" );
+
+	self delete();
 }

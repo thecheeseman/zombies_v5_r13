@@ -16,13 +16,13 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 
 # To-do
 
-- [ ] Add classes: recon, support, medic, sniper, engineer
+- [X] Add classes: recon, support, medic, sniper, engineer
     - [X] Recon: double jump
     - [X] Support: mobile ammobox
     - [X] Medic: mobile medic bag
-    - [ ] Sniper: something interesting
+    - [X] Sniper: something interesting
     - [X] Engineer: turrets
-- [ ] Breakable barricades and turrets
+- [X] Breakable barricades and turrets
 - [ ] Some new buy menu features?
 - [ ] ????
 - [ ] Profit
@@ -39,6 +39,8 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1
 #### 04/04/16 - 08/04/16
     
+    + Added destructible barricades
+    + Now when you buy Flashbangs, they will completely replace your regular grenades :)
     + Sniper now does 2X damage when invisible
     + Added Sniper class with special ability: invisibility (active after not moving for 3 seconds)
     - Removed "immunity" progress bar as it's basically useless and wasting 2/31 HUD elements

@@ -169,7 +169,7 @@ startGame()
 	while ( 1 )
 	{
 		ePlayers = getPlayersOnTeam( "axis" );
-		if ( ePlayers.size > 1 || level.debug )
+		if ( ePlayers.size > 1 )
 			break;
 			
 		wait 1;
@@ -645,6 +645,7 @@ onConnect()
 	self.lasthittime = 0;
 	self.class = "default";
 	self.invisible = false;
+	self.flashbangs = false;
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -713,6 +714,7 @@ spawnPlayer()
 	self.lasthittime = 0;
 	self.class = "default";
 	self.invisible = false;
+	self.flashbangs = false;
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	

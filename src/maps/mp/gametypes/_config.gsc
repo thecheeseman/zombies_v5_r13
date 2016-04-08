@@ -20,9 +20,10 @@ main()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_config.gsc::main()", true );
 
-	precacheString( &"^1zomb^7ies ^2rev^713.07" );
+	precacheString( &"^1zom^7bies ^2rev^713.^11" );
 	precacheString( &"mod by ^3cheese" );
 	precacheString( &"steam^2:^7 thecheeseman999" );
+	precacheString( &"^5http^7:^5//^71.1^1zom^7bies.com" );
 	
 	thread setupValues();
 	thread setupServerMessages();
@@ -44,7 +45,7 @@ logo()
 	while ( 1 )
 	{
 		level.logo.alpha = 0;
-		level.logo setText( &"^1zomb^7ies ^2rev^713.07" );
+		level.logo setText( &"^1zom^7bies ^2rev^713.^11" );
 		level.logo fadeOverTime( 2 );
 		level.logo.alpha = 1;
 		
@@ -67,6 +68,17 @@ logo()
 		wait 2;
 		
 		level.logo setText( &"steam^2:^7 thecheeseman999" );
+		level.logo fadeOverTime( 2 );
+		level.logo.alpha = 1;
+		
+		wait 8;
+
+		level.logo fadeOverTime( 2 );
+		level.logo.alpha = 0;
+		
+		wait 2;
+		
+		level.logo setText( &"^5http^7:^5//^71.1^1zom^7bies.com" );
 		level.logo fadeOverTime( 2 );
 		level.logo.alpha = 1;
 		

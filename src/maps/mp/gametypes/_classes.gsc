@@ -697,18 +697,17 @@ sentry_damage_detect()
     doHit = false;
     attackerweapon = "enfield_mp";
     players = getEntArray( "player", "classname" );
+    attacker = undefined;
     for ( i = 0; i < players.size; i++ )
     {
         if ( distance( self.mg.origin, players[ i ].origin ) < 52 )
         {
             if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) )
             {
-                self playSound( "melee_hit" );
-                players[ i ] thread maps\mp\gametypes\_zombie::showhit();
-                attackerweapon = players[ i ] getCurrentWeapon();
-
+                attacker = players[ i ];
+                attacker thread meleedowntrack();
+                attackerweapon = attacker getCurrentWeapon();
                 doHit = true;
-                players[ i ] thread meleedowntrack();
                 break;
             }
             
@@ -727,8 +726,8 @@ sentry_damage_detect()
     
     if ( doHit )
     {
-        //self.mg.health -= maps\mp\gametypes\_zombie::_randomIntRange( 15, 45 );
         damage = 0;
+      
         switch ( attackerweapon ) {
             case "sten_mp":             damage = 35; break;
             case "colt_mp":         
@@ -741,7 +740,13 @@ sentry_damage_detect()
         if ( damage == 0 )
             return;
 
-        self.mg.health -= damage;
+        self playSound( "melee_hit" );
+        attacker thread maps\mp\gametypes\_zombie::showhit();
+        
+        self.mg.health -= damage * attacker.damagemult;
+
+        attacker iPrintLn( "You did ^1" + (int)damage + "^7 damage to that turret!" );
+        owner iPrintLn( attacker.name + "^7 did ^1" + (int)damage + " ^7damage to your turret!" );
 
         if ( self.mg.health < 0 )
             self.mg.health = 0;
@@ -752,6 +757,9 @@ sentry_damage_detect()
 }   
 
 meleedowntrack() {
+    if ( !isDefined( self.meleedown ) )
+        self.meleedown = true;
+
     while ( self meleeButtonPressed() )
         wait 0.05;
 

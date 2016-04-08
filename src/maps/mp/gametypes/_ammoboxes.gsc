@@ -457,7 +457,7 @@ getammo( box )
 				self setWeaponSlotAmmo( "primary", primarymax + addprimary );
 				self setWeaponSlotAmmo( "pistol", pistolmax + addpistol );
 				
-				if ( self hasWeapon( "fraggrenade_mp" ) )
+				if ( self hasWeapon( "fraggrenade_mp" ) || self.flashbangs )
 					self setWeaponSlotWeapon( "grenade", "fraggrenade_mp" );
 				else
 					self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
