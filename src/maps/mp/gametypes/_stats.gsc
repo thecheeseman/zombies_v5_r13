@@ -152,6 +152,7 @@ main() {
 	addStatField( "assists" );
 	addStatField( "shotsFired" );
 	addStatField( "shotsHit" );
+	addStatField( "sentryKills" );
 	addStatField( "totalKills" );
 	addStatField( "totalDeaths" );
 	addStatField( "totalBashes" );
@@ -160,6 +161,7 @@ main() {
 	addStatField( "totalAssists" );
 	addStatField( "totalShotsFired" );
 	addStatField( "totalShotsHit" );
+	addStatField( "totalSentryKills" );
 
 	// class related
 	addStatField( "jumperZombieKills" );

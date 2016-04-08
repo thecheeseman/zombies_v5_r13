@@ -21,6 +21,8 @@ main()
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::main()", true );
 	level._effect[ "thunderhead" ] = loadfx( "fx/atmosphere/thunderhead.efx" );
 	level._effect[ "cloudflash" ] = loadfx( "fx/atmosphere/lowlevelburst.efx" );
+
+	level.fogdist = 1500;
 	
 	thread fog();
 }
@@ -90,7 +92,8 @@ dofog( mapname )
 	
 	while ( !level.gamestarted )
 		wait 1;
-		
+	
+	level.fogdist = max;
     currentfog = max;
     fogpersec = (float)( max / ( level.timelimit * 60 * 0.6 ) );
 
@@ -98,6 +101,7 @@ dofog( mapname )
 
     while ( currentfog > min ) {
         currentfog -= fogpersec;
+        level.fogdist = currentfog;
 	    setCullFog( 0, currentfog, r, g, b, 1 );
 	    wait 1;
     }

@@ -18,17 +18,38 @@
 
 init() {
     precacheModel( "xmodel/USAirborneHelmet_Medic" );
+    precacheModel( "xmodel/barrel_black1" );
+    precacheModel( "xmodel/mg42_bipod" );
+    precacheModel( "xmodel/mp_crate_misc_red1" );
+
+    precacheString( &"Sentry status: " );
+    precacheString( &"Sentry health: " );
+    precacheString( &"Sentry kills: " );
+    precacheString( &"Firing" );
+    precacheString( &"Reloading" );
+    precacheString( &"Disabled" );
+    precacheString( &"Idle" );
+    precacheString( &"Hold [{+activate}] to move turret" );
+
+    level._effect[ "sentry_fire" ] = loadfx( "fx/muzzleflashes/mg42flash.efx" );
+    level._effect[ "sentry_onfire" ] = loadfx( "fx/fire/barrelfire.efx" );
+    level._effect[ "sentry_explode" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
 }
 
 setup() {
     if ( self.pers[ "team" ] == "axis" ) {
-        switch ( self.pers[ "weapon" ] ) {
-            case "kar98k_mp":
-            case "m1garand_mp":
-                self.class = "engineer";
+        self.oldclass = self.class;
 
-                self setMoveSpeedScale( 1.15 );
+        switch ( self.pers[ "weapon" ] ) {
+            // recon
+            case "m1carbine_mp":
+                self.class = "recon";
+
+                self setMoveSpeedScale( 1.4 );
+
+                self thread recon();
                 break;
+            // medic
             case "mp40_mp":
             case "thompson_mp":
                 self.class = "medic";
@@ -42,6 +63,7 @@ setup() {
                 self thread regen_health();
                 self thread healthbag();
                 break;
+            // support
             case "mp44_mp":
             case "bar_mp":
                 self.class = "support";
@@ -50,22 +72,24 @@ setup() {
 
                 self thread ammobox();
                 break;
+            // engineer
+            case "kar98k_mp":
+            case "m1garand_mp":
+                self.class = "engineer";
+
+                self setMoveSpeedScale( 1.15 );
+                self thread sentry();
+                break;
+            // sniper
             case "kar98k_sniper_mp":
             case "springfield_mp":
                 self.class = "sniper";
 
                 self setMoveSpeedScale( 1.2 );
-                break;
-            // recon
-            case "m1carbine_mp":
-                self.class = "recon";
 
-                self setMoveSpeedScale( 1.4 );
-
-                self thread recon();
+                self thread sneakyfuck();
                 break;
-        }
-        
+        }        
     } else {
         switch ( self.pers[ "weapon" ] ) {
             case "enfield_mp":
@@ -92,7 +116,6 @@ setup() {
     }
 }
 
-
 recon() {
     doublejumped = false;
     self.jumpblocked = false;
@@ -101,8 +124,8 @@ recon() {
     self endon( "death" );
     self endon( "disconnect" );
     self endon( "spawned" );
-    while ( !level.lasthunter & self.class == "recon" ) {
-        if ( self useButtonPressed() && !self.jumpblocked && !self isOnGround() ) 
+    while ( !level.lasthunter ) {
+        if ( self useButtonPressed() && !self.jumpblocked && !self.gettingammo && !self isOnGround() ) 
         {
             if ( !self isOnGround() )
                 airjumps++;
@@ -129,7 +152,7 @@ regen_health()
     self endon( "disconnected" );
     self endon( "spawned" );
 
-    while ( !level.lasthunter && self.class == "medic" ) {
+    while ( !level.lasthunter ) {
         // got hurt somehow
         if ( self.health < self.maxhealth && self.lasthittime + 3000 < gettime() )
             self.health++;
@@ -142,11 +165,12 @@ healthbag()
 {
     mypack = spawn( "script_model", self getOrigin() );
     mypack setModel( "xmodel/health_large" );
+    mypack hide();
     mypack setContents( 0 );
     
     self thread dohealing( mypack );
     
-    while ( isAlive( self ) && self.class == "medic" && !level.lasthunter )
+    while ( isAlive( self ) && !level.lasthunter )
     {  
         wait 0.05;
         
@@ -177,7 +201,7 @@ dohealing( mypack )
     self endon( "remove healthbag" );
 
     healamount = 0;
-    while ( isAlive( self ) && self.class == "medic" )
+    while ( isAlive( self ) )
     {
         wait 1;
         
@@ -244,11 +268,12 @@ ammobox()
     
     mybox = spawn( "script_model", self getOrigin() );
     mybox setModel( boxmodels[ modeli ] );
+    mybox hide();
     mybox setContents( 0 );
     
     self thread ammobox_think( mybox );
     
-    while ( isAlive( self ) && self.class == "support" && !level.lasthunter )
+    while ( isAlive( self ) && !level.lasthunter )
     {  
         wait 0.05;
         
@@ -359,6 +384,703 @@ ammobox_think( box )
             }
         }
     }
+}
+
+//sentry() {}
+
+sentry()
+{   
+    self iPrintLn( "Double tap ^2[{+activate}]^7 to place your sentry" );
+
+    barrel = spawn( "script_model", self getOrigin() );
+    barrel hide();
+    barrel setContents( 0 );
+    barrel setModel( "xmodel/barrel_black1" );
+    
+    while ( isAlive( self ) )
+    {  
+        wait 0.05;
+        
+        barrel hide();
+        
+        if ( self getCurrentWeapon() != "stielhandgranate_mp" )
+            continue;
+
+        barrel show();
+        traceDir = anglesToForward( self.angles );
+        traceEnd = self.origin;
+        traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
+        trace = bulletTrace( self.origin, traceEnd, false, barrel );
+
+        pos = trace[ "position" ];
+        barrel moveto( pos, 0.05 );
+        barrel.angles = self.angles;
+            
+        // stoled from lev
+        if ( self useButtonPressed() )
+        {
+            catch_next = false;
+            lol = false;
+
+            for ( i = 0; i <= 0.30; i += 0.02 )
+            {
+                if ( catch_next && self useButtonPressed() )
+                {
+                    lol = true;
+                    break;
+                }
+                else if ( !( self useButtonPressed() ) )
+                    catch_next = true;
+
+                wait 0.03;
+            }
+            
+            if ( lol )
+                break;
+        }
+    }
+    
+    if ( !isAlive( self ) )
+    {
+        barrel delete();
+        return;
+    }
+    
+    trace = bullettrace( barrel.origin, barrel.origin + ( 0, 0, -1024 ), false, undefined );
+    barrel moveto( trace[ "position" ], 0.1 );
+    
+    self iprintln( "Sentry placed!" );
+    
+    self switchToWeapon( self getWeaponSlotWeapon( "primary" ) );
+    self setWeaponSlotWeapon( "grenade", "none" );
+    
+    wait 0.15;
+    
+    self thread sentry_think( barrel );
+    self thread sentry_remove_on_death( barrel );
+    self thread sentry_remove_on_spec( barrel );
+
+    self thread watchmoveturret( barrel );
+}
+
+watchmoveturret( barrel ) {
+    self endon( "remove sentry" );
+    self endon( "death" );
+    self endon( "disconnect" );
+
+    while ( true ) {
+        if ( distance( barrel.origin, self.origin ) < level.plantdist && !isDefined( self.moveturret ) )
+            self thread moveturret( barrel );
+        
+        wait 0.1;
+    }
+}
+
+moveturret( barrel ) {
+    self endon( "death" );
+    self endon( "disconnect" );
+    
+    breakout = false;
+    self.moveturret = true;
+
+    movetime = 3;
+    while ( !breakout && isDefined( barrel ) && distance( barrel.origin, self.origin ) < level.plantdist && isAlive( self ) && !level.lasthunter )
+    {   
+        if ( !isDefined( self.moveturretnotice ) )
+        {
+            self.moveturretnotice = newClientHudElem( self );
+            self.moveturretnotice.alignX = "center";
+            self.moveturretnotice.alignY = "middle";
+            self.moveturretnotice.x = 320;
+            self.moveturretnotice.y = 320;
+            self.moveturretnotice.alpha = 1;
+            self.moveturretnotice setText( &"Hold [F] to move turret" );
+        }
+        
+        while ( self usebuttonpressed() && self isOnGround() && isAlive( self ) )
+        {
+            org = spawn( "script_origin", self.origin );
+            if ( !isdefined( self.mtprogressbackground ) )
+            {
+                self.mtprogressbackground = newClientHudElem( self );             
+                self.mtprogressbackground.alignX = "center";
+                self.mtprogressbackground.alignY = "middle";
+                self.mtprogressbackground.x = 320;
+                self.mtprogressbackground.y = 365;
+                self.mtprogressbackground.alpha = 0.75;
+            }
+            self.mtprogressbackground setShader( "black", ( level.barsize + 4 ), 12 );        
+
+            if ( !isdefined( self.mtprogressbar ) )
+            {
+                self.mtprogressbar = newClientHudElem( self );                
+                self.mtprogressbar.alignX = "left";
+                self.mtprogressbar.alignY = "middle";
+                self.mtprogressbar.x = ( 320 - ( level.barsize / 2.0 ) );
+                self.mtprogressbar.y = 365;
+                self.mtprogressbar.alpha = 1;
+                self.mtprogressbar.sort = 10;
+            }
+            self.mtprogressbar setShader( "white", 0, 8 );
+            self.mtprogressbar scaleOverTime( movetime, 288, 8 );
+            
+            self linkto( org );
+            
+            self.mtprogresstime = 0;
+            while( self useButtonPressed() && ( self.mtprogresstime < movetime ) && isAlive( self ) )
+            {
+                self.mtprogresstime += 0.05;
+                wait 0.05;
+            }
+            
+            org delete();
+            
+            if ( self.mtprogresstime >= movetime )
+            {           
+                self thread actualmoveturret( barrel );
+                breakout = true;
+                break;
+            }
+            else
+            {
+                if ( isDefined( self.mtprogressbackground ) )
+                    self.mtprogressbackground destroy();
+
+                if ( isDefined( self.mtprogressbar ) ) 
+                    self.mtprogressbar destroy();
+            }
+        }
+        
+        wait 0.05;
+    }
+
+    self.moveturret = undefined;
+    
+    if ( isDefined( self.moveturretnotice ) )
+        self.moveturretnotice destroy();
+
+    if ( isDefined( self.mtprogressbackground ) )
+        self.mtprogressbackground destroy();
+
+    if ( isDefined( self.mtprogressbar ) ) 
+        self.mtprogressbar destroy();
+}
+
+actualmoveturret( barrel ) {
+    self notify( "remove sentry" );
+
+    wait 0.15;
+
+    if ( isDefined( barrel ) )
+        barrel delete();
+    if ( isDefined( self.mg ) )
+        self.mg delete();
+
+    wait 0.15;
+
+    self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
+    self switchToWeapon( "stielhandgranate_mp" );
+
+    self thread sentry();
+}
+
+sentry_remove_on_death( barrel ) {    
+    self endon( "remove sentry" );
+
+    self waittill( "death" );
+    self notify( "remove sentry" );
+
+    if ( isDefined( barrel ) )
+        barrel delete();
+}
+
+sentry_remove_on_spec( barrel ) {
+    self endon( "remove sentry" );
+
+    self waittill( "spawned" );
+    self notify( "remove sentry" );
+
+    if ( isDefined( barrel ) )
+        barrel delete();
+}
+
+mg_remove( mg )
+{
+    self endon( "remove sentry" );
+
+    self waittill( "death" );
+
+    if ( isDefined( mg ) ) {
+        mg delete();
+        mg = undefined;
+    }
+}
+
+mg_remove_on_spec( mg )
+{
+    self endon( "remove sentry" );
+
+    self waittill( "spawned" );
+
+    if ( isDefined( mg ) ) {
+        mg delete();
+        mg = undefined;
+    }
+}
+
+sentry_think( barrel )
+{     
+    self.mg = spawn( "script_model", barrel getOrigin() + ( 0, 0, 42 ) );
+    self.mg setModel( "xmodel/mg42_bipod" );
+    self.mg setContents( 1 );
+    
+    self thread mg_remove( self.mg );
+    self thread mg_remove_on_spec( self.mg );
+    self thread sentry_hud( self.mg );
+    self thread sentry_explode();
+       
+    self.mg.ammo = 50;
+    self.mg.health = 500;
+
+    self endon( "remove sentry" );
+    
+    while ( isAlive( self ) && isDefined( self.mg ) )
+    {
+        wait 0.03;
+        
+        self sentry_aim();
+        self sentry_damage_detect();
+    }
+}
+
+sentry_aim()
+{
+    if ( isDefined( self.mg.disabled ) )
+        return;
+        
+    // do stuff here
+    players = getEntArray( "player", "classname" );
+    bestplayer = undefined;
+    bestdist = level.fogdist - 250;
+    if ( bestdist < 250 )
+        bestdist = 250;
+
+    for ( i = 0; i < players.size; i++ )
+    {               
+        if ( distance( self.mg.origin, players[ i ].origin ) < bestdist && players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" )
+        {
+            trace = bullettrace( self.mg.origin, players[ i ].origin + ( 0, 0, 60 ), true, players[ i ] );
+            if ( trace[ "fraction" ] != 1 )
+                continue;
+                
+            bestplayer = players[ i ];
+            bestdist = distance( self.mg.origin, players[ i ].origin );
+        }
+    }
+    
+    if ( isDefined( bestplayer ) )
+    {
+        x = bestplayer maps\mp\gametypes\_zombie::getStance( true );
+        trace = bullettrace( self.mg.origin, bestplayer.origin + ( 0, 0, x - 8 ), true, bestplayer );
+        if ( trace[ "fraction" ] != 1 )
+            return;
+            
+        self.mg.angles = vectorToAngles( vectorNormalize( ( bestplayer.origin + ( 0, 0, x - 20 ) ) - self.mg.origin ) );
+        
+        if ( !isDefined( self.mg.isfiring ) )
+            self.mg thread sentry_fire( bestplayer, self, x );
+    }
+}
+
+sentry_damage_detect()
+{
+    doHit = false;
+    attackerweapon = "enfield_mp";
+    players = getEntArray( "player", "classname" );
+    for ( i = 0; i < players.size; i++ )
+    {
+        if ( distance( self.mg.origin, players[ i ].origin ) < 52 )
+        {
+            if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) )
+            {
+                self playSound( "melee_hit" );
+                players[ i ] thread maps\mp\gametypes\_zombie::showhit();
+                attackerweapon = players[ i ] getCurrentWeapon();
+
+                doHit = true;
+                players[ i ] thread meleedowntrack();
+                break;
+            }
+            
+            if ( players[ i ] == self )
+            {
+                if ( self meleeButtonPressed() && !isDefined( self.meleedown ) ) {
+                    self thread meleedowntrack();
+
+                    self.mg.health += 25;
+                    if ( self.mg.health > 100 )
+                        self.mg.health = 100;
+                }
+            }
+        }
+    }
+    
+    if ( doHit )
+    {
+        //self.mg.health -= maps\mp\gametypes\_zombie::_randomIntRange( 15, 45 );
+        damage = 0;
+        switch ( attackerweapon ) {
+            case "sten_mp":             damage = 35; break;
+            case "colt_mp":         
+            case "mk1britishfrag_mp":   damage = 50; break;
+            case "enfield_mp":  
+            case "springfield_mp":      damage = 150; break;
+            case "bren_mp":             damage = 200; break;
+        }
+
+        if ( damage == 0 )
+            return;
+
+        self.mg.health -= damage;
+
+        if ( self.mg.health < 0 )
+            self.mg.health = 0;
+            
+        if ( self.mg.health == 0 )
+            self thread sentry_disable();
+    }
+}   
+
+meleedowntrack() {
+    while ( self meleeButtonPressed() )
+        wait 0.05;
+
+    currentWeapon = self getCurrentWeapon();
+
+    waittime = 0.05;
+    switch ( currentWeapon ) {
+        case "sten_mp":
+            waittime = 0.15;
+            break;
+        case "panzerfaust_mp":
+            waittime = 0.5;
+            break;
+        case "mp40_mp":
+            waittime = 0.6;
+            break;
+        case "bar_mp":
+        case "bar_slow_mp":
+        case "bren_mp":
+        case "enfield_mp":
+        case "fraggrenade_mp":
+        case "kar98k_mp":
+        case "kar98k_sniper_mp":
+        case "luger_mp":
+        case "m1carbine_mp":
+        case "m1garand_mp":
+        case "mk1britishfrag_mp":
+        case "mosin_nagant_mp":
+        case "mosin_nagant_sniper_mp":
+        case "rgd-33russianfrag_mp":
+        case "springfield_mp":
+        case "stielhandgranate_mp":
+            waittime = 0.65;
+            break;
+        case "colt_mp":
+        case "thompson_mp":
+        case "thompson_semi_mp":
+            waittime = 0.7;
+            break;
+        case "fg42_mp":
+        case "fg42_semi_mp":
+        case "mp44_mp":
+        case "mp44_semi_mp":
+        case "ppsh_mp":
+        case "ppsh_semi_mp":
+            waittime = 0.75;
+            break;
+    }
+
+    wait ( waittime );
+
+    self.meleedown = undefined;
+}
+
+sentry_disable()
+{
+    if ( isDefined( self.mg.disabled ) )
+        return;
+        
+    self.mg.disabled = true;
+    
+    while ( self.mg.health <= 0 )
+    {
+        playFx( level._effect[ "sentry_onfire" ], self.mg.origin + ( 0, 0, -8 ) );
+        wait 0.3;
+    }
+    
+    self.mg.disabled = undefined;
+}
+
+sentry_explode()
+{
+    self waittill( "remove sentry" );
+    
+    if ( !isDefined( self.moveturret ) )
+        playFx( level._effect[ "sentry_explode" ], self.mg.origin );
+}
+
+sentry_fire( target, owner, x )
+{
+    if ( self.ammo == 0 )
+    {
+        if ( !isDefined( self.reloading ) )
+            self thread sentry_reload( owner );
+            
+        return;
+    }
+        
+    self.isfiring = true;
+    
+    // hurt with mg42_bipod_stand_mp :)
+    stance = target maps\mp\gametypes\_zombie::getStance();
+
+    self playSound( "weap_bren_fire" );
+    playFxOnTag( level._effect[ "sentry_fire" ], self, "tag_flash" );
+    
+    trace = bullettrace( self.origin, target.origin + ( 0, 0, 16 ), false, undefined );
+    trace2 = bullettrace( self.origin, target.origin + ( 0, 0, 40 ), false, undefined );
+    trace3 = bullettrace( self.origin, target.origin + ( 0, 0, 60 ), false, undefined );
+
+    hitloc = "torso_upper";
+    if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] == 1 )
+        hitloc = "torso_lower";
+    if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace[ "fraction" ] == 1 )
+    {
+        s = "left";
+        if ( randomInt( 100 ) > 50 )
+            s = "right";
+            
+        hitloc = s + "_leg_upper";
+    }
+    
+    dist = distance( target.origin, self.origin );
+    maxdist = 1024;
+    distanceModifier = ( (maxdist/2) - dist ) / maxdist + 1;
+    if ( dist > maxdist )
+        distanceModifier = 0.5;
+
+    target maps\mp\gametypes\zombies::Callback_PlayerDamage( owner, owner, 15 * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
+
+    wait 0.2;
+    
+    self.ammo--;
+    
+    // every 10th shot has a chance of lowering the health by 1-3 points
+    if ( self.ammo % 10 == 0 && randomInt( 100 ) > 50 )
+        self.health -= maps\mp\gametypes\_zombie::_randomIntRange( 1, 5 );
+        
+    self.isfiring = undefined;
+}
+
+sentry_reload( owner )
+{
+    self.reloading = true;
+    
+    self.timer = 11;
+    self.timeup = 0;
+    
+    while ( self.timer > 0 )
+    {
+        wait 0.1;
+        self.timer -= 0.1;
+        self.timeup += 0.1;
+    }
+
+    self.timer = undefined;
+    self.timeup = undefined;
+    self.reloading = undefined;
+    
+    self.ammo = 50;
+}
+
+sentry_hud( mg )
+{
+    self endon( "disconnect" );
+    
+    self.sentry_hud_back = newClientHudElem( self );
+    self.sentry_hud_back.x = 550;
+    self.sentry_hud_back.y = 416;
+    self.sentry_hud_back.alignx = "right";
+    self.sentry_hud_back.aligny = "middle";
+    self.sentry_hud_back.alpha = 0.7;
+    self.sentry_hud_back setShader( "gfx/hud/hud@health_back.dds", 116, 10 );
+    self.sentry_hud_back.sort = 10;
+    
+    self.sentry_hud_front = newClientHudElem( self );
+    self.sentry_hud_front.x = 548;
+    self.sentry_hud_front.y = 416;
+    self.sentry_hud_front.alignx = "right";
+    self.sentry_hud_front.aligny = "middle";
+    self.sentry_hud_front.alpha = 0.8;
+    self.sentry_hud_front setShader( "gfx/hud/hud@health_bar.dds", 112, 8 );
+    self.sentry_hud_front.sort = 20;
+    
+    self.sentry_hud_notice = newClientHudElem( self );
+    self.sentry_hud_notice.x = 492;
+    self.sentry_hud_notice.y = 416;
+    self.sentry_hud_notice.alignx = "center";
+    self.sentry_hud_notice.aligny = "middle";
+    self.sentry_hud_notice.alpha = 1;
+    self.sentry_hud_notice.sort = 25;
+    self.sentry_hud_notice.fontscale = 0.7;
+    self.sentry_hud_notice.label = &"Sentry status: ";
+    
+    self.sentry_hud_health_back = newClientHudElem( self );
+    self.sentry_hud_health_back.x = 550;
+    self.sentry_hud_health_back.y = 404;
+    self.sentry_hud_health_back.alignx = "right";
+    self.sentry_hud_health_back.aligny = "middle";
+    self.sentry_hud_health_back.alpha = 0.7;
+    self.sentry_hud_health_back setShader( "gfx/hud/hud@health_back.dds", 116, 10 );
+    self.sentry_hud_health_back.sort = 10;
+    
+    self.sentry_hud_health_front = newClientHudElem( self );
+    self.sentry_hud_health_front.x = 548;
+    self.sentry_hud_health_front.y = 404;
+    self.sentry_hud_health_front.alignx = "right";
+    self.sentry_hud_health_front.aligny = "middle";
+    self.sentry_hud_health_front.alpha = 0.8;
+    self.sentry_hud_health_front.color = ( 0, 0, 1 );
+    self.sentry_hud_health_front setShader( "gfx/hud/hud@health_bar.dds", 112, 8 );
+    self.sentry_hud_health_front.sort = 20;
+    
+    self.sentry_hud_health = newClientHudElem( self );
+    self.sentry_hud_health.x = 492;
+    self.sentry_hud_health.y = 404;
+    self.sentry_hud_health.alignx = "center";
+    self.sentry_hud_health.aligny = "middle";
+    self.sentry_hud_health.alpha = 1;
+    self.sentry_hud_health.sort = 25;
+    self.sentry_hud_health.fontscale = 0.7;
+    self.sentry_hud_health.label = &"Sentry health: ";
+    
+    self.sentry_hud_kills = newClientHudElem( self );
+    self.sentry_hud_kills.x = 492;
+    self.sentry_hud_kills.y = 392;
+    self.sentry_hud_kills.alignx = "center";
+    self.sentry_hud_kills.aligny = "middle";
+    self.sentry_hud_kills.alpha = 1;
+    self.sentry_hud_kills.sort = 25;
+    self.sentry_hud_kills.fontscale = 0.7;
+    self.sentry_hud_kills.label = &"Sentry kills: ";
+    
+    while ( isAlive( self ) && isDefined( self.mg ) )
+    {       
+        if ( isDefined( mg.isfiring ) )
+        {
+            self.sentry_hud_front.alpha = 0;
+            self.sentry_hud_notice.color = ( 0, 1, 0 );
+            self.sentry_hud_notice setText( &"Firing" );
+        }        
+        else if ( isDefined( mg.reloading ) )
+        {
+            self.sentry_hud_front.alpha = 1;
+            self.sentry_hud_front.color = ( 1, 0, 0 );
+            self.sentry_hud_front setShader( "white", mg.timeup * 10.2, 8 );
+            self.sentry_hud_notice.color = ( 1, 1, 1 );
+            self.sentry_hud_notice setText( &"Reloading" );
+        }        
+        else if ( isDefined( mg.disabled ) )
+        {
+            self.sentry_hud_front.alpha = 0;
+            self.sentry_hud_notice.color = ( 1, 0, 0 );
+            self.sentry_hud_notice setText( &"Disabled" );
+        }
+        else
+        {
+            self.sentry_hud_front.alpha = 0;
+            self.sentry_hud_notice.color = ( 1, 1, 1 );
+            self.sentry_hud_notice setText( &"Idle" );
+        }            
+        
+        self.sentry_hud_health setValue( self.mg.health );
+        self.sentry_hud_health_front setShader( "white", ( self.mg.health / 5 ) * 1.12, 8 );
+        self.sentry_hud_kills setValue( self.stats[ "totalSentryKills" ] + self.stats[ "sentryKills" ] );
+        wait 0.1;
+    }
+    
+    if ( isDefined( self.sentry_hud_back ) )            self.sentry_hud_back destroy();
+    if ( isDefined( self.sentry_hud_front ) )           self.sentry_hud_front destroy();
+    if ( isDefined( self.sentry_hud_notice ) )          self.sentry_hud_notice destroy();
+    if ( isDefined( self.sentry_hud_health_back ) )     self.sentry_hud_health_back destroy();
+    if ( isDefined( self.sentry_hud_health_front ) )    self.sentry_hud_health_front destroy();
+    if ( isDefined( self.sentry_hud_health ) )          self.sentry_hud_health destroy();
+    if ( isDefined( self.sentry_hud_kills ) )           self.sentry_hud_kills destroy();
+}
+
+sneakyfuck() {
+    self endon( "death" );
+    self endon( "disconnect" );
+
+    self.hiddenhud = newClientHudElem( self );
+    self.hiddenhud.x = 0;
+    self.hiddenhud.y = 0;
+    self.hiddenhud.color = ( 0, 0, 1 );
+    self.hiddenhud.alpha = 0;
+    self.hiddenhud setShader( "white", 640, 480 );
+    self.hiddenhud.sort = 9999;
+
+    lastorigin = self.origin;
+    stoppedtime = gettime();
+    moving = true;
+    self.invisible = false;
+
+    while ( isAlive( self ) && !level.lasthunter ) {
+        lastorigin = self.origin;
+
+        wait 0.05;
+
+        // become visible if moving or fired or melee'd
+        if ( ( self attackbuttonpressed() || self meleebuttonpressed() || self.origin != lastorigin ) && self.invisible ) {
+            self iPrintLn( "You are now visible!" );
+
+            stoppedtime = gettime();
+
+            self.hiddenhud.alpha = 0;
+            self detachall();
+            self maps\mp\gametypes\_skins::setAllModels();
+
+            moving = true;
+            self.invisible = false;
+        }
+
+        // moving
+        if ( self.origin != lastorigin ) {
+            stoppedtime = gettime();
+            continue;
+        }
+
+        // stopped moving
+        if ( self isOnGround() && self.origin == lastorigin && moving ) {
+            stoppedtime = gettime();
+            moving = false;
+        }
+
+        // hasn't moved in 3 seconds
+        if ( gettime() - stoppedtime > 3000 && !self.invisible ) {
+            self iPrintLn( "You are now ^5invisible^7!" );
+
+            self.hiddenhud.alpha = 0.2;
+            self detachall();
+            self setModel( "xmodel/mp_crate_misc_red1" );
+
+            self.invisible = true;
+        }
+    }
+
+    if ( isDefined( self.hiddenhud ) )
+        self.hiddenhud destroy();
 }
 
 superJump()

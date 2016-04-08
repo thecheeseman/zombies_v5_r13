@@ -21,7 +21,7 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     - [X] Support: mobile ammobox
     - [X] Medic: mobile medic bag
     - [ ] Sniper: something interesting
-    - [ ] Engineer: turrets
+    - [X] Engineer: turrets
 - [ ] Breakable barricades and turrets
 - [ ] Some new buy menu features?
 - [ ] ????
@@ -36,9 +36,24 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
-#### Revision 13.08
-#### 04/04/16 - 05/04/16
+#### Revision 13.1
+#### 04/04/16 - 08/04/16
     
+    + Sniper now does 2X damage when invisible
+    + Added Sniper class with special ability: invisibility (active after not moving for 3 seconds)
+    - Removed "immunity" progress bar as it's basically useless and wasting 2/31 HUD elements
+    + Sentries are now movable
+    + Sentries have 500 health now instead of 100
+    * Changed Sentry code around, now Engineer needs to bash to repair - Zombies also do full melee damage to turrets
+    + Added new stats: sentryKills
+    + Added Engineer class
+    * Finally updated killstreaks to use CoDExtended's getPlayerAngles() for more accurate locations
+    # Fixed a potential crash with the Carpet Bomb / Airstrike killstreaks
+    - Disabled the ability to change classes on the fly - if its before game starts, you'll just commit suicide and change (makes my life so much easier)
+    * Some slight cosmetic changes with Support / Medic so you don't see the ammobox / medicbag spawning :)
+    # Fixed a bug where you could have a Medic helmet and not be a Medic
+    # Fixed a bug that would caues the Recon to double-jump while getting ammo from an ammobox
+    + Added a +25 HP bonus if Medic bashes players while healing them
     + Added new stats: timePlayed, joins, hpHealed, ammoHealed
     # Fixed a crash that occured when two players joined, the timer started, and left
     # Fixed a crash that occured when game tried to force everyone into a gamecam with no last killer

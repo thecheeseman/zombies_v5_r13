@@ -644,6 +644,7 @@ onConnect()
 	self.specialmodel = false;
 	self.lasthittime = 0;
 	self.class = "default";
+	self.invisible = false;
 	
 	self.ispoisoned = false;
 	self.onfire = false;
@@ -711,6 +712,7 @@ spawnPlayer()
 	self.specialmodel = false;
 	self.lasthittime = 0;
 	self.class = "default";
+	self.invisible = false;
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	
@@ -719,9 +721,7 @@ spawnPlayer()
 		self.spechud destroy();
 		self.specnotice destroy();
 	}
-	
-	self thread maps\mp\gametypes\_hud::runHud();
-	
+		
 	if ( self.pers[ "team" ] == "axis" )
 	{
 		if ( self.iszombie )
@@ -767,6 +767,8 @@ spawnPlayer()
 		self.isnew = false;
 		self thread maps\mp\gametypes\_config::welcomeMessage();
 	}
+
+	self thread maps\mp\gametypes\_hud::runHud();
 	
 	if ( level.debug )
 		self thread showpos();
@@ -992,10 +994,10 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker thread killstreakShiz();
 
 			switch ( self.zombietype ) {
-				case "jumper":	attacker.stats[ "jumperzombiekills" ]++;	break;
-				case "fast":	attacker.stats[ "fastzombiekills" ]++;		break;
-				case "poison":	attacker.stats[ "poisonzombiekills" ]++;	break;
-				case "fire":	attacker.stats[ "firezombiekills" ]++;		break;
+				case "jumper":	attacker.stats[ "jumperZombieKills" ]++;	break;
+				case "fast":	attacker.stats[ "fastZombieKills" ]++;		break;
+				case "poison":	attacker.stats[ "poisonZombieKills" ]++;	break;
+				case "fire":	attacker.stats[ "fireZombieKills" ]++;		break;
 			}
 		}
 		
@@ -1006,10 +1008,10 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 			attacker thread checkRank();
 
 			switch ( attacker.zombietype ) {
-				case "jumper":	attacker.stats[ "killsasjumperzombie" ]++;	break;
-				case "fast":	attacker.stats[ "killsasfastzombie" ]++;	break;
-				case "poison":	attacker.stats[ "killsaspoisonzombie" ]++;	break;
-				case "fire":	attacker.stats[ "killsasfirezombie" ]++;	break;
+				case "jumper":	attacker.stats[ "killsAsJumperZombie" ]++;	break;
+				case "fast":	attacker.stats[ "killsAsFastZombie" ]++;	break;
+				case "poison":	attacker.stats[ "killsAsPoisonZombie" ]++;	break;
+				case "fire":	attacker.stats[ "killsAsFireZombie" ]++;	break;
 			}
 		}
 			
@@ -2906,6 +2908,43 @@ _randomInt( iMax )
 	}
 	
 	return oArray[ randomInt( oArray.size ) ];
+}
+
+_randomIntRange( min, max ) {
+	temparr = [];
+	for ( i = 0; i < 1024; i++ )
+		temparr[ i ] = randomInt( max );
+		
+	goods = [];
+	for ( i = 0; i < temparr.size; i++ ) {
+		if ( temparr[ i ] < min )
+			continue;
+		goods[ goods.size ] = temparr[ i ];
+	}
+	
+	thisint = goods[ randomInt( goods.size ) ];
+	return thisint;
+}
+
+getStance( returnValue )
+{
+    if ( !self isOnGround() && !isDefined( returnValue ) )
+        return "in air";
+ 
+    org = spawn( "script_model", self.origin );
+    org linkto( self, "tag_helmet", ( 0, 0, 0 ), ( 0, 0, 0 ) );
+    wait 0.03;  // this is required, or else the model will not move to tag_helmet by the time it's removed
+ 
+    z = org.origin[ 2 ] - self.origin[ 2 ];
+ 
+    org delete();
+    
+    if ( isDefined( returnValue ) && returnValue )
+        return z;
+ 
+    if ( z < 20 )   return "prone";
+    if ( z < 50 )   return "crouch";
+    if ( z < 70 )   return "stand";
 }
 
 showPos()

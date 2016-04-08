@@ -325,12 +325,21 @@ Callback_PlayerConnect()
 			{
 				if ( self.pers[ "team" ] == "allies" )
 					self suicide();
+
+				if ( self.pers[ "team" ] == "axis" ) {
+					if ( !level.gamestarted ) {
+						self suicide();
+					} else {
+						self iPrintLn( "^1You cannot change your weapon at this time." );
+						continue;
+					}
+				}
 				
 				oldweap = self.pers[ "weapon" ];
 				self.pers["weapon"] = weapon;
 
 				weaponname = maps\mp\gametypes\_teams::getWeaponName(self.pers["weapon"]);
-				
+				/*
 				if ( self.pers[ "team" ] == "axis" )
 				{
 					if ( !level.gamestarted )
@@ -350,8 +359,8 @@ Callback_PlayerConnect()
 					else
 					{
 						self iPrintLn( "^1You cannot change your weapon at this time." );
-					}
-				}
+					}*
+				}*/
 			}
 		}
 		else if(menu == game["menu_viewmap"])
@@ -529,6 +538,9 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 			
 		if ( eAttacker.pers[ "team" ] == "axis" && level.lasthunter && sWeapon == "mosin_nagant_sniper_mp" && sMeansOfDeath == "MOD_MELEE" )
 			iDamage = self.health;
+
+		if ( eAttacker.pers[ "team" ] == "axis" && self.class == "sniper" && self.invisible )
+			iDamage *= 2;
 	}
 	
 	if ( isPlayer( eAttacker ) && eAttacker.pers[ "team" ] == "axis" && sMeansOfDeath == "MOD_MELEE" )

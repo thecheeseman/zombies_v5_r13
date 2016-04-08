@@ -43,6 +43,8 @@ init()
 	precacheString( &"Medic" );
 	precacheString( &"Support" );
 	precacheString( &"Recon" );
+	precacheString( &"Engineer" );
+	precacheString( &"Sniper" );
 	precacheString( &"None" );
 	
 	precacheString( &"Jumper" );
@@ -175,6 +177,8 @@ cleanUpHud()
 	if ( isDefined( self.gc_bottombar ) ) 	self.gc_bottombar destroy();
 	if ( isDefined( self.gc_title ) )		self.gc_title destroy();
 	if ( isDefined( self.gc_timer ) )		self.gc_timer destroy();
+
+	if ( isDefined( self.hiddenhud ) )		self.hiddenhud destroy();
 	
 	self thread maps\mp\gametypes\_zombie::FOVScale( 80 );
 }
@@ -321,7 +325,7 @@ runHud()
 		self.exploarmor_text.alpha = 0;
 		self.exploarmor_text.label = &"Explosion Armor: ";
 		self.exploarmor_text.fontscale = 0.9;
-		
+		/*
 		self.immunity_hud_back = newClientHudElem( self );
 		self.immunity_hud_back.x = 501;
 		self.immunity_hud_back.y = 454;
@@ -339,7 +343,7 @@ runHud()
 		self.immunity_hud_front.color = ( 1, 1, 0 );
 		self.immunity_hud_front.alpha = 2;
 		self.immunity_hud_front setShader( "gfx/hud/hud@health_bar.dds", 129, 3 );
-		self.immunity_hud_front.sort = 20;
+		self.immunity_hud_front.sort = 20;*/
 
 		self.darkness = newClientHudElem( self );
 		self.darkness.x = 0;
@@ -412,6 +416,18 @@ doHud()
 		rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
 		self.hud[ "rank" ] setText( rank.rankString );
 //		self.hud[ "timealive" ] setTimerUp( 0 );
+
+		classstring = &"None";
+		switch ( self.class ) {
+			case "medic":		classstring = &"Medic"; break;
+			case "support":		classstring = &"Support"; break;
+			case "recon":		classstring = &"Recon"; break;
+			case "engineer":	classstring = &"Engineer"; break;
+			case "sniper":		classstring = &"Sniper"; break;
+			default: 			break;
+		}
+
+		self.hud[ "class" ] setText( classstring );
 	}
 	
 	if ( self.pers[ "team" ] == "allies" )
@@ -419,10 +435,10 @@ doHud()
 		rank = undefined;
 		switch ( self.pers[ "weapon" ] )
 		{
-			case "enfield_mp": rank = &"Jumper"; break;
-			case "sten_mp": rank = &"Fast"; break;
-			case "bren_mp": rank = &"Poison"; break;
-			case "springfield_mp": rank = &"Fire"; break;
+			case "enfield_mp": 		rank = &"Jumper"; break;
+			case "sten_mp": 		rank = &"Fast"; break;
+			case "bren_mp": 		rank = &"Poison"; break;
+			case "springfield_mp": 	rank = &"Fire"; break;
 		}
 		
 		lolrank = maps\mp\gametypes\_ranks::getRankByID( "zombie", self.zomrank );
@@ -434,26 +450,12 @@ doHud()
 	self endon( "death" );
 	self endon( "spawned" );
 
-	class = "none";
-		
 	while ( true )
 	{
 		self.hud[ "health" ] setValue( self.health );
 		
 		if ( self.pers[ "team" ] == "axis" )
 		{
-			if ( class != self.class ) {
-				classstring = &"None";
-				switch ( self.class ) {
-					case "medic":	class = "medic"; 	classstring = &"Medic"; break;
-					case "support":	class = "support"; 	classstring = &"Support"; break;
-					case "recon":	class = "recon"; 	classstring = &"Recon"; break;
-					default: 		class = "default"; 	break;
-				}
-
-				self.hud[ "class" ] setText( classstring );
-			}
-
 			self.hud[ "xp" ] setValue( self.xp );
 			self.hud[ "stickies" ] setValue( self.stickynades );
 			self.hud[ "healthpacks" ] setValue( self.healthpacks );
@@ -512,7 +514,7 @@ doHud()
 				self.exploarmor_hud_front.alpha = 0;
 				self.exploarmor_text.alpha = 0;
 			}
-			
+			/*
 			imm = 0;
 			if ( self.immunity == 1 )
 				imm = 25;
@@ -525,7 +527,7 @@ doHud()
 			else if ( self.immunity == 5 )
 				imm = 128;
 				
-			self.immunity_hud_front setShader( "white", imm, 4 );
+			self.immunity_hud_front setShader( "white", imm, 4 );*/
 		}
 		else if ( self.pers[ "team" ] == "allies" )
 		{

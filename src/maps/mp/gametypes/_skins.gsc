@@ -300,25 +300,46 @@ setPlayerModel( models ) {
     }
 
     mymodel = models[ randomInt( models.size ) ];
-    self setModel( "xmodel/" + mymodel.bodyname );
+
+    self.xmodel = "xmodel/" + mymodel.bodyname;
     self.headmodel = "xmodel/" + mymodel.headlist[ randomInt( mymodel.headlist.size ) ];
-    self attach( self.headmodel );
-    self setViewModel( "xmodel/" + mymodel.viewmodel );
+    self.viewmodel = "xmodel/" + mymodel.viewmodel;
     self.nationality = mymodel.nationality;
 
     // no hats or gear for zombies ;)
     if ( self.pers[ "team" ] == "axis" ) {
+        self.gear = [];
         self.hatmodel = "xmodel/" + mymodel.hatlist[ randomInt( mymodel.hatlist.size ) ];
+        
+        if ( randomInt( 100 ) > 50 ) {
+            self.gear = [];
+            self.gear[ 0 ] = "xmodel/" + mymodel.gearlist[ randomInt( mymodel.gearlist.size ) ];
+        }
+    }
+
+    self setAllModels();
+}
+
+setAllModels() {
+    self setModel( self.xmodel );
+    self attach( self.headmodel );
+    self setViewModel( self.viewmodel );
+
+    if ( isDefined( self.hatmodel ) )
         self attach( self.hatmodel );
 
-        if ( randomInt( 100 ) > 50 ) {
-            self attach( "xmodel/" + mymodel.gearlist[ randomInt( mymodel.gearlist.size ) ] );
-        }
+    if ( isDefined( self.gear ) ) {
+        for ( i = 0; i < self.gear.size; i++ )
+            self attach( self.gear[ i ] );
     }
 }
 
 main() {
     self detachall();
+
+    self.xmodel = undefined;
+    self.hatmodel = undefined;
+    self.gear = undefined;
 
     // special check beforehand for any cool peeps
     if ( self.pers[ "team" ] == "axis" ) {
@@ -327,67 +348,80 @@ main() {
             case 2508:
                 self.specialmodel = true;
 
-                self setModel( "xmodel/playerbody_british_commando" );
+                self.xmodel = "xmodel/playerbody_british_commando";
                 self.headmodel = "xmodel/head_Price";
-                self attach( self.headmodel );
                 self.hatmodel = "xmodel/equipment_british_beret_red";
-                self attach( self.hatmodel );
-                self setViewModel( "xmodel/viewmodel_hands_british" );
-                self attach( "xmodel/gear_british_price" );
+                self.viewmodel = "xmodel/viewmodel_hands_british";
+
+                self.gear = [];
+                self.gear[ 0 ] = "xmodel/gear_british_price";
+
                 self.nationality = "british";
+
+                self setAllModels();
                 break;
             // crazypanzer
             case 3914:
                 self.specialmodel = true;
 
-                self setModel( "xmodel/playerbody_russian_conscript" );
+                self.xmodel = "xmodel/playerbody_russian_conscript";
                 self.headmodel = "xmodel/head_Pavlov";
-                self attach( self.headmodel );
                 self.hatmodel = "xmodel/equipment_pavlov_ushanka";
-                self attach( self.hatmodel );
-                self setViewModel( "xmodel/viewmodel_hands_russian" );
-                self attach( "xmodel/gear_russian_load_ocoat" );
-                self attach( "xmodel/gear_russian_ppsh_ocoat" );
-                self attach( "xmodel/gear_russian_pack_ocoat" );
+                self.viewmodel = "xmodel/viewmodel_hands_russian";
+
+                self.gear = [];
+                self.gear[ 0 ] = "xmodel/gear_russian_load_ocoat";
+                self.gear[ 1 ] = "xmodel/gear_russian_ppsh_ocoat";
+                self.gear[ 2 ] = "xmodel/gear_russian_pack_ocoat";
+
                 self.nationality = "russian";
+
+                self setAllModels();
                 break;
             // fade
             case 4196:
                 self.specialmodel = true;
 
-                self setModel( "xmodel/playerbody_british_commando" );
+                self.xmodel = "xmodel/playerbody_british_commando";
                 self.headmodel = "xmodel/head_ingram";
-                self attach( self.headmodel );
                 self.hatmodel = "xmodel/equipment_british_beret_green";
-                self attach( self.hatmodel );
-                self setViewModel( "xmodel/viewmodel_hands_british" );
+                self.viewmodel ="xmodel/viewmodel_hands_british";
+
                 self.nationality = "british";
+
+                self setAllModels();
                 break;
             // majdrew
             case 3863:
                 self.specialmodel = true;
 
-                self setModel( "xmodel/playerbody_american_airborne" );
+                self.xmodel = "xmodel/playerbody_american_airborne";
                 self.headmodel = "xmodel/head_Foley";
-                self attach( self.headmodel );
                 self.hatmodel = "xmodel/gear_US_helmet_scrim";
-                self attach( self.hatmodel );
-                self setViewModel( "xmodel/viewmodel_hands_us" );
-                self attach( "xmodel/gear_US_Foley" );
+                self.viewmodel = "xmodel/viewmodel_hands_us";
+
+                self.gear = [];
+                self.gear[ 0 ] = "xmodel/gear_US_Foley";
+
                 self.nationality = "american";
+
+                self setAllModels();
                 break;
             // spartan
             case 4204:
                 self.specialmodel = true;
 
-                self setModel( "xmodel/playerbody_american_airborne" );
+                self.xmodel = "xmodel/playerbody_american_airborne";
                 self.headmodel = "xmodel/head_Elder";
-                self attach( self.headmodel );
                 self.hatmodel = "xmodel/gear_US_helmet_net";
-                self attach( self.hatmodel );
-                self setViewModel( "xmodel/viewmodel_hands_us");
-                self attach( "xmodel/gear_US_Elder" );
+                self.viewmodel = "xmodel/viewmodel_hands_us";
+
+                self.gear = [];
+                self.gear[ 0 ] = "xmodel/gear_US_Elder";
+
                 self.nationality = "american";
+
+                self setAllModels();
                 break;
             // everyone else
             default:
