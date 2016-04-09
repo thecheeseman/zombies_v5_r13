@@ -479,7 +479,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		iDamage = 1;
 		
 	if ( sHitLoc == "head" && sMeansOfDeath != "MOD_MELEE" )
-	{
+	{/*
 		if ( !level.firstzombie )
 		{
 			doit = true;
@@ -509,6 +509,23 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 				else
 					iDamage = self.health + 10;
 			}
+		}*/
+
+		switch ( sWeapon ) {
+			case "m1carbine_mp":
+				iDamage *= 3;
+				break;
+			case "kar98k_mp":
+			case "mp40_mp":
+			case "thompson_mp":
+				iDamage *= 2;
+				break;
+			case "kar98k_sniper_mp":
+			case "springfield_mp":
+			case "ppsh_mp":
+			case "ppsh_semi_mp":
+				iDamage = self.health + 10;
+				break;
 		}
 	}
 
@@ -541,6 +558,16 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
 		if ( eAttacker.pers[ "team" ] == "axis" && self.class == "sniper" && self.invisible )
 			iDamage *= 2;
+
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 125;
+		}
+
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 150;
+		}
 	}
 	
 	if ( isPlayer( eAttacker ) && eAttacker.pers[ "team" ] == "axis" && sMeansOfDeath == "MOD_MELEE" )

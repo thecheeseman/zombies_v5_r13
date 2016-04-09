@@ -171,6 +171,10 @@ cleanUpHud()
 	if ( isDefined( self.gc_timer ) )		self.gc_timer destroy();
 
 	if ( isDefined( self.hiddenhud ) )		self.hiddenhud destroy();
+
+	if ( isDefined( self.moveturretnotice ) )		self.moveturretnotice destroy();
+	if ( isDefined( self.mtprogressbackground ) )	self.mtprogressbackground destroy();
+	if ( isDefined( self.mtprogressbar ) )			self.mtprogressbar destroy();
 	
 	self thread maps\mp\gametypes\_zombie::FOVScale( 80 );
 }

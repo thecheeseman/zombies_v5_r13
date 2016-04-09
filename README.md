@@ -39,6 +39,12 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1
 #### 04/04/16 - 08/04/16
     
+    * Lowered Sentry damage from 15 to 7
+    # Invisible snipers actually can be hit now
+    + Targeted Zombies get hit with 2X damage
+    + Engineers with the M1Garand can now select a preferred target for their sentry
+    + Redid weapon damage according to CP's spec
+    # Fixed various bugs relating to new additions
     + Added destructible barricades
     + Now when you buy Flashbangs, they will completely replace your regular grenades :)
     + Sniper now does 2X damage when invisible

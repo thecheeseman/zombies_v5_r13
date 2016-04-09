@@ -86,6 +86,9 @@ precache()
 	precacheShellshock( "groggy" );
 
 	precacheModel( "xmodel/health_large" );
+	precacheModel( "xmodel/gear_russian_load_coat" );
+	precacheModel( "xmodel/gear_russian_ppsh_coat" );
+	precacheModel( "xmodel/gear_russian_pack_ocoat" );
 	
 	level._effect[ "zombieFire" ] = loadFx( "fx/fire/tinybon.efx" );
 	level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
@@ -661,6 +664,7 @@ onConnect()
 	self.poisonbombready = true;
 	self.modelchanged = false;
 	self.nightvision = false;
+	self.preferredtarget = undefined;
 	
 	self.barricades = [];
 	
@@ -715,6 +719,7 @@ spawnPlayer()
 	self.class = "default";
 	self.invisible = false;
 	self.flashbangs = false;
+	self.preferredtarget = undefined;
 
 	maps\mp\gametypes\_zombie::setPlayerModel();
 	
@@ -843,6 +848,9 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 		{
 			eAttacker.stats[ "damage" ] += iDamage;
 			eAttacker.stats[ "shotsHit" ]++;
+
+			if ( eAttacker.class == "engineer" && sWeapon == "m1garand_mp" )
+				eAttacker.preferredtarget = self;
 		
 			if ( eAttacker.iszombie )
 			{
@@ -1001,6 +1009,9 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 				case "poison":	attacker.stats[ "poisonZombieKills" ]++;	break;
 				case "fire":	attacker.stats[ "fireZombieKills" ]++;		break;
 			}
+
+			if ( sWeapon == "mg42_bipod_stand_mp" )
+				attacker.stats[ "sentryKills" ]++;
 		}
 		
 		if ( attacker.pers[ "team" ] == "allies" )

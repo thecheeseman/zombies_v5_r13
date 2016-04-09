@@ -456,8 +456,8 @@ beDestroyed( owner, type ) {
             
 	        self.health -= damage * attacker.damagemult;
 
-			attacker iPrintLn( "You did ^1" + (int)damage + "^7 damage to that barricade!" );
-	        owner iPrintLn( attacker.name + "^7 did ^1" + (int)damage + "^7 damage to your barricade (^2" + self.health + "^7 HP remaining)!" );
+			attacker iPrintLn( "You did ^1" + (int)( damage * attacker.damagemult ) + "^7 damage to that barricade!" );
+	        owner iPrintLn( attacker.name + "^7 did ^1" + (int)( damage * attacker.damagemult ) + "^7 damage to your barricade (^2" + self.health + "^7 HP remaining)!" );
 
 	        if ( self.health < 0 )
 	            self.health = 0;

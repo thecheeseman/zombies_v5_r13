@@ -368,7 +368,7 @@ ammobox_think( box )
                      
                 if ( players[ i ] != self )
                 {
-                    self iPrintLn( "You gave ^2" + ammogiven + "^7 to " + players[ i ].name + "^7!" );
+                    self iPrintLn( "You gave ^2" + ammogiven + "^7 ammo to " + players[ i ].name + "^7!" );
                     self.stats[ "ammoHealed" ] += ammogiven;
 
                     healamount++;
@@ -640,7 +640,14 @@ sentry_think( barrel )
     self thread sentry_explode();
        
     self.mg.ammo = 50;
-    self.mg.health = 500;
+
+    if ( self.pers[ "weapon" ] == "m1garand_mp" ) {
+        self.mg.health = 1000;
+        self.mg.healthmax = 1000;
+    } else {
+        self.mg.health = 500;
+        self.mg.healthmax = 500;
+    }
 
     self endon( "remove sentry" );
     
@@ -669,6 +676,11 @@ sentry_aim()
     {               
         if ( distance( self.mg.origin, players[ i ].origin ) < bestdist && players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" )
         {
+            if ( isDefined( self.preferredtarget ) && self.preferredtarget == players[ i ] ) {
+                bestplayer = players[ i ];
+                break;
+            }
+
             trace = bullettrace( self.mg.origin, players[ i ].origin + ( 0, 0, 60 ), true, players[ i ] );
             if ( trace[ "fraction" ] != 1 )
                 continue;
@@ -716,9 +728,9 @@ sentry_damage_detect()
                 if ( self meleeButtonPressed() && !isDefined( self.meleedown ) ) {
                     self thread meleedowntrack();
 
-                    self.mg.health += 25;
-                    if ( self.mg.health > 100 )
-                        self.mg.health = 100;
+                    self.mg.health += 200;
+                    if ( self.mg.health > self.mg.healthmax )
+                        self.mg.health = self.mg.healthmax;
                 }
             }
         }
@@ -740,13 +752,13 @@ sentry_damage_detect()
         if ( damage == 0 )
             return;
 
-        self playSound( "melee_hit" );
+        self.mg playSound( "melee_hit" );
         attacker thread maps\mp\gametypes\_zombie::showhit();
         
         self.mg.health -= damage * attacker.damagemult;
 
-        attacker iPrintLn( "You did ^1" + (int)damage + "^7 damage to that turret!" );
-        owner iPrintLn( attacker.name + "^7 did ^1" + (int)damage + " ^7damage to your turret!" );
+        attacker iPrintLn( "You did ^1" + (int)( damage * attacker.damagemult ) + "^7 damage to that turret!" );
+        self iPrintLn( attacker.name + "^7 did ^1" + (int)( damage * attacker.damagemult ) + " ^7damage to your turret!" );
 
         if ( self.mg.health < 0 )
             self.mg.health = 0;
@@ -816,6 +828,8 @@ meleedowntrack() {
 
 sentry_disable()
 {
+    self endon( "remove sentry" );
+
     if ( isDefined( self.mg.disabled ) )
         return;
         
@@ -878,7 +892,11 @@ sentry_fire( target, owner, x )
     if ( dist > maxdist )
         distanceModifier = 0.5;
 
-    target maps\mp\gametypes\zombies::Callback_PlayerDamage( owner, owner, 15 * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
+    damagemodifier = 1;
+    if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && owner.pers[ "weapon" ] == "m1garand_mp" )
+        damagemodifier = 2;
+
+    target maps\mp\gametypes\zombies::Callback_PlayerDamage( owner, owner, 7 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
 
     wait 0.2;
     
@@ -1013,7 +1031,11 @@ sentry_hud( mg )
         }            
         
         self.sentry_hud_health setValue( self.mg.health );
-        self.sentry_hud_health_front setShader( "white", ( self.mg.health / 5 ) * 1.12, 8 );
+        if ( self.pers[ "weapon" ] == "m1garand_mp" )
+            self.sentry_hud_health_front setShader( "white", ( self.mg.health / 10 ) * 1.12, 8 );
+        else
+            self.sentry_hud_health_front setShader( "white", ( self.mg.health / 5 ) * 1.12, 8 );
+
         self.sentry_hud_kills setValue( self.stats[ "totalSentryKills" ] + self.stats[ "sentryKills" ] );
         wait 0.1;
     }
@@ -1051,6 +1073,8 @@ sneakyfuck() {
 
         // become visible if moving or fired or melee'd
         if ( ( self attackbuttonpressed() || self meleebuttonpressed() || self.origin != lastorigin ) && self.invisible ) {
+            wait 0.15;
+
             self iPrintLn( "You are now visible!" );
 
             stoppedtime = gettime();
@@ -1081,7 +1105,7 @@ sneakyfuck() {
 
             self.hiddenhud.alpha = 0.2;
             self detachall();
-            self setModel( "xmodel/mp_crate_misc_red1" );
+            self setModel( "" );
 
             self.invisible = true;
         }
