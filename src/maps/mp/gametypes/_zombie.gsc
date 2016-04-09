@@ -1111,7 +1111,7 @@ lastHunter()
 	self.lasthunterhud.archive = true;
 	self.lasthunterhud.sort = 20;
 	
-	self.maxhealth += 250;
+	self.maxhealth += 400;
 	self.health = self.maxhealth;
 	
 	self setClientCvar( "scr_showweapontab", "1" );

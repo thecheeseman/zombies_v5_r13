@@ -531,6 +531,16 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
 	if ( isPlayer( eAttacker ) && eAttacker != self )
 	{
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 90;
+		}
+
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 100;
+		}
+
 		if ( eAttacker.pers[ "team" ] == "allies" && sWeapon == "springfield_mp" )
 			iDamage /= 4;
 			
@@ -558,16 +568,6 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
 		if ( eAttacker.pers[ "team" ] == "axis" && eAttacker.class == "sniper" && eAttacker.invisible )
 			iDamage *= 2;
-
-		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
-			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
-			iDamage = 125;
-		}
-
-		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 
-			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
-			iDamage = 150;
-		}
 	}
 	
 	if ( isPlayer( eAttacker ) && eAttacker.pers[ "team" ] == "axis" && sMeansOfDeath == "MOD_MELEE" )
@@ -712,12 +712,12 @@ spawnPlayer()
 		if ( getCvar( "mapname" ) == "toybox_bloodbath" )
 			spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
 			
-		spawnpoint = maps\mp\gametypes\_spawnlogic::getSpawnpoint_NearTeam(spawnpoints);
+		spawnpoint = maps\mp\gametypes\_zombie_spawnlogic::getSpawnpoint_NearTeam(spawnpoints);
 	}
 	else if ( self.pers[ "team" ] == "axis" )
 	{
 		spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
-		spawnpoint = maps\mp\gametypes\_spawnlogic::getSpawnpoint_Farthest(spawnpoints);
+		spawnpoint = maps\mp\gametypes\_zombie_spawnlogic::getSpawnpoint_Random(spawnpoints);
 	}
 	
 	if(isdefined(spawnpoint))
