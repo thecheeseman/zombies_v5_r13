@@ -39,6 +39,8 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1
 #### 04/04/16 - 08/04/16
     
+    # Fixed a bug where snipers didn't get double damage for being invisible
+    # Fixed a bug where sentries could be placed in the air and/or fall down inside of objects
     * Lowered Sentry damage from 15 to 7
     # Invisible snipers actually can be hit now
     + Targeted Zombies get hit with 2X damage

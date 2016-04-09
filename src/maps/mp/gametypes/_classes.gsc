@@ -368,8 +368,10 @@ ammobox_think( box )
                      
                 if ( players[ i ] != self )
                 {
-                    self iPrintLn( "You gave ^2" + ammogiven + "^7 ammo to " + players[ i ].name + "^7!" );
-                    self.stats[ "ammoHealed" ] += ammogiven;
+                    if ( ammogiven > 0 ) {
+                        self iPrintLn( "You gave ^2" + ammogiven + "^7 ammo to " + players[ i ].name + "^7!" );
+                        self.stats[ "ammoHealed" ] += ammogiven;
+                    }
 
                     healamount++;
                     if ( healamount % 10 == 0 ) {
@@ -446,7 +448,7 @@ sentry()
         return;
     }
     
-    trace = bullettrace( barrel.origin, barrel.origin + ( 0, 0, -1024 ), false, undefined );
+    trace = bullettrace( barrel.origin + ( 0, 0, 24 ), barrel.origin + ( 0, 0, -10000 ), false, undefined );
     barrel moveto( trace[ "position" ], 0.1 );
     
     self iprintln( "Sentry placed!" );
@@ -1093,6 +1095,12 @@ sneakyfuck() {
             continue;
         }
 
+        // fired or bashed
+        if ( self attackbuttonpressed() || self meleebuttonpressed() ) {
+            stoppedtime = gettime();
+            continue;
+        }
+
         // stopped moving
         if ( self isOnGround() && self.origin == lastorigin && moving ) {
             stoppedtime = gettime();
@@ -1110,6 +1118,17 @@ sneakyfuck() {
             self.invisible = true;
         }
     }
+
+    self iPrintLn( "You are now visible!" );
+
+    stoppedtime = gettime();
+
+    self.hiddenhud.alpha = 0;
+    self detachall();
+    self maps\mp\gametypes\_skins::setAllModels();
+
+    moving = true;
+    self.invisible = false;
 
     if ( isDefined( self.hiddenhud ) )
         self.hiddenhud destroy();

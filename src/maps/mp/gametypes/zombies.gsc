@@ -556,7 +556,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		if ( eAttacker.pers[ "team" ] == "axis" && level.lasthunter && sWeapon == "mosin_nagant_sniper_mp" && sMeansOfDeath == "MOD_MELEE" )
 			iDamage = self.health;
 
-		if ( eAttacker.pers[ "team" ] == "axis" && self.class == "sniper" && self.invisible )
+		if ( eAttacker.pers[ "team" ] == "axis" && eAttacker.class == "sniper" && eAttacker.invisible )
 			iDamage *= 2;
 
 		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
