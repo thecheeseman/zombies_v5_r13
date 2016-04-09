@@ -413,8 +413,11 @@ beDestroyed( owner, type ) {
 	self endon( "stop destroy" );
 
 	self.health = 2000;
-	if ( type == "xmodel/barrel_black1" )
+	hitboxsize = 32;
+	if ( type == "xmodel/barrel_black1" ) {
 		self.health = 5000;
+		hitboxsize = 48;
+	}
 
 	attacker = undefined;
 	while ( self.health > 0 ) {
@@ -424,9 +427,9 @@ beDestroyed( owner, type ) {
     	attackerweapon = "enfield_mp";
 	    players = getEntArray( "player", "classname" );
 	    for ( i = 0; i < players.size; i++ ) {
-	        if ( distance( self.origin, players[ i ].origin ) < 32 ) {
-	            //if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
-	        	if ( players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
+	        if ( distance( self.origin, players[ i ].origin ) < hitboxsize ) {
+	            if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
+	        	//if ( players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
 	                attacker = players[ i ];
 	                attacker thread maps\mp\gametypes\_classes::meleedowntrack();
 	                attackerweapon = players[ i ] getCurrentWeapon();

@@ -409,10 +409,10 @@ sentry()
             continue;
 
         barrel show();
-        traceDir = anglesToForward( self.angles );
+        traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
         traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
-        trace = bulletTrace( self.origin, traceEnd, false, barrel );
+        trace = bulletTrace( self.origin, traceEnd, true, barrel );
 
         pos = trace[ "position" ];
         barrel moveto( pos, 0.05 );
@@ -448,7 +448,7 @@ sentry()
         return;
     }
     
-    trace = bullettrace( barrel.origin + ( 0, 0, 24 ), barrel.origin + ( 0, 0, -10000 ), false, undefined );
+    trace = bullettrace( barrel.origin + ( 0, 0, 24 ), barrel.origin + ( 0, 0, -10000 ), true, self );
     barrel moveto( trace[ "position" ], 0.1 );
     
     self iprintln( "Sentry placed!" );
@@ -486,7 +486,7 @@ moveturret( barrel ) {
     self.moveturret = true;
 
     movetime = 3;
-    while ( !breakout && isDefined( barrel ) && distance( barrel.origin, self.origin ) < level.plantdist && isAlive( self ) && !level.lasthunter )
+    while ( !breakout && isDefined( barrel ) && distance( barrel.origin, self.origin ) < 40 && isAlive( self ) && !level.lasthunter )
     {   
         if ( !isDefined( self.moveturretnotice ) )
         {
