@@ -16,13 +16,13 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 
 # To-do
 
-- [ ] Add classes: recon, support, medic, sniper, engineer
-    - [ ] Recon: double jump
-    - [ ] Support: mobile ammobox
-    - [ ] Medic: mobile medic bag
-    - [ ] Sniper: something interesting
-    - [ ] Engineer: turrets
-- [ ] Breakable barricades and turrets
+- [X] Add classes: recon, support, medic, sniper, engineer
+    - [X] Recon: double jump
+    - [X] Support: mobile ammobox
+    - [X] Medic: mobile medic bag
+    - [X] Sniper: something interesting
+    - [X] Engineer: turrets
+- [X] Breakable barricades and turrets
 - [ ] Some new buy menu features?
 - [ ] ????
 - [ ] Profit
@@ -35,6 +35,47 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     -   removal
     *   change
     #   fix
+
+#### Revision 13.1
+#### 04/04/16 - 08/04/16
+    
+    * Lowered Sentry damage from 15 to 7
+    # Invisible snipers actually can be hit now
+    + Targeted Zombies get hit with 2X damage
+    + Engineers with the M1Garand can now select a preferred target for their sentry
+    + Redid weapon damage according to CP's spec
+    # Fixed various bugs relating to new additions
+    + Added destructible barricades
+    + Now when you buy Flashbangs, they will completely replace your regular grenades :)
+    + Sniper now does 2X damage when invisible
+    + Added Sniper class with special ability: invisibility (active after not moving for 3 seconds)
+    - Removed "immunity" progress bar as it's basically useless and wasting 2/31 HUD elements
+    + Sentries are now movable
+    + Sentries have 500 health now instead of 100
+    * Changed Sentry code around, now Engineer needs to bash to repair - Zombies also do full melee damage to turrets
+    + Added new stats: sentryKills
+    + Added Engineer class
+    * Finally updated killstreaks to use CoDExtended's getPlayerAngles() for more accurate locations
+    # Fixed a potential crash with the Carpet Bomb / Airstrike killstreaks
+    - Disabled the ability to change classes on the fly - if its before game starts, you'll just commit suicide and change (makes my life so much easier)
+    * Some slight cosmetic changes with Support / Medic so you don't see the ammobox / medicbag spawning :)
+    # Fixed a bug where you could have a Medic helmet and not be a Medic
+    # Fixed a bug that would caues the Recon to double-jump while getting ammo from an ammobox
+    + Added a +25 HP bonus if Medic bashes players while healing them
+    + Added new stats: timePlayed, joins, hpHealed, ammoHealed
+    # Fixed a crash that occured when two players joined, the timer started, and left
+    # Fixed a crash that occured when game tried to force everyone into a gamecam with no last killer
+    * Changed move speeds of Zombie classes to make them a bit faster
+    + Medic now gains XP per 25 health restored
+    + Added gained XP message
+    * Updated Ammoboxes so they don't give you grenades if you're Medic, Support, or Engineer
+    # Fixed bug where you could be a Medic with Recon abilities
+    * Upped the Sten's melee time so you can now do 6 bashes per second as opposed to 3
+    # Fixed Recon's double jump from applying as last hunter
+    # Fixed Medic's health regen from applying to other classes / last hunter
+    + Added classes from v6 : Recon, Support, Medic
+    - Removed the ability to change weapons during the game
+    + Added Indy's chat commands
 
 #### Revision 13.07
 #### 03/04/16

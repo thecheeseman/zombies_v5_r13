@@ -28,7 +28,7 @@ main()
 	precacheShader( "black" );
 	precacheShader( "gfx/hud/objective.tga" );
 	
-	precacheString( &"Hold [F] to get ammo/health" );
+	precacheString( &"Hold [{+activate}] to get ammo/health" );
 	
 	locs = [];
 	angs = [];
@@ -386,7 +386,7 @@ getammo( box )
 			self.ammonotice.x = 320;
 			self.ammonotice.y = 320;
 			self.ammonotice.alpha = 1;
-			self.ammonotice setText( &"Hold [F] to get ammo/health" );
+			self.ammonotice setText( &"Hold [{+activate}] to get ammo/health" );
 		}
 		
 		while ( !self.givenammo && self usebuttonpressed() && self isOnGround() && isAlive( self ) )
@@ -398,7 +398,7 @@ getammo( box )
 				self.progressbackground.alignX = "center";
 				self.progressbackground.alignY = "middle";
 				self.progressbackground.x = 320;
-				self.progressbackground.y = 385;
+				self.progressbackground.y = 365;
 				self.progressbackground.alpha = 0.75;
 			}
 			self.progressbackground setShader( "black", ( level.barsize + 4 ), 12 );		
@@ -409,7 +409,7 @@ getammo( box )
 				self.progressbar.alignX = "left";
 				self.progressbar.alignY = "middle";
 				self.progressbar.x = ( 320 - ( level.barsize / 2.0 ) );
-				self.progressbar.y = 385;
+				self.progressbar.y = 365;
 				self.progressbar.alpha = 1;
 			}
 			self.progressbar setShader( "white", 0, 8 );
@@ -457,13 +457,14 @@ getammo( box )
 				self setWeaponSlotAmmo( "primary", primarymax + addprimary );
 				self setWeaponSlotAmmo( "pistol", pistolmax + addpistol );
 				
-				if ( self hasWeapon( "fraggrenade_mp" ) )
+				if ( self hasWeapon( "fraggrenade_mp" ) || self.flashbangs )
 					self setWeaponSlotWeapon( "grenade", "fraggrenade_mp" );
 				else
 					self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
 				
 				if ( level.gamestarted ) {
-					self setWeaponSlotAmmo( "grenade", self.stickynades );
+					if ( self.class != "engineer" && self.class != "medic" && self.class != "support" ) 
+						self setWeaponSlotAmmo( "grenade", self.stickynades );
 				
 					if ( self.healthpacks < self.maxhealthpacks )
 						self.healthpacks++;

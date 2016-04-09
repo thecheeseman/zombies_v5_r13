@@ -325,31 +325,42 @@ Callback_PlayerConnect()
 			{
 				if ( self.pers[ "team" ] == "allies" )
 					self suicide();
+
+				if ( self.pers[ "team" ] == "axis" ) {
+					if ( !level.gamestarted ) {
+						self suicide();
+					} else {
+						self iPrintLn( "^1You cannot change your weapon at this time." );
+						continue;
+					}
+				}
 				
 				oldweap = self.pers[ "weapon" ];
 				self.pers["weapon"] = weapon;
 
 				weaponname = maps\mp\gametypes\_teams::getWeaponName(self.pers["weapon"]);
-				
+				/*
 				if ( self.pers[ "team" ] == "axis" )
 				{
-					if ( self.changeweapon || self.rank > 7 )
+					if ( !level.gamestarted )
 					{
 						self setWeaponSlotWeapon( "primary", self.pers[ "weapon" ] );
 						primarymax = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
-						max = ( primarymax / 4 ) + ( primarymax / 2 );
-						self setWeaponSlotAmmo( "primary", max );
-						self.changeweapon = false;	
+						bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
+						primarymax += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
+
+						self setWeaponSlotAmmo( "primary", primarymax );
+						self.changeweapon = false;
 						
 						self switchToWeapon( self.pers[ "weapon" ] );
 
-						self maps\mp\gametypes\_zombie::setupClasses();
+						self maps\mp\gametypes\_classes::setup();
 					}
 					else
 					{
 						self iPrintLn( "^1You cannot change your weapon at this time." );
-					}
-				}
+					}*
+				}*/
 			}
 		}
 		else if(menu == game["menu_viewmap"])
@@ -422,8 +433,23 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		return;
 	}
 		
-	if ( isPlayer( eAttacker ) && eAttacker != self && eAttacker.pers[ "team" ] == self.pers[ "team" ] )
+	if ( isPlayer( eAttacker ) && eAttacker != self && eAttacker.pers[ "team" ] == self.pers[ "team" ] ) {
+		if ( sWeapon == "stielhandgranate_mp" && eAttacker.class == "medic" ) {
+			if ( self.health < self.maxhealth ) {
+				eAttacker iPrintLn( "You healed " + self.name + "^7 for ^225^7 HP!" );
+				self.health += 25;
+				if ( self.health > self.maxhealth )
+					self.health = self.maxhealth;
+
+				eAttacker.stats[ "hpHealed" ] += 25;
+				eAttacker.xp += level.xpvalues[ "medic_heal" ];
+                eAttacker.score += level.xpvalues[ "medic_heal" ];
+                eAttacker iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
+                eAttacker thread maps\mp\gametypes\_zombie::checkRank();
+			}
+		}
 		return;
+	}
 
 	if ( isPlayer( eInflictor ) && eInflictor != self && eInflictor.pers[ "team" ] == self.pers[ "team" ] )
 		return;
@@ -453,7 +479,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		iDamage = 1;
 		
 	if ( sHitLoc == "head" && sMeansOfDeath != "MOD_MELEE" )
-	{
+	{/*
 		if ( !level.firstzombie )
 		{
 			doit = true;
@@ -469,6 +495,9 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 				if ( i > rndchance )
 					doit = false;
 			}
+
+			if ( self.pers[ "team" ] == "allies" && self.zombietype == "fast" )
+				doit = false;
 				
 			// instakill vs. half the health
 			if ( doit )
@@ -480,6 +509,23 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 				else
 					iDamage = self.health + 10;
 			}
+		}*/
+
+		switch ( sWeapon ) {
+			case "m1carbine_mp":
+				iDamage *= 3;
+				break;
+			case "kar98k_mp":
+			case "mp40_mp":
+			case "thompson_mp":
+				iDamage *= 2;
+				break;
+			case "kar98k_sniper_mp":
+			case "springfield_mp":
+			case "ppsh_mp":
+			case "ppsh_semi_mp":
+				iDamage = self.health + 10;
+				break;
 		}
 	}
 
@@ -509,6 +555,19 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 			
 		if ( eAttacker.pers[ "team" ] == "axis" && level.lasthunter && sWeapon == "mosin_nagant_sniper_mp" && sMeansOfDeath == "MOD_MELEE" )
 			iDamage = self.health;
+
+		if ( eAttacker.pers[ "team" ] == "axis" && self.class == "sniper" && self.invisible )
+			iDamage *= 2;
+
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 125;
+		}
+
+		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 
+			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
+			iDamage = 150;
+		}
 	}
 	
 	if ( isPlayer( eAttacker ) && eAttacker.pers[ "team" ] == "axis" && sMeansOfDeath == "MOD_MELEE" )

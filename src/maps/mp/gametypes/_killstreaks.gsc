@@ -358,7 +358,7 @@ doMortar( owner, pos, fx )
 		y *= -1;
 		
 	newpos = pos + ( x, y, 0 );
-	trace = bullettrace( newpos + ( 0, 0, 1024 ), newpos + ( 0, 0, -1024 ), true, undefined );
+	trace = bullettrace( newpos, newpos + ( 0, 0, -10000 ), false, undefined );
 	newpos = pos + ( x, y, trace[ "position" ][ 2 ] );
 	
 	mod = spawn( "script_model", newpos + ( 0, 0, 512 ) );
@@ -615,7 +615,8 @@ getBestPlaneDirection( hitpos )
 		angle = (checkPitch, yaw + 180, 0);
 		dir = anglesToForward( angle );
 		
-		endpos = startpos + dir * 1500;
+		//endpos = startpos + dir * 1500;
+		endpos = maps\mp\_utility::vectorScale( ( startpos + dir ), 1500 );
 		
 		trace = bullettrace( startpos, endpos, false, undefined );
 		
@@ -715,7 +716,7 @@ getUserLocation()
 	
 	while ( isAlive( self ) )
 	{
-		traceDir = anglesToForward( self.angles );
+		traceDir = anglesToForward( self getPlayerAngles() );
 		traceEnd = self.origin + ( 0, 0, 64 );
 		traceEnd += maps\mp\_utility::vectorScale( traceDir, 10000 );
 		trace = bulletTrace( self.origin + ( 0, 0, 64 ), traceEnd, false, undefined );

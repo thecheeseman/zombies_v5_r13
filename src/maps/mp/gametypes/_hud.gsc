@@ -31,13 +31,20 @@ init()
 	precacheString( &"^1Time Alive^7: " );
 	precacheString( &"^1Zombie Rank^7: " );
 	precacheString( &"^3Total Kills^7: " );
-	//precacheString( &"^1Assists^7: " );
 	
+	precacheString( &"^6Class^7: " );
 	precacheString( &"^2XP^7: " );
 	precacheString( &"^3Points^7: " );
 	precacheString( &"^1Rank^7: " );
 	precacheString( &"^4Proximity Charges^7: " );
 	precacheString( &"^5Health Packs^7: " );
+
+	precacheString( &"Medic" );
+	precacheString( &"Support" );
+	precacheString( &"Recon" );
+	precacheString( &"Engineer" );
+	precacheString( &"Sniper" );
+	precacheString( &"None" );
 	
 	precacheString( &"Jumper" );
 	precacheString( &"Fast" );
@@ -90,21 +97,15 @@ init()
 cleanUpHud()
 {
 	if ( isDefined( self.hud ) ) {
+		if ( isDefined( self.hud[ "class" ] ) )			self.hud[ "class" ] destroy();
 		if ( isDefined( self.hud[ "health" ] ) )		self.hud[ "health" ] destroy();
 		if ( isDefined( self.hud[ "rank" ] ) )			self.hud[ "rank" ] destroy();
 		if ( isDefined( self.hud[ "xp" ] ) )			self.hud[ "xp" ] destroy();
-		if ( isDefined( self.hud[ "kills" ] ) )			self.hud[ "kills" ] destroy();
-		if ( isDefined( self.hud[ "bashes" ] ) )		self.hud[ "bashes" ] destroy();
-		if ( isDefined( self.hud[ "deaths" ] ) )		self.hud[ "deaths" ] destroy();
-		if ( isDefined( self.hud[ "damage" ] ) )		self.hud[ "damage" ] destroy();
-		if ( isDefined( self.hud[ "headshots" ] ) )		self.hud[ "headshots" ] destroy();
 		if ( isDefined( self.hud[ "stickies" ] ) ) 		self.hud[ "stickies" ] destroy();
 		if ( isDefined( self.hud[ "healthpacks" ] ) ) 	self.hud[ "healthpacks" ] destroy();
-		if ( isDefined( self.hud[ "timealive" ] ) )		self.hud[ "timealive" ] destroy();
 		if ( isDefined( self.hud[ "zombietype" ] ) ) 	self.hud[ "zombietype" ] destroy();
 		if ( isDefined( self.hud[ "zombierank" ] ) )	self.hud[ "zombierank" ] destroy();
 		if ( isDefined( self.hud[ "zombiekills" ] ) )	self.hud[ "zombiekills" ] destroy();
-		if ( isDefined( self.hud[ "assists" ] ) )		self.hud[ "assists" ] destroy();
 		if ( isDefined( self.hud[ "firebomb" ] ) )		self.hud[ "firebomb" ] destroy();
 		if ( isDefined( self.hud[ "poisonbomb" ] ) )	self.hud[ "poisonbomb" ] destroy();
 		if ( isDefined( self.hud[ "points" ] ) )		self.hud[ "points" ] destroy();
@@ -168,6 +169,12 @@ cleanUpHud()
 	if ( isDefined( self.gc_bottombar ) ) 	self.gc_bottombar destroy();
 	if ( isDefined( self.gc_title ) )		self.gc_title destroy();
 	if ( isDefined( self.gc_timer ) )		self.gc_timer destroy();
+
+	if ( isDefined( self.hiddenhud ) )		self.hiddenhud destroy();
+
+	if ( isDefined( self.moveturretnotice ) )		self.moveturretnotice destroy();
+	if ( isDefined( self.mtprogressbackground ) )	self.mtprogressbackground destroy();
+	if ( isDefined( self.mtprogressbar ) )			self.mtprogressbar destroy();
 	
 	self thread maps\mp\gametypes\_zombie::FOVScale( 80 );
 }
@@ -175,22 +182,13 @@ cleanUpHud()
 runHud()
 {
 	self addTextHud( "health", 567, 465, "center", "middle", 1, 0.8, 10, &"" );
-/*
-	self addTextHud( "kills", 630, 25, "right", "middle", 1, 0.8, 10, &"^1Kills^7: " );
-	self addTextHud( "bashes", 630, 40, "right", "middle", 1, 0.8, 10, &"^1Bashes^7: " );
-	self addTextHud( "deaths", 630, 55, "right", "middle", 1, 0.8, 10, &"^1Deaths^7: " );
-	self addTextHud( "damage", 630, 70, "right", "middle", 1, 0.8, 10, &"^1Damage^7: " );
-	self addTextHud( "headshots", 630, 85, "right", "middle", 1, 0.8, 10, &"^1Headshots^7: " );
-	self addTextHud( "assists", 630, 100, "right", "middle", 1, 0.8, 10, &"^1Assists^7: " );
-*/
 	
 	if ( self.pers[ "team" ] == "axis" )
 	{
+		self addTextHud( "class", 630, 320, "right", "middle", 1, 1, 10, &"^6Class^7: " );
 		self addTextHud( "xp", 630, 340, "right", "middle", 1, 1, 10, &"^2XP^7: " );
 		self addTextHud( "points", 630, 360, "right", "middle", 1, 1, 10, &"^3Points^7: " );
 		self addTextHud( "rank", 630, 380, "right", "middle", 1, 1, 10, &"^1Rank^7: " );
-		//self addTextHud( "stickies", 630, 390, "right", "middle", 1, 1, 10, &"^4Proximity Charges^7: " );
-		//self addTextHud( "healthpacks", 630, 410, "right", "middle", 1, 1, 10, &"^5Health Packs^7: " );
 		
 		self.hud[ "datahud_back" ] = newClientHudElem( self );
 		self.hud[ "datahud_back" ].x = 638;
@@ -245,18 +243,6 @@ runHud()
 		self.hud[ "healthpacks" ].alpha = 1;
 		self.hud[ "healthpacks" ].fontscale = 0.9;
 		self.hud[ "healthpacks" ].sort = 10;
-/*		
-		self.xpshow = newClientHudElem( self );
-		self.xpshow.x = 320;
-		self.xpshow.y = 220;
-		self.xpshow.alignx = "center";
-		self.xpshow.aligny = "middle";
-		self.xpshow.alpha = 0;
-		self.xpshow.fontscale = 1;
-		self.xpshow.label = &"^3+";
-		self.xpshow.sort = 10;
-*/	
-//		self addTextHud( "timealive" , 630, 100, "right", "middle", 1, 0.8, 10, &"^1Time Alive^7: " );
 		
 		self.bodyarmor_hud_back = newClientHudElem( self );
 		self.bodyarmor_hud_back.x = 320;
@@ -313,25 +299,6 @@ runHud()
 		self.exploarmor_text.alpha = 0;
 		self.exploarmor_text.label = &"Explosion Armor: ";
 		self.exploarmor_text.fontscale = 0.9;
-		
-		self.immunity_hud_back = newClientHudElem( self );
-		self.immunity_hud_back.x = 501;
-		self.immunity_hud_back.y = 454;
-		self.immunity_hud_back.alignx = "left";
-		self.immunity_hud_back.aligny = "top";
-		self.immunity_hud_back.alpha = 2;
-		self.immunity_hud_back setShader( "gfx/hud/hud@health_back.dds", 130, 5 );
-		self.immunity_hud_back.sort = 10;
-		
-		self.immunity_hud_front = newClientHudElem( self );
-		self.immunity_hud_front.x = 502;
-		self.immunity_hud_front.y = 455;
-		self.immunity_hud_front.alignx = "left";
-		self.immunity_hud_front.aligny = "top";
-		self.immunity_hud_front.color = ( 1, 1, 0 );
-		self.immunity_hud_front.alpha = 2;
-		self.immunity_hud_front setShader( "gfx/hud/hud@health_bar.dds", 129, 3 );
-		self.immunity_hud_front.sort = 20;
 
 		self.darkness = newClientHudElem( self );
 		self.darkness.x = 0;
@@ -403,7 +370,18 @@ doHud()
 	{
 		rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
 		self.hud[ "rank" ] setText( rank.rankString );
-//		self.hud[ "timealive" ] setTimerUp( 0 );
+
+		classstring = &"None";
+		switch ( self.class ) {
+			case "medic":		classstring = &"Medic"; break;
+			case "support":		classstring = &"Support"; break;
+			case "recon":		classstring = &"Recon"; break;
+			case "engineer":	classstring = &"Engineer"; break;
+			case "sniper":		classstring = &"Sniper"; break;
+			default: 			break;
+		}
+
+		self.hud[ "class" ] setText( classstring );
 	}
 	
 	if ( self.pers[ "team" ] == "allies" )
@@ -411,10 +389,10 @@ doHud()
 		rank = undefined;
 		switch ( self.pers[ "weapon" ] )
 		{
-			case "enfield_mp": rank = &"Jumper"; break;
-			case "sten_mp": rank = &"Fast"; break;
-			case "bren_mp": rank = &"Poison"; break;
-			case "springfield_mp": rank = &"Fire"; break;
+			case "enfield_mp": 		rank = &"Jumper"; break;
+			case "sten_mp": 		rank = &"Fast"; break;
+			case "bren_mp": 		rank = &"Poison"; break;
+			case "springfield_mp": 	rank = &"Fire"; break;
 		}
 		
 		lolrank = maps\mp\gametypes\_ranks::getRankByID( "zombie", self.zomrank );
@@ -425,7 +403,7 @@ doHud()
 	self endon( "disconnect" );
 	self endon( "death" );
 	self endon( "spawned" );
-		
+
 	while ( true )
 	{
 		self.hud[ "health" ] setValue( self.health );
@@ -490,20 +468,6 @@ doHud()
 				self.exploarmor_hud_front.alpha = 0;
 				self.exploarmor_text.alpha = 0;
 			}
-			
-			imm = 0;
-			if ( self.immunity == 1 )
-				imm = 25;
-			else if ( self.immunity == 2 )
-				imm = 50;
-			else if ( self.immunity == 3 )
-				imm = 75;
-			else if ( self.immunity == 4 )
-				imm = 100;
-			else if ( self.immunity == 5 )
-				imm = 128;
-				
-			self.immunity_hud_front setShader( "white", imm, 4 );
 		}
 		else if ( self.pers[ "team" ] == "allies" )
 		{
@@ -524,14 +488,7 @@ doHud()
 					self.hud[ "poisonbomb" ] setText( &"No" );
 			}
 		}
-/*			
-		self.hud[ "kills" ] setValue( self.stats[ "kills" ] );
-		self.hud[ "bashes" ] setValue( self.stats[ "bashes" ] );
-		self.hud[ "deaths" ] setValue( self.stats[ "deaths" ] );
-		self.hud[ "damage" ] setValue( (int)self.stats[ "damage" ] );
-		self.hud[ "headshots" ] setValue( self.stats[ "headshots" ] );
-		self.hud[ "assists" ] setValue( self.stats[ "assists" ] );
-*/		
+
 		wait 0.1;
 	}
 }
@@ -681,7 +638,7 @@ endgamehud()
 		player.stat_shotsfired.sort = 9001;
 		player.stat_shotsfired.label = &"Shots Fired: ";
 		player.stat_shotsfired.fontscale = 0.9;	
-		player.stat_shotsfired setValue( player.shotsfired );
+		player.stat_shotsfired setValue( player.stats[ "shotsFired" ] );
 		
 		player.stat_shotshit = newClientHudElem( player );
 		player.stat_shotshit.alpha = 1;
@@ -690,7 +647,7 @@ endgamehud()
 		player.stat_shotshit.sort = 9001;
 		player.stat_shotshit.label = &"Shots Hit: ";
 		player.stat_shotshit.fontscale = 0.9;	
-		player.stat_shotshit setValue( player.shotshit );
+		player.stat_shotshit setValue( player.stats[ "shotsHit" ] );
 		
 		player.stat_accuracy = newClientHudElem( player );
 		player.stat_accuracy.alpha = 1;
@@ -699,8 +656,8 @@ endgamehud()
 		player.stat_accuracy.sort = 9001;
 		player.stat_accuracy.label = &"Accuracy: ";
 		player.stat_accuracy.fontscale = 0.9;	
-		if ( player.shotshit > 0 ) {
-			player.stat_accuracy setValue( ( player.shotsfired / player.shotshit ) );
+		if ( player.stats[ "shotsHit" ] > 0 ) {
+			player.stat_accuracy setValue( (float)( (float)player.stats[ "shotsFired" ] / (float)player.stats[ "shotsHit" ] ) * 100 );
 		} else {
 			player.stat_accuracy setValue( 0 );
 		}
@@ -767,12 +724,12 @@ endgamehud_cleanup()
 nightvision()
 {
 	self.nightvision = true;
-	/*
+	
 	self.nightvis = newClientHudElem( self );
 	self.nightvis.x = 0;
 	self.nightvis.y = 0;
 	self.nightvis setShader( "gfx/effects/dark_smoke.tga", 640, 480 );
-	self.nightvis.alpha = 0.2;
+	self.nightvis.alpha = 0.4;
 	self.nightvis.sort = 9001;
-	//self.nightvis.color = ( 0, 1, 0 );*/
+	self.nightvis.color = ( 0, 1, 0 );
 }
