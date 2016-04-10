@@ -676,7 +676,7 @@ sentry_think( barrel )
     
     self thread mg_remove( self.mg );
     self thread mg_remove_on_spec( self.mg );
-    self thread sentry_hud( self.mg );
+    self thread sentry_hud( self.mg, self.pers[ "weapon" ] );
     self thread sentry_explode();
        
     self.mg.ammo = 50;
@@ -970,7 +970,7 @@ sentry_reload( owner )
     self.ammo = 50;
 }
 
-sentry_hud( mg )
+sentry_hud( mg, type )
 {
     self endon( "disconnect" );
     
@@ -1071,7 +1071,7 @@ sentry_hud( mg )
         }            
         
         self.sentry_hud_health setValue( self.mg.health );
-        if ( self.pers[ "weapon" ] == "m1garand_mp" )
+        if ( type == "m1garand_mp" )
             self.sentry_hud_health_front setShader( "white", ( self.mg.health / 10 ) * 1.12, 8 );
         else
             self.sentry_hud_health_front setShader( "white", ( self.mg.health / 5 ) * 1.12, 8 );
