@@ -168,6 +168,7 @@ healthbag()
     mypack hide();
     mypack setContents( 0 );
     
+    self thread healthbag_destroy( mypack );
     self thread dohealing( mypack );
     
     while ( isAlive( self ) && !level.lasthunter )
@@ -194,6 +195,16 @@ healthbag()
 
     self notify( "remove healthbag" );
     mypack delete();
+}
+
+healthbag_destroy( bag ) {
+    self endon( "remove healthbag" );
+
+    self waittill( "spawned" );
+    self notify( "remove healthbag" );
+
+    if ( isDefined( bag ) )
+        bag delete();
 }
 
 dohealing( mypack )
@@ -272,6 +283,9 @@ ammobox()
     mybox setContents( 0 );
     
     self thread ammobox_think( mybox );
+    self thread ammobox_destroy( mybox );
+
+    self endon( "remove ammobox" );
     
     while ( isAlive( self ) && !level.lasthunter )
     {  
@@ -297,6 +311,16 @@ ammobox()
     
     self notify( "remove ammobox" );
     mybox delete();
+}
+
+ammobox_destroy( box ) {
+    self endon( "remove ammobox" );
+
+    self waittill( "spawned" );
+    self notify( "remove ammobox" );
+
+    if ( isDefined( box ) )
+        box delete();
 }
 
 ammobox_think( box )
@@ -398,6 +422,10 @@ sentry()
     barrel hide();
     barrel setContents( 0 );
     barrel setModel( "xmodel/barrel_black1" );
+
+    self thread sentry_destroy( barrel );
+
+    self endon( "remove sentry" );
     
     while ( isAlive( self ) )
     {  
@@ -463,6 +491,16 @@ sentry()
     self thread sentry_remove_on_spec( barrel );
 
     self thread watchmoveturret( barrel );
+}
+
+sentry_destroy( barrel ) {
+    self endon( "remove sentry" );
+
+    self waittill( "spawned" );
+    self notify( "remove sentry" );
+
+    if ( isDefined( barrel ) )
+        barrel delete();
 }
 
 watchmoveturret( barrel ) {
