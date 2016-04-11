@@ -85,6 +85,8 @@ precache()
 	precacheShellshock( "default" );
 	precacheShellshock( "groggy" );
 
+	precacheString( &"^3Spectating is not allowed." );
+
 	precacheModel( "xmodel/health_large" );
 	precacheModel( "xmodel/gear_russian_load_coat" );
 	precacheModel( "xmodel/gear_russian_ppsh_coat" );
@@ -847,7 +849,9 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 		if ( eAttacker != self )
 		{
 			eAttacker.stats[ "damage" ] += iDamage;
-			eAttacker.stats[ "shotsHit" ]++;
+
+			if ( sWeapon != "mg42_bipod_stand_mp" )
+				eAttacker.stats[ "shotsHit" ]++;
 
 			if ( eAttacker.class == "engineer" && sWeapon == "m1garand_mp" )
 				eAttacker.preferredtarget = self;

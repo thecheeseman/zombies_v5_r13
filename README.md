@@ -36,6 +36,12 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
+#### Revision 13.1.1
+#### 09/04/16
+    
+    # Fixed a bug with class stacking
+    # Fixed a bug with sentry kills
+
 #### Revision 13.1
 #### 04/04/16 - 08/04/16
     

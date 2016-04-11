@@ -280,6 +280,7 @@ saveMyStats() {
 	self.stats[ "totalAssists" ] += self.stats[ "assists" ];
 	self.stats[ "totalShotsFired" ] += self.stats[ "shotsFired" ];
 	self.stats[ "totalShotsHit" ] += self.stats[ "shotsHit" ];
+	self.stats[ "totalSentryKills" ] += self.stats[ "sentryKills" ];
 
 	self.stats[ "timePlayed" ] += (gettime() - self.timejoined) / 1000;
 
@@ -311,6 +312,7 @@ saveMyStats() {
 			case "assists":
 			case "shotsFired":
 			case "shotsHit":
+			case "sentryKills":
 			case "playerName":
 				continue;
 				break;

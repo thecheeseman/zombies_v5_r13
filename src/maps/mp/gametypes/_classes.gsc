@@ -440,7 +440,7 @@ sentry()
         traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
         traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
-        trace = bulletTrace( self.origin, traceEnd, true, barrel );
+        trace = bulletTrace( self.origin, traceEnd, false, barrel );
 
         pos = trace[ "position" ];
         barrel moveto( pos, 0.05 );
@@ -476,7 +476,7 @@ sentry()
         return;
     }
     
-    trace = bullettrace( barrel.origin + ( 0, 0, 24 ), barrel.origin + ( 0, 0, -10000 ), true, self );
+    trace = bullettrace( barrel.origin + ( 0, 0, 24 ), barrel.origin + ( 0, 0, -10000 ), false, self );
     barrel moveto( trace[ "position" ], 0.1 );
     
     self iprintln( "Sentry placed!" );
@@ -1091,6 +1091,7 @@ sentry_hud( mg, type )
 
 sneakyfuck() {
     self endon( "death" );
+    self endon( "spawned" );
     self endon( "disconnect" );
 
     self.hiddenhud = newClientHudElem( self );
