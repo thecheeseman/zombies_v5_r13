@@ -45,7 +45,7 @@ setup() {
             case "m1carbine_mp":
                 self.class = "recon";
 
-                self setMoveSpeedScale( 1.4 );
+                self setMoveSpeedScale( 1.45 );
 
                 self thread recon();
                 break;
@@ -54,23 +54,46 @@ setup() {
             case "thompson_mp":
                 self.class = "medic";
 
-                self setMoveSpeedScale( 1.3 );
+                self.immunity = 2;
+
+                if ( self.pers[ "weapon" ] == "mp40_mp" ) {
+                    self.subclass = "combat";
+                    self setMoveSpeedScale( 1.25 );
+
+                    self.maxhealthpacks += 4;
+                    self.healthpacks = self.maxhealthpacks;
+                } else {
+                    self.maxhealth += 50;
+                    self.health = self.maxhealth;
+
+                    self setMoveSpeedScale( 1.35 );
+                    self thread healthbag();
+                }
+
+                self thread regen_health();
 
                 self detach( self.hatmodel );
                 self.hatmodel = "xmodel/USAirborneHelmet_Medic";
                 self attach( self.hatmodel );
-
-                self thread regen_health();
-                self thread healthbag();
                 break;
             // support
             case "mp44_mp":
             case "bar_mp":
                 self.class = "support";
 
-                self setMoveSpeedScale( 1.1 );
+                if ( self.pers[ "weapon" ] == "mp44_mp" ) {
+                    self.subclass = "combat";
+                    self setMoveSpeedScale( 1.1 );
 
-                self thread ammobox();
+                    self.ammobonus += 5;
+
+                    self.maxhealth += 100;
+                    self.health = self.maxhealth;
+                } else {
+                    self setMoveSpeedScale( 1.1 );
+                    self thread ammobox();
+                }
+
                 break;
             // engineer
             case "kar98k_mp":
@@ -440,7 +463,7 @@ sentry()
         traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
         traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
-        trace = bulletTrace( self.origin, traceEnd, false, barrel );
+        trace = bulletTrace( self.origin, traceEnd, false, self );
 
         pos = trace[ "position" ];
         barrel moveto( pos, 0.05 );
@@ -485,6 +508,15 @@ sentry()
     self setWeaponSlotWeapon( "grenade", "none" );
     
     wait 0.15;
+
+    while ( isAlive( self ) && maps\mp\gametypes\_zombie::distance2d( self.origin, barrel.origin ) < 40 )
+        wait 0.05;
+
+    if ( !isAlive( self ) )
+    {
+        barrel delete();
+        return;
+    }
     
     self thread sentry_think( barrel );
     self thread sentry_remove_on_death( barrel );
@@ -656,6 +688,18 @@ mg_remove( mg )
     }
 }
 
+mg_remove_on_disconnect( mg )
+{
+    self endon( "remove sentry" );
+
+    self waittill( "disconnect" );
+
+    if ( isDefined( mg ) ) {
+        mg delete();
+        mg = undefined;
+    }
+}
+
 mg_remove_on_spec( mg )
 {
     self endon( "remove sentry" );
@@ -675,6 +719,7 @@ sentry_think( barrel )
     self.mg setContents( 1 );
     
     self thread mg_remove( self.mg );
+    self thread mg_remove_on_disconnect( self.mg );
     self thread mg_remove_on_spec( self.mg );
     self thread sentry_hud( self.mg, self.pers[ "weapon" ] );
     self thread sentry_explode();
@@ -1090,10 +1135,6 @@ sentry_hud( mg, type )
 }
 
 sneakyfuck() {
-    self endon( "death" );
-    self endon( "spawned" );
-    self endon( "disconnect" );
-
     self.hiddenhud = newClientHudElem( self );
     self.hiddenhud.x = 0;
     self.hiddenhud.y = 0;
@@ -1102,10 +1143,23 @@ sneakyfuck() {
     self.hiddenhud setShader( "white", 640, 480 );
     self.hiddenhud.sort = 9999;
 
+    self.invisible = false;
+
+    if ( self.pers[ "weapon" ] == "springfield_mp" )
+        self thread hideyfuck();
+    else 
+        self thread pressftofuck();
+}
+
+hideyfuck() {
+    self endon( "death" );
+    self endon( "spawned" );
+    self endon( "disconnect" );
+
     lastorigin = self.origin;
     stoppedtime = gettime();
     moving = true;
-    self.invisible = false;
+    timehidden = 0;
 
     while ( isAlive( self ) && !level.lasthunter ) {
         lastorigin = self.origin;
@@ -1146,8 +1200,8 @@ sneakyfuck() {
             moving = false;
         }
 
-        // hasn't moved in 3 seconds
-        if ( gettime() - stoppedtime > 3000 && !self.invisible ) {
+        // hasn't moved in 5 seconds
+        if ( gettime() - stoppedtime > 5000 && !self.invisible ) {
             self iPrintLn( "You are now ^5invisible^7!" );
 
             self.hiddenhud.alpha = 0.2;
@@ -1155,7 +1209,11 @@ sneakyfuck() {
             self setModel( "" );
 
             self.invisible = true;
+            timehidden = 0;
         }
+
+        if ( self.invisible )
+            timehidden++;
     }
 
     self iPrintLn( "You are now visible!" );
@@ -1171,6 +1229,17 @@ sneakyfuck() {
 
     if ( isDefined( self.hiddenhud ) )
         self.hiddenhud destroy();
+}
+
+pressftofuck() {
+    self endon( "death" );
+    self endon( "spawned" );
+    self endon( "disconnect" );
+
+    lastorigin = self.origin;
+    stoppedtime = gettime();
+    moving = true;
+    timehidden = 0;
 }
 
 superJump()

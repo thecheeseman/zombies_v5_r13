@@ -171,8 +171,7 @@ startGame()
 	
 	thread rotateIfEmpty();
 	
-	while ( 1 )
-	{
+	while ( true ) {
 		ePlayers = getPlayersOnTeam( "axis" );
 		if ( ePlayers.size > 1 )
 			break;
@@ -238,8 +237,7 @@ rotateIfEmpty()
 	
 	time = 0;
 	
-	while ( time < 1200 )
-	{
+	while ( time < 1200 ) {
 		time++;
 		wait 1;
 	}
@@ -493,6 +491,8 @@ gameLogic()
 	
 	while ( 1 )
 	{
+		resettimeout();
+
 		zombies = getPlayersOnTeam( "allies" );
 		hunters = getPlayersOnTeam( "axis" );
 		
@@ -649,6 +649,7 @@ onConnect()
 	self.specialmodel = false;
 	self.lasthittime = 0;
 	self.class = "default";
+	self.subclass = "none";
 	self.invisible = false;
 	self.flashbangs = false;
 	
@@ -719,12 +720,11 @@ spawnPlayer()
 	self.specialmodel = false;
 	self.lasthittime = 0;
 	self.class = "default";
+	self.subclass = "none";
 	self.invisible = false;
 	self.flashbangs = false;
 	self.preferredtarget = undefined;
 
-	maps\mp\gametypes\_zombie::setPlayerModel();
-	
 	if ( isDefined( self.spechud ) || isDefined( self.specnotice ) )
 	{
 		self.spechud destroy();
@@ -738,12 +738,9 @@ spawnPlayer()
 			self.iszombie = false;
 			self.zombietype = "none";
 		}
-
-		self maps\mp\gametypes\_classes::setup();
 		
-		self thread ammoLimiting();
 		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
-		self thread stickynades();
+
 		self thread timeAlive();
 		self thread whatscooking();
 		self thread shotsfired();
@@ -759,8 +756,6 @@ spawnPlayer()
 		self setWeaponSlotAmmo( "pistol", 0 );
 		self setWeaponSlotClipAmmo( "primary", 0 );
 		self setWeaponSlotClipAmmo( "pistol", 0 );
-		
-		self maps\mp\gametypes\_classes::setup();
 
 		if ( self.headicon != "" )
 		{
@@ -769,6 +764,17 @@ spawnPlayer()
 		}
 			
 		self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
+	}
+
+	self maps\mp\gametypes\_skins::main();
+	self maps\mp\gametypes\_classes::setup();
+
+	if ( self.pers[ "team" ] == "axis" ) {
+		self thread ammoLimiting();
+
+		if ( self.class == "sniper" || self.class == "recon" || 
+		   ( self.class == "support" && self.subclass == "combat" ) )
+			self thread stickynades();
 	}
 	
 	if ( self.isnew )
@@ -862,27 +868,25 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 
 				// grenade damage
 				if ( sWeapon == "mk1britishfrag_mp" ) {
-					doit = true;
-
-					if ( ( self.immunity > 2 || self.exploarmor > 0 ) )
-						doit = false;
-
 					y = randomInt( 100 );
 
-					if ( doit ) {
+					poisonfire = true;
+					if ( self.immunity >= 2 || self.exploarmor > 0 ) 
+						poisonfire = false;
+
+					if ( poisonfire ) {
 						if ( eAttacker.zombietype == "poison" && !self.ispoisoned && y > 75 ) {
 							self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
 						} else if ( eAttacker.zombietype == "fire" && !self.onfire && y > 75 ) {
 							self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
-						} else if ( eAttacker.zombietype == "jumper" && y > 50) {
-							// apply velocity here
-							//self setVelocity( vectornormalize( eAttacker.origin - self.origin ) );
-							self.health += 2000;
-							self finishPlayerDamage( eAttacker, eAttacker, 2000, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize( self.origin - eAttacker.origin ), "none" );
-						} else if ( eAttacker.zombietype == "fast" && y > 50 ) {
-							// apply slow speed here
-							self shellshock( "groggy", 2 );
 						}
+					}
+					
+					if ( eAttacker.zombietype == "jumper" && y > 50) {
+						self.health += 2000;
+						self finishPlayerDamage( eAttacker, eAttacker, 2000, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize( self.origin - eAttacker.origin ), "none" );
+					} else if ( eAttacker.zombietype == "fast" && y > 50 ) {
+						self shellshock( "groggy", 2 );
 					}
 				}
 				
@@ -894,13 +898,13 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 						doit = false;
 					} else 
 					{
-						if ( iDamage < 100 && self.immunity > 1 )
+						if ( iDamage < 100 && self.immunity >= 1 )
 							doit = false;
-						if ( iDamage < 200 && iDamage >= 100 && self.immunity > 2 )
+						if ( iDamage < 200 && iDamage >= 100 && self.immunity >= 2 )
 							doit = false;
-						if ( iDamage < 300 && iDamage >= 200 && self.immunity > 3 )
+						if ( iDamage < 300 && iDamage >= 200 && self.immunity >= 3 )
 							doit = false;
-						if ( iDamage >= 300 && self.immunity > 4 )
+						if ( iDamage >= 300 && self.immunity >= 4 )
 							doit = false;
 					}
 					
@@ -915,13 +919,13 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 					if ( sWeapon == "mk1britishfrag_mp" ) {
 						doit = false;
 					} else {
-						if ( iDamage < 100 && self.immunity > 1 )
+						if ( iDamage < 100 && self.immunity >= 1 )
 							doit = false;
-						if ( iDamage < 200 && iDamage >= 100 && self.immunity > 2 )
+						if ( iDamage < 200 && iDamage >= 100 && self.immunity >= 2 )
 							doit = false;
-						if ( iDamage < 300 && iDamage >= 200 && self.immunity > 3 )
+						if ( iDamage < 300 && iDamage >= 200 && self.immunity >= 3 )
 							doit = false;
-						if ( iDamage >= 300 && self.immunity > 4 )
+						if ( iDamage >= 300 && self.immunity >= 4 )
 							doit = false;
 					}
 					
@@ -1865,8 +1869,10 @@ killstreakShiz()
 		case 80: streaktext = "^3 is a MOTHER FUCKING BAD ASS with 80 kills!"; break;
 		case 90: streaktext = "^3 is like JACKIE FUCKING CHAN with 90 kills!"; break;
 		case 100: streaktext = "^3 is ALMOST AS AWESOME AS CHUCK NORRIS with 100 kills!"; break;
+		case 110: streaktext = "^3 has LAID WASTE TO THE ZOMBIE HORDE with 110 kills!"; break;
 		case 125: streaktext = "^3 has ONE HUNDRED AND TWENTY FIVE FUCKING KILLS."; break;
 		case 150: streaktext = "^3 HAS DESTROYED ALL HOPE with 150 kills."; break;
+		case 175: streaktext = "^3 IS SHITTING ALL OVER THE ZOMBIES with 175 kills."; break;
 		case 200: streaktext = "^3 IS A GOD WITH 200 KILLS."; break;
 		default: break;
 	}
@@ -1972,7 +1978,7 @@ ammoLimiting()
 	
 	primarymax = getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
 	pistolmax = getWeaponMaxWeaponAmmo( "luger_mp" );
-	
+
 	bonus = self getAmmoBonusForRank();
 	
 	primarymax += getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
@@ -1990,9 +1996,13 @@ ammoLimiting()
 getAmmoBonusForRank()
 {
 	bonus = 1;
-	rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
-	if ( isDefined( rank ) && isDefined( rank.rankPerks ) )
-		bonus = rank.rankPerks.ammobonus;
+	if ( self.ammobonus > 0 ) {
+		bonus = self.ammobonus;
+	} else {
+		rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
+		if ( isDefined( rank ) && isDefined( rank.rankPerks ) )
+			bonus = rank.rankPerks.ammobonus;
+	}
 		
 	return bonus;
 }
@@ -2859,11 +2869,6 @@ getMapWeather()
 	return "normal";
 }
 
-setPlayerModel()
-{
-	self maps\mp\gametypes\_skins::main();
-}
-
 fadeIn( time, image )
 {
 	self setShader( image, 32, 32 );
@@ -2962,6 +2967,10 @@ getStance( returnValue )
     if ( z < 20 )   return "prone";
     if ( z < 50 )   return "crouch";
     if ( z < 70 )   return "stand";
+}
+
+distance2D( origin1, origin2 ) {
+	return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
 }
 
 showPos()

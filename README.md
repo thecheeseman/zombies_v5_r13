@@ -14,19 +14,6 @@ You can probably try and get this working without CoDExtended -- I'm only really
 
 Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/id/thecheeseman999/) if you have any questions, comments, suggestions, or hate mail.
 
-# To-do
-
-- [X] Add classes: recon, support, medic, sniper, engineer
-    - [X] Recon: double jump
-    - [X] Support: mobile ammobox
-    - [X] Medic: mobile medic bag
-    - [X] Sniper: something interesting
-    - [X] Engineer: turrets
-- [X] Breakable barricades and turrets
-- [ ] Some new buy menu features?
-- [ ] ????
-- [ ] Profit
-
 # Changelog
 
 #### Legend:
@@ -37,10 +24,18 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.1.1
-#### 09/04/16
-    
+#### 09/04/16 - 11/04/16
+
+    + Add some more Killstreak notification text 
+    * Buffed the Recon
+    + Split Support, Medic, and Engineer into two subclasses (combat versions and regular)
+    + Split Sniper into two sub-classes: Combat Sniper (hold F to hide) and Hidden Sniper (auto hide)
+    # Fixed a problem where Engineers could get stuck inside their Sentries
+    # Fixed a bug allowing other classes to become invisible 
+    # Fixed a bug causing the Sentry Health HUD elem to extend across the screen
     # Fixed a bug with class stacking
-    # Fixed a bug with sentry kills
+    # Fixed Sentry shot's hit being counted for Player's shot's hit
+    # Fixed a bug with Sentry kills not tallying correctly
 
 #### Revision 13.1
 #### 04/04/16 - 08/04/16
