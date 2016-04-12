@@ -479,38 +479,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 		iDamage = 1;
 		
 	if ( sHitLoc == "head" && sMeansOfDeath != "MOD_MELEE" )
-	{/*
-		if ( !level.firstzombie )
-		{
-			doit = true;
-			
-			if ( sWeapon == "mp40_mp" || sWeapon == "thompson_mp" || sWeapon == "thompson_semi_mp" || sWeapon == "luger_mp" || sWeapon == "m1carbine_mp" )
-			{
-				rndchance = 9000;
-				
-				if ( sWeapon == "thompson_mp" )
-					rndchance = 8000;
-					
-				i = maps\mp\gametypes\_zombie::_randomint( 10000 );
-				if ( i > rndchance )
-					doit = false;
-			}
-
-			if ( self.pers[ "team" ] == "allies" && self.zombietype == "fast" )
-				doit = false;
-				
-			// instakill vs. half the health
-			if ( doit )
-				iDamage = self.health + 10;
-			else
-			{
-				if ( self.health > 200 )
-					iDamage = self.health / 2;
-				else
-					iDamage = self.health + 10;
-			}
-		}*/
-
+	{
 		switch ( sWeapon ) {
 			case "m1carbine_mp":
 				iDamage *= 3;
@@ -533,7 +502,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	{
 		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
 			( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
-			iDamage = 90;
+			iDamage = 115;
 		}
 
 		if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 

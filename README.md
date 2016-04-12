@@ -23,14 +23,23 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
-#### Revision 13.1.1
-#### 09/04/16 - 11/04/16
+#### Revision 13.1.2
+#### 10/04/16 - 11/04/16
 
+    + Add stats for times played as Last Hunter and Last Hunter kills
+    + Add stats: kills for engineers, medics, supports, snipers, recons, and sentries (and their combat cousins)
+    + Medics are now immue to poison and fire (up to 200 dmg)
+    * Combat Snipers can now double tap F to go invisible
+    * Regular Snipers now have a maximum invisibility time (55 seconds)
     + Add some more Killstreak notification text 
     * Buffed the Recon
     + Split Support, Medic, and Engineer into two subclasses (combat versions and regular)
-    + Split Sniper into two sub-classes: Combat Sniper (hold F to hide) and Hidden Sniper (auto hide)
+    + Split Sniper into two sub-classes: Combat Sniper and Hidden Sniper
     # Fixed a problem where Engineers could get stuck inside their Sentries
+
+#### Revision 13.1.1
+#### 09/04/16
+
     # Fixed a bug allowing other classes to become invisible 
     # Fixed a bug causing the Sentry Health HUD elem to extend across the screen
     # Fixed a bug with class stacking

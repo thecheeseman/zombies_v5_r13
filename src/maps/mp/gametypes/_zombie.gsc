@@ -773,7 +773,8 @@ spawnPlayer()
 		self thread ammoLimiting();
 
 		if ( self.class == "sniper" || self.class == "recon" || 
-		   ( self.class == "support" && self.subclass == "combat" ) )
+		   ( self.class == "support" && self.subclass == "combat" ) ||
+		   ( self.class == "medic" && self.subclass == "combat" ) )
 			self thread stickynades();
 	}
 	
@@ -809,7 +810,7 @@ spawnSpectator()
 	if ( getCvar( "zom_antispec" ) == "1" && !level.mapended )
 	{
 		self.spechud = newClientHudElem( self );
-		self.spechud.sort = -1;
+		self.spechud.sort = -2;
 		self.spechud.x = 0;
 		self.spechud.y = 0;
 		self.spechud setShader( "black", 640, 480 );
@@ -817,7 +818,7 @@ spawnSpectator()
 		self.spechud.archived = false;
 		
 		self.specnotice = newClientHudElem( self );
-		self.specnotice.sort = -2;
+		self.specnotice.sort = -1;
 		self.specnotice.x = 320;
 		self.specnotice.y = 220;
 		self.specnotice.alignx = "center";
@@ -1018,8 +1019,40 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 				case "fire":	attacker.stats[ "fireZombieKills" ]++;		break;
 			}
 
-			if ( sWeapon == "mg42_bipod_stand_mp" )
-				attacker.stats[ "sentryKills" ]++;
+			if ( level.lasthunter ) {
+				self.stats[ "lastHunterKills" ]++;
+			} else {
+				switch ( attacker.class ) {
+					case "engineer":
+						if ( sWeapon == "mg42_bipod_stand_mp" ) {
+							if ( attacker.subclass == "combat" )
+								attacker.stats[ "combatSentryKills" ]++;
+							else
+								attacker.stats[ "sentryKills" ]++;
+						} else {
+							if ( attacker.subclass == "combat" )
+								attacker.stats[ "killsAsCombatEngineer" ]++; 
+							else
+								attacker.stats[ "killsAsEngineer" ]++; 
+						}
+						break;
+					case "medic":
+						if ( attacker.subclass == "combat" ) 	{ attacker.stats[ "killsAsCombatMedic" ]++; }
+						else									{ attacker.stats[ "killsAsMedic" ]++; }
+						break;
+					case "support":
+						if ( attacker.subclass == "combat" ) 	{ attacker.stats[ "killsAsCombatSupport" ]++; }
+						else									{ attacker.stats[ "killsAsSupport" ]++; }
+						break;
+					case "sniper":
+						if ( attacker.subclass == "combat" ) 	{ attacker.stats[ "killsAsCombatSniper" ]++; }
+						else									{ attacker.stats[ "killsAsSniper" ]++; }
+						break;
+					case "recon":
+						attacker.stats[ "killsAsRecon" ]++;
+						break;
+				}
+			}
 		}
 		
 		if ( attacker.pers[ "team" ] == "allies" )
@@ -1033,6 +1066,28 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 				case "fast":	attacker.stats[ "killsAsFastZombie" ]++;	break;
 				case "poison":	attacker.stats[ "killsAsPoisonZombie" ]++;	break;
 				case "fire":	attacker.stats[ "killsAsFireZombie" ]++;	break;
+			}
+
+			switch ( self.class ) {
+				case "engineer":
+					if ( self.subclass == "combat" )		{ attacker.stats[ "combatEngineerKillsKills" ]++; }
+					else									{ attacker.stats[ "engineerKills" ]++; }
+					break;
+				case "medic":
+					if ( self.subclass == "combat" ) 		{ attacker.stats[ "combatMedicKills" ]++; }
+					else									{ attacker.stats[ "medicKills" ]++; }
+					break;
+				case "support":
+					if ( self.subclass == "combat" ) 		{ attacker.stats[ "combatSupportKills" ]++; }
+					else									{ attacker.stats[ "supportKills" ]++; }
+					break;
+				case "sniper":
+					if ( self.subclass == "combat" ) 		{ attacker.stats[ "combatSniperKills" ]++; }
+					else									{ attacker.stats[ "sniperKills" ]++; }
+					break;
+				case "recon":
+					attacker.stats[ "reconKills" ]++;
+					break;
 			}
 		}
 			
@@ -1079,6 +1134,8 @@ lastHunter()
 	
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::lastHunter() -- " + self.name + " (" + self getip() + ")", true );
 	iPrintLnBold( cleanString( self.name ) + "^7 is the last ^6Hunter^7!" );
+
+	self.stats[ "timesAsLastHunter" ]++;
 	
 	self closeMenu();
 	

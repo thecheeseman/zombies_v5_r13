@@ -169,12 +169,15 @@ cleanUpHud()
 	
 	if ( isDefined( self.nightvis ) )				self.nightvis destroy();
 
-	if ( isDefined( self.gc_topbar ) )		self.gc_topbar destroy();
-	if ( isDefined( self.gc_bottombar ) ) 	self.gc_bottombar destroy();
-	if ( isDefined( self.gc_title ) )		self.gc_title destroy();
-	if ( isDefined( self.gc_timer ) )		self.gc_timer destroy();
+	if ( isDefined( self.gc_topbar ) )			self.gc_topbar destroy();
+	if ( isDefined( self.gc_bottombar ) ) 		self.gc_bottombar destroy();
+	if ( isDefined( self.gc_title ) )			self.gc_title destroy();
+	if ( isDefined( self.gc_timer ) )			self.gc_timer destroy();
 
-	if ( isDefined( self.hiddenhud ) )		self.hiddenhud destroy();
+	if ( isDefined( self.hiddenhud ) )			self.hiddenhud destroy();
+	if ( isDefined( self.invis_hud_back ) )		self.invis_hud_back destroy();
+	if ( isDefined( self.invis_hud_front ) )	self.invis_hud_front destroy();
+	if ( isDefined( self.invis_hud_notice ) )	self.invis_hud_notice destroy();
 
 	if ( isDefined( self.moveturretnotice ) )		self.moveturretnotice destroy();
 	if ( isDefined( self.mtprogressbackground ) )	self.mtprogressbackground destroy();
