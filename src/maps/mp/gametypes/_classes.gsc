@@ -1219,7 +1219,7 @@ sniper_combat() {
     self endon( "spawned" );
     self endon( "disconnect" );
 
-    reloadtime = 15;
+    reloadtime = 10;
     reloading = false;
     timeup = 0;
 
@@ -1265,7 +1265,8 @@ sniper_combat() {
 
                 self.invis_hud_notice setText( &"Cooldown" );
 
-                while ( gettime() - donetime < 5000 )
+                donetime = gettime();
+                while ( ( gettime() - donetime ) < 5000 )
                     wait 0.05;
 
                 reloading = true;
@@ -1343,9 +1344,11 @@ sniper_support() {
         // hasn't moved in 5 seconds
         if ( gettime() - stoppedtime > 5000 && !self.invisible && !reloading ) {
             timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, true ) );
-            donetime = gettime();
 
-            while ( gettime() - donetime < 5000 )
+            self.invis_hud_notice setText( &"Cooldown" );
+
+            donetime = gettime();
+            while ( ( gettime() - donetime ) < 5000 )
                 wait 0.05;
 
             stoppedtime = gettime();
