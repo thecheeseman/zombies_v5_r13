@@ -776,6 +776,11 @@ spawnPlayer()
 		   ( self.class == "support" && self.subclass == "combat" ) ||
 		   ( self.class == "medic" && self.subclass == "combat" ) )
 			self thread stickynades();
+	} else {
+		if ( level.firstzombie ) {
+			self.maxhealth = 2000;
+			self.health = self.maxhealth;
+		}
 	}
 	
 	if ( self.isnew )

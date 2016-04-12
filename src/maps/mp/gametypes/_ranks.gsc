@@ -395,10 +395,7 @@ giveZomRankPerks()
 		self.resilience = thesePerks.resilience;
 		self.zomnadeammo = thesePerks.zomnadeammo;
 		
-		self.maxhealth += newhealth;
-		if ( level.firstzombie )
-			self.maxhealth = 2000;
-			
+		self.maxhealth += newhealth;		
 		self.health = self.maxhealth;
 		
 		if ( level.firstzombie )
