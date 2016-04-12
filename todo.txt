@@ -1,0 +1,3 @@
+TODO
+
+- fix bug with 'shots hit' counting melee

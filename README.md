@@ -26,6 +26,7 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1.2
 #### 10/04/16 - 11/04/16
 
+    * Increased cooldown time for Sniper invisiblity
     * Updated Fade and Majdrew's skin ID's
     # Fixed a bug where Zombies didn't receive Rank health
     # Fixed a bug where first zombie wouldn't receive 2000 health
