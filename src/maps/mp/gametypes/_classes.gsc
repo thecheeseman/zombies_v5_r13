@@ -1408,6 +1408,29 @@ sniper_goinvisible( time, trackmoving ) {
             break;
         }
 
+        if ( self useButtonPressed() )
+        {
+            catch_next = false;
+            lol = false;
+
+            for ( i = 0; i <= 0.30; i += 0.02 )
+            {
+                if ( catch_next && self useButtonPressed() )
+                {
+                    lol = true;
+                    break;
+                }
+                else if ( !( self useButtonPressed() ) )
+                    catch_next = true;
+
+                wait 0.03;
+            }
+            
+            if ( lol ) {
+                break;
+            }
+        }
+
         if ( (int)( amount * timedown ) > 0 )
             self.invis_hud_front setShader( "white", (float)( amount * timedown ), 8 );
     }
