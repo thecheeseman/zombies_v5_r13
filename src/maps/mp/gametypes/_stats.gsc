@@ -129,6 +129,8 @@ main() {
 	// server related
 	addStatField( "joins" );
 	addStatField( "timePlayed" );
+	addStatField( "timesAsLastHunter" );
+	addStatField( "lastHunterKills" );
 
 	// old system holdovers
 	addStatField( "xp" );
@@ -152,7 +154,8 @@ main() {
 	addStatField( "assists" );
 	addStatField( "shotsFired" );
 	addStatField( "shotsHit" );
-	addStatField( "sentryKills" );
+	addStatField( "combatSentryKills" );
+	addStatField( "sentryKills" ); 
 	addStatField( "totalKills" );
 	addStatField( "totalDeaths" );
 	addStatField( "totalBashes" );
@@ -161,6 +164,7 @@ main() {
 	addStatField( "totalAssists" );
 	addStatField( "totalShotsFired" );
 	addStatField( "totalShotsHit" );
+	addStatField( "totalCombatSentryKills" );
 	addStatField( "totalSentryKills" );
 
 	// class related
@@ -174,6 +178,26 @@ main() {
 	addStatField( "killsAsFireZombie" );
 	addStatField( "hpHealed" );
 	addStatField( "ammoHealed" );
+	addStatField( "combatEngineerKills" );
+	addStatField( "engineerKills" );
+	addStatField( "combatMedicKills" );
+	addStatField( "medicKills" );
+	addStatField( "combatSupportKills" );
+	addStatField( "supportKills" );
+	addStatField( "combatSniperKills" );
+	addStatField( "sniperKills" );
+	addStatField( "reconKills" );
+	addStatField( "killsAsCombatEngineer" );
+	addStatField( "killsAsEngineer" );
+	addStatField( "killsAsCombatMedic" );
+	addStatField( "killsAsMedic" );
+	addStatField( "killsAsCombatSupport" );
+	addStatField( "killsAsSupport" );
+	addStatField( "killsAsCombatSniper" );
+	addStatField( "killsAsSniper" );
+	addStatField( "killsAsRecon" );
+
+	// end of file
 	addStatField( "eof" );
 }
 
@@ -280,6 +304,7 @@ saveMyStats() {
 	self.stats[ "totalAssists" ] += self.stats[ "assists" ];
 	self.stats[ "totalShotsFired" ] += self.stats[ "shotsFired" ];
 	self.stats[ "totalShotsHit" ] += self.stats[ "shotsHit" ];
+	self.stats[ "totalCombatSentryKills" ] += self.stats[ "combatSentryKills" ];
 	self.stats[ "totalSentryKills" ] += self.stats[ "sentryKills" ];
 
 	self.stats[ "timePlayed" ] += (gettime() - self.timejoined) / 1000;
@@ -322,33 +347,7 @@ saveMyStats() {
 	}
 
 	data += "eof\n";
-/*
-	data = 	"guid: " + 					self.guid + ",\n";
-	data += "xp: " + 					self.xp + ",\n";
-	data += "rank: " + 					self.rank + ",\n";
-	data += "points: " + 				self.points + ",\n";
-	data += "zombieXP: " + 				self.zomxp + ",\n";
-	data += "zombieRank: " + 			self.zomrank + ",\n";
-	data += "kills: " +					self.stats[ "totalkills" ] + ",\n";
-	data += "deaths: " +				self.stats[ "totaldeaths" ] + ",\n";
-	data += "bashes: " +				self.stats[ "totalbashes" ] + ",\n";
-	data += "damage: " +				self.stats[ "totaldamage" ] + ",\n";
-	data += "headshots: " +				self.stats[ "totalheadshots" ] + ",\n";
-	data += "assists: " +				self.stats[ "totalassists" ] + ",\n";
-	data += "shotsFired: " +			self.stats[ "totalshotsfired" ] + ",\n";
-	data += "shotsHit: " +				self.stats[ "totalshotshit" ] + ",\n";
-	data += "jumperZombieKills: " +		self.stats[ "jumperzombiekills" ] + ",\n";
-	data += "fastZombieKills: " +		self.stats[ "fastzombiekills" ] + ",\n";
-	data += "poisonZombieKills: " +		self.stats[ "poisonzombiekills" ] + ",\n";
-	data += "fireZombieKills: " +		self.stats[ "firezombiekills" ] + ",\n";
-	data += "killsAsJumperZombie: " +	self.stats[ "killsasjumperzombie" ] + ",\n";
-	data += "killsAsFastZombie: " +		self.stats[ "killsasfastzombie" ] + ",\n";
-	data += "killsAsPoisonZombie: " +	self.stats[ "killsaspoisonzombie" ] + ",\n";
-	data += "killsAsFireZombie: " +		self.stats[ "killsasfirezombie" ] + ",\n";
-	data += "hpHealed: " +				self.stats[ "hphealed" ] + ",\n";
-	data += "ammoHealed: " +			self.stats[ "ammohealed" ] + ",\n";
-	data += "eof\n";
-*/
+
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- write data to file " + lutname, true );
 	fwrite( data, handle );
 

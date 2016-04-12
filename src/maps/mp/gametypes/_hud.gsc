@@ -39,10 +39,14 @@ init()
 	precacheString( &"^4Proximity Charges^7: " );
 	precacheString( &"^5Health Packs^7: " );
 
-	precacheString( &"Medic" );
-	precacheString( &"Support" );
+	precacheString( &"Combat Engineer" );
+	precacheString( &"Combat Medic" );
+	precacheString( &"Combat Support" );
+	precacheString( &"Combat Sniper" );
 	precacheString( &"Recon" );
 	precacheString( &"Engineer" );
+	precacheString( &"Medic" );
+	precacheString( &"Support" );
 	precacheString( &"Sniper" );
 	precacheString( &"None" );
 	
@@ -165,12 +169,15 @@ cleanUpHud()
 	
 	if ( isDefined( self.nightvis ) )				self.nightvis destroy();
 
-	if ( isDefined( self.gc_topbar ) )		self.gc_topbar destroy();
-	if ( isDefined( self.gc_bottombar ) ) 	self.gc_bottombar destroy();
-	if ( isDefined( self.gc_title ) )		self.gc_title destroy();
-	if ( isDefined( self.gc_timer ) )		self.gc_timer destroy();
+	if ( isDefined( self.gc_topbar ) )			self.gc_topbar destroy();
+	if ( isDefined( self.gc_bottombar ) ) 		self.gc_bottombar destroy();
+	if ( isDefined( self.gc_title ) )			self.gc_title destroy();
+	if ( isDefined( self.gc_timer ) )			self.gc_timer destroy();
 
-	if ( isDefined( self.hiddenhud ) )		self.hiddenhud destroy();
+	if ( isDefined( self.hiddenhud ) )			self.hiddenhud destroy();
+	if ( isDefined( self.invis_hud_back ) )		self.invis_hud_back destroy();
+	if ( isDefined( self.invis_hud_front ) )	self.invis_hud_front destroy();
+	if ( isDefined( self.invis_hud_notice ) )	self.invis_hud_notice destroy();
 
 	if ( isDefined( self.moveturretnotice ) )		self.moveturretnotice destroy();
 	if ( isDefined( self.mtprogressbackground ) )	self.mtprogressbackground destroy();
@@ -372,12 +379,16 @@ doHud()
 		self.hud[ "rank" ] setText( rank.rankString );
 
 		classstring = &"None";
-		switch ( self.class ) {
-			case "medic":		classstring = &"Medic"; break;
-			case "support":		classstring = &"Support"; break;
-			case "recon":		classstring = &"Recon"; break;
-			case "engineer":	classstring = &"Engineer"; break;
-			case "sniper":		classstring = &"Sniper"; break;
+		switch ( self.pers[ "weapon" ] ) {
+			case "kar98k_mp":		classstring = &"Combat Engineer"; 	break;
+			case "mp40_mp":			classstring = &"Combat Medic";		break;
+			case "mp44_mp":			classstring = &"Combat Support";	break;
+			case "kar98k_sniper_mp":classstring = &"Combat Sniper";		break;
+			case "m1carbine_mp":	classstring = &"Recon";				break;
+			case "m1garand_mp":		classstring = &"Engineer";			break;
+			case "thompson_mp":		classstring = &"Medic";				break;
+			case "bar_mp":			classstring = &"Support";			break;
+			case "springfield_mp":	classstring = &"Sniper";			break;
 			default: 			break;
 		}
 

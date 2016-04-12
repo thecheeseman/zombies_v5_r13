@@ -316,7 +316,7 @@ barricade( item )
 			model = "xmodel/barrel_black1";
 			clip = [];
 			clip[ 0 ] = ( 0, 0, 40 );
-			trigdistance = 40;
+			trigdistance = 48;
 			break;
 		case "buy_crate":
 			model = "xmodel/crate_misc_red2";
@@ -338,12 +338,11 @@ spawn_barricade( model, clip, trigdistance )
 	
 	num = self.barricades.size;
 	org = self.origin;
-	totalmodels = 1;
 	
 	self.barricades[ num ] = spawnstruct();
 	self.barricades[ num ].model = spawn( "script_model", org );
 	self.barricades[ num ].model setModel( model );
-	//self.barricades[ num ].model enablelinkto();
+
 	wait 0.05;
 
 	switch ( model ) {
@@ -351,7 +350,7 @@ spawn_barricade( model, clip, trigdistance )
 			self.barricades[ num ].model setBounds( 4, 40 );
 			break;
 		case "xmodel/crate_misc_red2":
-			self.barricades[ num ].model setBounds( 4, 24 );
+			self.barricades[ num ].model setBounds( 4, 32 );
 			break;
 	}
 /*	
@@ -367,19 +366,23 @@ spawn_barricade( model, clip, trigdistance )
 		wait 0.05;
 	}
 	*/
-	level.barricades += totalmodels;
+	level.barricades++;;
 	
 	self.barricades[ num ].model thread maps\mp\gametypes\_physics::doPhysics();
 
 	self.insidebarricade = true;
-	
-	while ( distance( self.origin, org ) < trigdistance )
+
+	while ( isAlive( self ) && maps\mp\gametypes\_zombie::distance2d( self.origin, org ) < trigdistance )
 		wait 0.05;
 
 	self.insidebarricade = undefined;
+
+    if ( !isAlive( self ) ) {
+        return;
+    }
 		
 	self.barricades[ num ].model setContents( 1 );
-	self.barricades[ num ].model thread beDestroyed( self, model );
+	self.barricades[ num ].model thread beDestroyed( self, model, trigdistance );
 	//for ( i = 0; i < clip.size; i++ )
 	//	self.barricades[ num ].clip[ i ] setContents( 1 );
 }
@@ -409,14 +412,12 @@ cleanUp()
 	level.barricades -= totalmodels;
 }
 
-beDestroyed( owner, type ) {
+beDestroyed( owner, type, hitboxsize ) {
 	self endon( "stop destroy" );
 
 	self.health = 2000;
-	hitboxsize = 32;
 	if ( type == "xmodel/barrel_black1" ) {
 		self.health = 5000;
-		hitboxsize = 48;
 	}
 
 	attacker = undefined;

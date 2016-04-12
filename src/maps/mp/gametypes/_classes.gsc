@@ -30,6 +30,10 @@ init() {
     precacheString( &"Disabled" );
     precacheString( &"Idle" );
     precacheString( &"Hold [{+activate}] to move turret" );
+    precacheString( &"Invisibility status: " );
+    precacheString( &"Ready" );
+    precacheString( &"Recharging" );
+    precacheString( &"Invisible" );
 
     level._effect[ "sentry_fire" ] = loadfx( "fx/muzzleflashes/mg42flash.efx" );
     level._effect[ "sentry_onfire" ] = loadfx( "fx/fire/barrelfire.efx" );
@@ -45,7 +49,7 @@ setup() {
             case "m1carbine_mp":
                 self.class = "recon";
 
-                self setMoveSpeedScale( 1.4 );
+                self setMoveSpeedScale( 1.45 );
 
                 self thread recon();
                 break;
@@ -54,30 +58,60 @@ setup() {
             case "thompson_mp":
                 self.class = "medic";
 
-                self setMoveSpeedScale( 1.3 );
+                // immune to poison/fire damage < 200
+                self.immunity = 2;
+
+                if ( self.pers[ "weapon" ] == "mp40_mp" ) {
+                    self.subclass = "combat";
+                    self setMoveSpeedScale( 1.35 );
+                    self.maxhealthpacks += 4;
+                    self.healthpacks = self.maxhealthpacks;
+                } else {
+                    self.stickynades = 0;
+
+                    self setMoveSpeedScale( 1.25 );
+                    self thread healthbag();
+                }
+
+                self thread regen_health();
 
                 self detach( self.hatmodel );
                 self.hatmodel = "xmodel/USAirborneHelmet_Medic";
                 self attach( self.hatmodel );
-
-                self thread regen_health();
-                self thread healthbag();
                 break;
             // support
             case "mp44_mp":
             case "bar_mp":
                 self.class = "support";
 
-                self setMoveSpeedScale( 1.1 );
+                if ( self.pers[ "weapon" ] == "mp44_mp" ) {
+                    self.subclass = "combat";
 
-                self thread ammobox();
+                    self setMoveSpeedScale( 1.15 );
+                    self.ammobonus += 5;
+                    self.maxhealth += 100;
+                    self.health = self.maxhealth;
+                } else {
+                    self setMoveSpeedScale( 1.1 );
+                    self.stickynades = 0;
+
+                    self thread ammobox();
+                }
+
                 break;
             // engineer
             case "kar98k_mp":
             case "m1garand_mp":
                 self.class = "engineer";
 
-                self setMoveSpeedScale( 1.15 );
+                if ( self.pers[ "weapon" ] == "kar98k_mp" ) {
+                    self.subclass = "combat";
+
+                    self setMoveSpeedScale( 1.25 );
+                } else {
+                    self setMoveSpeedScale( 1.15 );
+                }
+
                 self thread sentry();
                 break;
             // sniper
@@ -87,7 +121,11 @@ setup() {
 
                 self setMoveSpeedScale( 1.2 );
 
-                self thread sneakyfuck();
+                if ( self.pers[ "weapon" ] == "kar98k_sniper_mp" ) {
+                    self.subclass = "combat";
+                }
+
+                self thread sniper();
                 break;
         }        
     } else {
@@ -440,7 +478,7 @@ sentry()
         traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
         traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
-        trace = bulletTrace( self.origin, traceEnd, false, barrel );
+        trace = bulletTrace( self.origin, traceEnd, false, self );
 
         pos = trace[ "position" ];
         barrel moveto( pos, 0.05 );
@@ -485,6 +523,15 @@ sentry()
     self setWeaponSlotWeapon( "grenade", "none" );
     
     wait 0.15;
+
+    while ( isAlive( self ) && maps\mp\gametypes\_zombie::distance2d( self.origin, barrel.origin ) < 40 )
+        wait 0.05;
+
+    if ( !isAlive( self ) )
+    {
+        barrel delete();
+        return;
+    }
     
     self thread sentry_think( barrel );
     self thread sentry_remove_on_death( barrel );
@@ -621,6 +668,8 @@ actualmoveturret( barrel ) {
     self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
     self switchToWeapon( "stielhandgranate_mp" );
 
+    wait 0.5;
+
     self thread sentry();
 }
 
@@ -656,6 +705,18 @@ mg_remove( mg )
     }
 }
 
+mg_remove_on_disconnect( mg )
+{
+    self endon( "remove sentry" );
+
+    self waittill( "disconnect" );
+
+    if ( isDefined( mg ) ) {
+        mg delete();
+        mg = undefined;
+    }
+}
+
 mg_remove_on_spec( mg )
 {
     self endon( "remove sentry" );
@@ -675,18 +736,19 @@ sentry_think( barrel )
     self.mg setContents( 1 );
     
     self thread mg_remove( self.mg );
+    self thread mg_remove_on_disconnect( self.mg );
     self thread mg_remove_on_spec( self.mg );
     self thread sentry_hud( self.mg, self.pers[ "weapon" ] );
     self thread sentry_explode();
        
     self.mg.ammo = 50;
 
-    if ( self.pers[ "weapon" ] == "m1garand_mp" ) {
-        self.mg.health = 1000;
-        self.mg.healthmax = 1000;
-    } else {
+    if ( self.subclass == "combat" ) {
         self.mg.health = 500;
         self.mg.healthmax = 500;
+    } else {
+        self.mg.health = 1000;
+        self.mg.healthmax = 1000;
     }
 
     self endon( "remove sentry" );
@@ -933,7 +995,7 @@ sentry_fire( target, owner, x )
         distanceModifier = 0.5;
 
     damagemodifier = 1;
-    if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && owner.pers[ "weapon" ] == "m1garand_mp" )
+    if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && self.subclass != "combat" )
         damagemodifier = 2;
 
     target maps\mp\gametypes\zombies::Callback_PlayerDamage( owner, owner, 7 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
@@ -1071,12 +1133,15 @@ sentry_hud( mg, type )
         }            
         
         self.sentry_hud_health setValue( self.mg.health );
-        if ( type == "m1garand_mp" )
-            self.sentry_hud_health_front setShader( "white", ( self.mg.health / 10 ) * 1.12, 8 );
-        else
+        if ( self.subclass == "combat" ) {
             self.sentry_hud_health_front setShader( "white", ( self.mg.health / 5 ) * 1.12, 8 );
-
-        self.sentry_hud_kills setValue( self.stats[ "totalSentryKills" ] + self.stats[ "sentryKills" ] );
+            self.sentry_hud_kills setValue( self.stats[ "totalCombatSentryKills" ] + self.stats[ "combatSentryKills" ] );
+        }
+        else {
+            self.sentry_hud_health_front setShader( "white", ( self.mg.health / 10 ) * 1.12, 8 );
+            self.sentry_hud_kills setValue( self.stats[ "totalSentryKills" ] + self.stats[ "sentryKills" ] );
+        }
+        
         wait 0.1;
     }
     
@@ -1089,10 +1154,35 @@ sentry_hud( mg, type )
     if ( isDefined( self.sentry_hud_kills ) )           self.sentry_hud_kills destroy();
 }
 
-sneakyfuck() {
-    self endon( "death" );
-    self endon( "spawned" );
-    self endon( "disconnect" );
+sniper() {
+    self.invis_hud_back = newClientHudElem( self );
+    self.invis_hud_back.x = 550;
+    self.invis_hud_back.y = 416;
+    self.invis_hud_back.alignx = "right";
+    self.invis_hud_back.aligny = "middle";
+    self.invis_hud_back.alpha = 0.7;
+    self.invis_hud_back setShader( "gfx/hud/hud@health_back.dds", 116, 10 );
+    self.invis_hud_back.sort = 10;
+    
+    self.invis_hud_front = newClientHudElem( self );
+    self.invis_hud_front.x = 548;
+    self.invis_hud_front.y = 416;
+    self.invis_hud_front.alignx = "right";
+    self.invis_hud_front.aligny = "middle";
+    self.invis_hud_front.alpha = 0.8;
+    self.invis_hud_front setShader( "gfx/hud/hud@health_bar.dds", 112, 8 );
+    self.invis_hud_front.sort = 20;
+    self.invis_hud_front.color = ( 0, 0, 1 );
+    
+    self.invis_hud_notice = newClientHudElem( self );
+    self.invis_hud_notice.x = 492;
+    self.invis_hud_notice.y = 416;
+    self.invis_hud_notice.alignx = "center";
+    self.invis_hud_notice.aligny = "middle";
+    self.invis_hud_notice.alpha = 1;
+    self.invis_hud_notice.sort = 25;
+    self.invis_hud_notice.fontscale = 0.7;
+    self.invis_hud_notice.label = &"Invisibility status: ";
 
     self.hiddenhud = newClientHudElem( self );
     self.hiddenhud.x = 0;
@@ -1102,34 +1192,132 @@ sneakyfuck() {
     self.hiddenhud setShader( "white", 640, 480 );
     self.hiddenhud.sort = 9999;
 
+    self.invisible = false;
+
+    self.invis_hud_notice setText( &"Ready" );
+
+    if ( self.subclass == "combat" )
+        self sniper_combat();
+    else
+        self sniper_support();
+
+    self iPrintLn( "You are now visible!" );
+
+    self.hiddenhud.alpha = 0;
+    self detachall();
+    self maps\mp\gametypes\_skins::setAllModels();
+
+    self.invisible = false;
+
+    if ( isDefined( self.hiddenhud ) )
+        self.hiddenhud destroy();
+}
+
+sniper_combat() {
+    self endon( "death" );
+    self endon( "spawned" );
+    self endon( "disconnect" );
+
+    reloadtime = 10;
+    reloading = false;
+    timeup = 0;
+
+    self iPrintLn( "Double tap [{+activate}] to go invisible!" );
+
+    while ( isAlive( self ) && !level.lasthunter ) {
+        wait 0.05;
+
+        if ( timeup == ( reloadtime * 20 ) && reloading ) {
+            reloading = false;
+            timeup = 0;
+
+            self iPrintLn( "Double tap [{+activate}] to go invisible!" );
+            self.invis_hud_notice setText( &"Ready" );
+            self.invis_hud_front.color = ( 0, 0, 1 );
+        }
+
+        if ( reloading ) {
+            timeup++;
+            self.invis_hud_front setShader( "white", (float)( (float)timeup / 20 ) * 11.2, 8 );
+        }
+
+        if ( self useButtonPressed() && !reloading )
+        {
+            catch_next = false;
+            lol = false;
+
+            for ( i = 0; i <= 0.30; i += 0.02 )
+            {
+                if ( catch_next && self useButtonPressed() )
+                {
+                    lol = true;
+                    break;
+                }
+                else if ( !( self useButtonPressed() ) )
+                    catch_next = true;
+
+                wait 0.03;
+            }
+            
+            if ( lol ) {
+                timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, false ) );
+
+                reloading = true;
+                self.invis_hud_notice setText( &"Reloading" );
+                self.invis_hud_front.color = ( 1, 0, 0 );
+            }
+        }
+    }
+}
+
+sniper_support() {
+    self.hiddenhud = newClientHudElem( self );
+    self.hiddenhud.x = 0;
+    self.hiddenhud.y = 0;
+    self.hiddenhud.color = ( 0, 0, 1 );
+    self.hiddenhud.alpha = 0;
+    self.hiddenhud setShader( "white", 640, 480 );
+    self.hiddenhud.sort = 9999;
+
+    self.invisible = false;
+
+    self iPrintLn( "Stand still for 5 seconds to go invisible!" );
+
     lastorigin = self.origin;
     stoppedtime = gettime();
     moving = true;
-    self.invisible = false;
+    timehidden = 0;
+
+    reloadtime = 55;
+    reloading = false;
+    timeup = 0;
+
+    self endon( "death" );
+    self endon( "spawned" );
+    self endon( "disconnect" );
 
     while ( isAlive( self ) && !level.lasthunter ) {
         lastorigin = self.origin;
 
         wait 0.05;
 
-        // become visible if moving or fired or melee'd
-        if ( ( self attackbuttonpressed() || self meleebuttonpressed() || self.origin != lastorigin ) && self.invisible ) {
-            wait 0.15;
+        if ( ( timeup == reloadtime * 20 ) && reloading ) {
+            reloading = false;
+            timeup = 0;
 
-            self iPrintLn( "You are now visible!" );
+            self iPrintLn( "Stand still for 5 seconds to go invisible!" );
+            self.invis_hud_notice setText( &"Ready" );
+            self.invis_hud_front.color = ( 0, 0, 1 );
+        }
 
-            stoppedtime = gettime();
-
-            self.hiddenhud.alpha = 0;
-            self detachall();
-            self maps\mp\gametypes\_skins::setAllModels();
-
-            moving = true;
-            self.invisible = false;
+        if ( reloading ) {
+            timeup++; 
+            self.invis_hud_front setShader( "white", (float)( ( (float)timeup / 110 ) ) * 11.2, 8 );
         }
 
         // moving
         if ( self.origin != lastorigin ) {
+            moving = true;
             stoppedtime = gettime();
             continue;
         }
@@ -1146,31 +1334,86 @@ sneakyfuck() {
             moving = false;
         }
 
-        // hasn't moved in 3 seconds
-        if ( gettime() - stoppedtime > 3000 && !self.invisible ) {
-            self iPrintLn( "You are now ^5invisible^7!" );
+        // hasn't moved in 5 seconds
+        if ( gettime() - stoppedtime > 5000 && !self.invisible && !reloading ) {
+            timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, true ) );
 
-            self.hiddenhud.alpha = 0.2;
-            self detachall();
-            self setModel( "" );
-
-            self.invisible = true;
+            stoppedtime = gettime();
+            reloading = true;
+            self.invis_hud_notice setText( &"Reloading" );
+            self.invis_hud_front.color = ( 1, 0, 0 );
         }
     }
+}
+
+sniper_goinvisible( time, trackmoving ) {
+    if ( !isDefined( time ) )
+        time = 25;
+
+    if ( !isDefined( trackmoving ) )
+        trackmoving = true;
+
+    self iPrintLn( "You are now ^5invisible^7!" );
+    self.invisible = true;
+
+    self.invis_hud_notice setText( &"Invisible" );
+
+    self.hiddenhud.alpha = 0.2;
+    self detachall();
+    self setModel( "" );
+
+    lastorigin = self.origin;
+    fired = false;
+
+    timedown = time * 20;
+    timeup = 0;
+
+    self endon( "death" );
+    self endon( "spawned" );
+    self endon( "disconnect" );
+
+    amount = (float)( (float)112 / (float)( time * 20 ) );
+    clicksaway = 0;
+    if ( amount < 1 && amount > 0 ) {
+        clicksaway = (float)( (float)1 / amount );
+    }
+
+    while ( true ) {
+        lastorigin = self.origin;
+
+        wait 0.05;
+
+        timeup++;
+        timedown--;
+
+        if ( self attackButtonPressed() || self meleeButtonPressed() ) {
+            fired = true;
+            break;
+        }
+
+        if ( ( trackmoving && self.origin != lastorigin ) || timedown == 0 ) {
+            break;
+        }
+
+        if ( (int)( amount * timedown ) > 0 )
+            self.invis_hud_front setShader( "white", (float)( amount * timedown ), 8 );
+    }
+
+    if ( timedown == 0 ) {
+        self.invis_hud_front setShader( "white", 0, 8 );
+    }
+
+    if ( fired )
+        wait 0.15;
 
     self iPrintLn( "You are now visible!" );
-
-    stoppedtime = gettime();
+    self.invisible = false;
 
     self.hiddenhud.alpha = 0;
     self detachall();
     self maps\mp\gametypes\_skins::setAllModels();
 
-    moving = true;
-    self.invisible = false;
-
-    if ( isDefined( self.hiddenhud ) )
-        self.hiddenhud destroy();
+    return timeup;
 }
 
 superJump()
