@@ -375,7 +375,7 @@ giveHunterRankPerks()
 		if ( level.lasthunter ) 
 			newhealth += 250;
 			
-		self.maxhealth = newhealth;
+		self.maxhealth += newhealth;
 		
 		if ( !level.gamestarted || level.lasthunter )
 			self.health = self.maxhealth;

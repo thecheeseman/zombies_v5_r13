@@ -379,7 +379,7 @@ main() {
                 self setAllModels();
                 break;
             // fade
-            case 4196:
+            case 2279:
                 self.specialmodel = true;
 
                 self.xmodel = "xmodel/playerbody_british_commando";
@@ -392,7 +392,7 @@ main() {
                 self setAllModels();
                 break;
             // majdrew
-            case 3863:
+            case 2650:
                 self.specialmodel = true;
 
                 self.xmodel = "xmodel/playerbody_american_airborne";

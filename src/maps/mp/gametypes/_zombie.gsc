@@ -738,8 +738,6 @@ spawnPlayer()
 			self.iszombie = false;
 			self.zombietype = "none";
 		}
-		
-		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 
 		self thread timeAlive();
 		self thread whatscooking();
@@ -762,8 +760,6 @@ spawnPlayer()
 			self.headicon = "";
 			self.headiconteam = "";
 		}
-			
-		self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
 	}
 
 	self maps\mp\gametypes\_skins::main();
@@ -776,7 +772,11 @@ spawnPlayer()
 		   ( self.class == "support" && self.subclass == "combat" ) ||
 		   ( self.class == "medic" && self.subclass == "combat" ) )
 			self thread stickynades();
+
+		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 	} else {
+		self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
+
 		if ( level.firstzombie ) {
 			self.maxhealth = 2000;
 			self.health = self.maxhealth;

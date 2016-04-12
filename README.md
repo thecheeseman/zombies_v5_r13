@@ -26,6 +26,8 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1.2
 #### 10/04/16 - 11/04/16
 
+    * Updated Fade and Majdrew's skin ID's
+    # Fixed a bug where Zombies didn't receive Rank health
     # Fixed a bug where first zombie wouldn't receive 2000 health
     + Add stats for times played as Last Hunter and Last Hunter kills
     + Add stats: kills for engineers, medics, supports, snipers, recons, and sentries (and their combat cousins)
