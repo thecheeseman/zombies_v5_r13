@@ -34,6 +34,7 @@ init() {
     precacheString( &"Ready" );
     precacheString( &"Recharging" );
     precacheString( &"Invisible" );
+    precacheString( &"Cooldown" );
 
     level._effect[ "sentry_fire" ] = loadfx( "fx/muzzleflashes/mg42flash.efx" );
     level._effect[ "sentry_onfire" ] = loadfx( "fx/fire/barrelfire.efx" );
@@ -1218,7 +1219,7 @@ sniper_combat() {
     self endon( "spawned" );
     self endon( "disconnect" );
 
-    reloadtime = 10;
+    reloadtime = 15;
     reloading = false;
     timeup = 0;
 
@@ -1261,6 +1262,11 @@ sniper_combat() {
             
             if ( lol ) {
                 timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, false ) );
+
+                self.invis_hud_notice setText( &"Cooldown" );
+
+                while ( gettime() - donetime < 5000 )
+                    wait 0.05;
 
                 reloading = true;
                 self.invis_hud_notice setText( &"Reloading" );
@@ -1337,6 +1343,10 @@ sniper_support() {
         // hasn't moved in 5 seconds
         if ( gettime() - stoppedtime > 5000 && !self.invisible && !reloading ) {
             timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, true ) );
+            donetime = gettime();
+
+            while ( gettime() - donetime < 5000 )
+                wait 0.05;
 
             stoppedtime = gettime();
             reloading = true;
