@@ -1270,7 +1270,7 @@ sniper_combat() {
                     wait 0.05;
 
                 reloading = true;
-                self.invis_hud_notice setText( &"Reloading" );
+                self.invis_hud_notice setText( &"Recharging" );
                 self.invis_hud_front.color = ( 1, 0, 0 );
             }
         }
@@ -1353,7 +1353,7 @@ sniper_support() {
 
             stoppedtime = gettime();
             reloading = true;
-            self.invis_hud_notice setText( &"Reloading" );
+            self.invis_hud_notice setText( &"Recharging" );
             self.invis_hud_front.color = ( 1, 0, 0 );
         }
     }
