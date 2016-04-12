@@ -1212,6 +1212,15 @@ sniper() {
 
     if ( isDefined( self.hiddenhud ) )
         self.hiddenhud destroy();
+
+    if ( isDefined( self.invis_hud_back ) )     
+        self.invis_hud_back destroy();
+
+    if ( isDefined( self.invis_hud_front ) )    
+        self.invis_hud_front destroy();
+
+    if ( isDefined( self.invis_hud_notice ) )   
+        self.invis_hud_notice destroy();
 }
 
 sniper_combat() {
@@ -1263,6 +1272,7 @@ sniper_combat() {
             if ( lol ) {
                 timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, false ) );
 
+                self.invis_hud_front.color = ( 1, 0, 0 );
                 self.invis_hud_notice setText( &"Cooldown" );
 
                 donetime = gettime();
@@ -1271,7 +1281,6 @@ sniper_combat() {
 
                 reloading = true;
                 self.invis_hud_notice setText( &"Recharging" );
-                self.invis_hud_front.color = ( 1, 0, 0 );
             }
         }
     }
@@ -1345,6 +1354,7 @@ sniper_support() {
         if ( gettime() - stoppedtime > 5000 && !self.invisible && !reloading ) {
             timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, true ) );
 
+            self.invis_hud_front.color = ( 1, 0, 0 );
             self.invis_hud_notice setText( &"Cooldown" );
 
             donetime = gettime();
@@ -1354,7 +1364,6 @@ sniper_support() {
             stoppedtime = gettime();
             reloading = true;
             self.invis_hud_notice setText( &"Recharging" );
-            self.invis_hud_front.color = ( 1, 0, 0 );
         }
     }
 }
