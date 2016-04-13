@@ -257,6 +257,8 @@ dohealing( mypack )
         
         if ( self getCurrentWeapon() != "stielhandgranate_mp" )
             continue;
+
+        resettimeout();
             
         //players = [[ level.call ]]( "get_good_players" );
         players = getEntArray( "player", "classname" );
@@ -373,6 +375,8 @@ ammobox_think( box )
         
         if ( self getCurrentWeapon() != "stielhandgranate_mp" )
             continue;
+
+        resettimeout();
             
         players = getEntArray( "player", "classname" );
         for ( i = 0; i < players.size; i++ )
@@ -1400,7 +1404,9 @@ sniper_goinvisible( time, trackmoving ) {
         clicksaway = (float)( (float)1 / amount );
     }
 
-    while ( true ) {
+    self thread sniper_goinvisible_f();
+
+    while ( self.invisible ) {
         lastorigin = self.origin;
 
         wait 0.05;
@@ -1415,29 +1421,6 @@ sniper_goinvisible( time, trackmoving ) {
 
         if ( ( trackmoving && self.origin != lastorigin ) || timedown == 0 ) {
             break;
-        }
-
-        if ( self useButtonPressed() )
-        {
-            catch_next = false;
-            lol = false;
-
-            for ( i = 0; i <= 0.30; i += 0.02 )
-            {
-                if ( catch_next && self useButtonPressed() )
-                {
-                    lol = true;
-                    break;
-                }
-                else if ( !( self useButtonPressed() ) )
-                    catch_next = true;
-
-                wait 0.03;
-            }
-            
-            if ( lol ) {
-                break;
-            }
         }
 
         if ( (int)( amount * timedown ) > 0 )
@@ -1461,6 +1444,40 @@ sniper_goinvisible( time, trackmoving ) {
     return timeup;
 }
 
+sniper_goinvisible_f() {
+    self endon( "death" );
+    self endon( "disconnect" );
+    self endon( "spawned" );
+
+    while ( self.invisible ) {
+        if ( self useButtonPressed() )
+        {
+            catch_next = false;
+            lol = false;
+
+            for ( i = 0; i <= 0.30; i += 0.02 )
+            {
+                if ( catch_next && self useButtonPressed() )
+                {
+                    lol = true;
+                    break;
+                }
+                else if ( !( self useButtonPressed() ) )
+                    catch_next = true;
+
+                wait 0.03;
+            }
+            
+            if ( lol ) {
+                self.invisible = false;
+                break;
+            }
+        }
+
+        wait 0.05;
+    }
+}
+
 superJump()
 {
     self endon( "death" );
@@ -1469,7 +1486,7 @@ superJump()
     
     self iPrintLn( "Zombie perk: ^2Super jump" );
     
-    self.maxhealth = 800;
+    self.maxhealth += 700;
     self.health = self.maxhealth;
     
     wait 1;
@@ -1513,7 +1530,7 @@ fastZombie()
 {
     self iPrintLn( "Zombie perk: ^2Super speed/bash" );
     
-    self.maxhealth = 500;
+    self.maxhealth += 400;
     self.health = self.maxhealth;
     self.missmines = true;
 }
@@ -1522,7 +1539,7 @@ poisonZombie()
 {
     self iPrintLn( "Zombie perk: ^2Poison" );
     
-    self.maxhealth = 1000;
+    self.maxhealth += 900;
     self.health = self.maxhealth;
 }
 
@@ -1616,7 +1633,7 @@ fireZombie()
     
     self iPrintLn( "Zombie perk: ^2Fire" );
     
-    self.maxhealth = 700;
+    self.maxhealth += 600;
     self.health = self.maxhealth;
     
     self thread firemonitor( self );
