@@ -742,6 +742,8 @@ spawnPlayer()
 		self thread timeAlive();
 		self thread whatscooking();
 		self thread shotsfired();
+
+		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 		
 		self.headiconteam = "axis";
 	}
@@ -754,6 +756,8 @@ spawnPlayer()
 		self setWeaponSlotAmmo( "pistol", 0 );
 		self setWeaponSlotClipAmmo( "primary", 0 );
 		self setWeaponSlotClipAmmo( "pistol", 0 );
+
+		self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
 
 		if ( self.headicon != "" )
 		{
@@ -772,11 +776,7 @@ spawnPlayer()
 		   ( self.class == "support" && self.subclass == "combat" ) ||
 		   ( self.class == "medic" && self.subclass == "combat" ) )
 			self thread stickynades();
-
-		self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
 	} else {
-		self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
-
 		if ( level.firstzombie ) {
 			self.maxhealth = 2000;
 			self.health = self.maxhealth;
