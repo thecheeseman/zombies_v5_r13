@@ -2755,7 +2755,7 @@ isSymbol( cChar )
 		case "}":	case ":":	case ".":
 		case "?":	case "^":	case "+":
 		case "/":	case "~":	case "`":
-		case ";":	case "|":
+		case ";":
 			bIsSymbol = true;
 			break;
 		default:
