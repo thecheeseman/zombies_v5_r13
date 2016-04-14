@@ -95,6 +95,8 @@ setupValues()
 {
 	level.debug = 								(int)cvardef( "zom_debug", 0, 0, 1, "int" );
 
+	level.antispec =							(int)cvardef( "zom_antispec", 1, 0, 1, "int", true );
+
 	level.xpvalues = [];
 	level.pointvalues = [];
 	level.cvars = [];
@@ -119,7 +121,7 @@ setupValues()
 	level.xpvalues[ "MOD_PISTOL_BULLET" ] = 	( (int)cvardef( "zom_xp_pistol_bullet", 20, 0, 100000, "int" ) ) 	* increase;
 	level.xpvalues[ "ASSISTS" ] = 				( (int)cvardef( "zom_xp_assists", 10, 0, 100000, "int" ) ) 			* increase;
 	level.xpvalues[ "HUNTER_WIN" ] = 			( (int)cvardef( "zom_xp_hunter_win", 5000, 0, 100000, "int" ) ) 	* increase;
-	level.xpvalues[ "LASTHUNTER" ] = 			( (int)cvardef( "zom_xp_lasthunter", 500, 0, 100000, "int" ) ) 		* increase;
+	level.xpvalues[ "LASTHUNTER" ] = 			( (int)cvardef( "zom_xp_lasthunter", 1000, 0, 100000, "int" ) ) 	* increase;
 	level.xpvalues[ "TIMEALIVE" ] = 			( (int)cvardef( "zom_xp_timealive", 10, 0, 100000, "int" ) ) 		* increase;
 	level.xpvalues[ "enfield_mp" ] = 			( (int)cvardef( "zom_xp_enfield_mp", 25, 0, 100000, "int" ) ) 		* increase;
 	level.xpvalues[ "sten_mp" ] = 				( (int)cvardef( "zom_xp_sten_mp", 10, 0, 100000, "int" ) ) 			* increase;
@@ -130,10 +132,10 @@ setupValues()
     level.xpvalues[ "medic_heal" ] =            ( (int)cvardef( "zom_xp_medic_heal", 25, 0, 100000, "int" ) )       * increase;
     level.xpvalues[ "support_heal" ] =          ( (int)cvardef( "zom_xp_support_heal", 10, 0, 100000, "int" ) )     * increase;
 	
-	level.pointvalues[ "KILL" ] = 				( (int)cvardef( "zom_point_kill", 10, 0, 100000, "int" ) ) 			* increase;
-	level.pointvalues[ "ASSISTS" ] = 			( (int)cvardef( "zom_point_assists", 5, 0, 100000, "int" ) ) 		* increase;
+	level.pointvalues[ "KILL" ] = 				( (int)cvardef( "zom_point_kill", 25, 0, 100000, "int" ) ) 			* increase;
+	level.pointvalues[ "ASSISTS" ] = 			( (int)cvardef( "zom_point_assists", 10, 0, 100000, "int" ) ) 		* increase;
 	level.pointvalues[ "HUNTER_WIN" ] = 		( (int)cvardef( "zom_point_hunter_win", 500, 0, 100000, "int" ) )	* increase;
-	level.pointvalues[ "LASTHUNTER" ] = 		( (int)cvardef( "zom_point_lasthunter", 50, 0, 100000, "int" ) ) 	* increase;
+	level.pointvalues[ "LASTHUNTER" ] = 		( (int)cvardef( "zom_point_lasthunter", 100, 0, 100000, "int" ) ) 	* increase;
 	level.pointvalues[ "RANKUP" ] = 			( (int)cvardef( "zom_point_rankup", 25, 0, 100000, "int" ) ) 		* increase;
 	
 	level.cvars[ "BOMB_DAMAGE_MAX" ] = 			(int)cvardef( "zom_bomb_damage_max", 75, 0, 100000, "int" );
@@ -236,8 +238,14 @@ Parameters:
 		"float" - floating point value: 1.0, 2.5, 10.384, etc.
 		"string" - a character string: "wave", "player", "none", etc.
 */
-cvardef(varname, vardefault, min, max, type)
+cvardef(varname, vardefault, min, max, type, setifblank)
 {
+	if ( !isDefined( setifblank) )
+		setifblank = true;
+
+	if ( setifblank && getCvar( varname ) == "" )
+		setCvar( varname, vardefault );
+
 	switch(type)
 	{
 		case "int":
