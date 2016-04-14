@@ -84,7 +84,13 @@ giveXp( value )
 		return;
 		
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
+
+	amount = atoi( array[ 1 ] );
+	if ( !isDefined ( amount ) )
+	{
+		self iprintln( "^1I^7nvalid XP Value^1!" );
+		return;
+	}
 	
 	if ( isDefined( player ) )
 	{
@@ -101,7 +107,13 @@ giveKills( value )
 		return;
 		
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
+
+	amount = atoi( array[ 1 ] );
+	if ( !isDefined ( amount ) )
+	{
+		self iprintln( "^1I^7nvalid Kill Value^1!" );
+		return;
+	}
 	
 	if ( isDefined( player ) )
 	{
@@ -118,7 +130,13 @@ givePoints( value )
 		return;
 		
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
+	
+	amount = atoi( array[ 1 ] );
+	if ( !isDefined ( amount ) )
+	{
+		self iprintln( "^1I^7nvalid Point Value^1!" );
+		return;
+	}
 	
 	if ( isDefined( player ) )
 		player.points += amount;
@@ -131,9 +149,18 @@ updateXP( value )
 	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
 		return;
 		
-	id = (int)array[ 0 ];
-	amount = (int)array[ 1 ];
-	
+	id = atoi( array[ 0 ] );
+	if ( !isDefined ( id ) )
+	{
+		self iprintln( "^1I^7nvalid ID^1!" );
+		return;
+	}
+	amount = atoi( array[ 1 ] );
+	if ( !isDefined ( amount ) )
+	{
+		self iprintln( "^1I^7nvalid XP Value^1!" );
+		return;
+	}
 	for ( i = 0; i < level.stats[ "hunters" ].size; i++ )
 	{
 		miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "hunters" ][ i ], "," );
@@ -155,9 +182,18 @@ updateKills( value )
 	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
 		return;
 		
-	id = (int)array[ 0 ];
-	amount = (int)array[ 1 ];
-	
+	id = atoi( array[ 0 ] );
+	if ( !isDefined ( id ) )
+	{
+		self iprintln( "^1I^7nvalid ID^1!" );
+		return;
+	}
+	amount = atoi( array[ 1 ] );
+	if ( !isDefined ( amount ) )
+	{
+		self iprintln( "^1I^7nvalid Kill Value^1!" );
+		return;
+	}
 	for ( i = 0; i < level.stats[ "zombies" ].size; i++ )
 	{
 		miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "zombies" ][ i ], "," );
@@ -212,10 +248,18 @@ drop( value )
 	
 	if ( !isDefined( array[ 0 ] ) )
 		return;
-
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+		
 	if ( isDefined( array[ 1 ] ) )
-		height = (int)array[ 1 ];
+	{
+		height = atoi( array[ 1 ] );
+		if ( !isDefined ( height ) )
+		{
+			self iprintln( "^1I^7nvalid Height^1!" );
+			return;
+		}
+	}
+	
+	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 	
 	if ( isDefined( player ) )
 	{
@@ -241,12 +285,20 @@ spank( value )
 	if ( !isDefined( array[ 0 ] ) )
 		return;
 		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 	if ( isDefined( array[ 1 ] ) )
-		time = (int)array[ 1 ];
-		
-	if ( isDefined( player ) )
 	{
+		time = atoi( array[ 1 ] );
+		if ( !isDefined ( time ) )
+		{
+			self iprintln( "^1I^7nvalid Time^1!" );
+			return;
+		}
+	}
+		
+	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+
+	if ( isDefined( player ) )
+	{	
 		iPrintLn( "^3The admin SPANKED ^7" + player.name + "^3!" );
 			
 		player shellshock( "default", time / 2 );
@@ -267,11 +319,19 @@ slap( value )
 	
 	if ( !isDefined( array[ 0 ] ) )
 		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+	
 	if ( isDefined( array[ 1 ] ) )
-		dmg = (int)array[ 1 ];
-		
+	{
+		dmg = atoi( array[ 1 ] );
+		if ( !isDefined ( dmg ) )
+		{
+			self iprintln( "^1I^7nvalid Damage Value^1!" );
+			return;
+		}
+	}
+	
+	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+
 	if ( isDefined( player ) )
 	{
 		eInflictor = player;
@@ -340,14 +400,74 @@ givearmor( value )
 
 	if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) && !isDefined( array[ 2 ] ) )
 		return;
-		
+	
+	armor = atoi( array[ 2 ] );
+	if ( !isDefined ( armor ) )
+	{
+		self iprintln( "^1I^7nvalid Value^1!" );
+		return;
+	}
+	
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 	
 	if ( isDefined( player ) )
-	{
+	{	
 		if ( array[ 1 ] == "bodyarmor" )
-			player.bodyarmor = (int)array[ 2 ];
+			player.bodyarmor = armor;
 		else if ( array[ 1 ] == "exploarmor" )
-			player.exploarmor = (int)array[ 2 ];
+			player.exploarmor = armor;
 	}
+}
+
+atoi( sString ) {
+    sString = maps\mp\gametypes\_zombie::strreplacer( sString, "numeric" );
+    if ( sString == "" )
+        return undefined;
+    return (int)sString;
+}
+
+strreplacer( sString, sType ) {
+    switch ( sType ) {
+        case "lower":
+            out = "abcdefghijklmnopqrstuvwxyz";
+            in = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            bIgnoreExtraChars = false;
+            break;
+        case "upper":
+            in = "abcdefghijklmnopqrstuvwxyz";
+            out = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            bIgnoreExtraChars = false;
+            break;
+        case "numeric":
+            in = "0123456789.-";
+            out = "0123456789.-";
+            bIgnoreExtraChars = true;
+            break;
+        case "vector":
+            in = "0123456789.-,()";
+            out = "0123456789.-,()";
+            bIgnoreExtraChars = true;
+            break;
+        default:
+            return sString;
+            break;
+    }
+        
+    sOut = "";
+    for ( i = 0; i < sString.size; i++ ) {
+        bFound = false;
+        cChar = sString[ i ];
+        for ( j = 0; j < in.size; j++ ) {
+            if ( in[ j ] == cChar ) {
+                sOut += out[ j ];
+                bFound = true;
+                break;
+            }
+        }
+        
+        if ( !bFound && !bIgnoreExtraChars )
+            sOut += cChar;
+    }
+    
+    return sOut;
 }
