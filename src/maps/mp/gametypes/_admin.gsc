@@ -18,336 +18,671 @@
 
 main()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_admin.gsc::main()", true );
-	if ( level.debug )
-	{
-		thread watchVar( "admin_endgame", ::endGame );
-		thread watchVar( "admin_giveweap", ::giveWeap );
-		thread watchVar( "admin_drop", ::drop );
-		thread watchVar( "admin_giveks", ::giveks );
-		thread watchVar( "admin_givearmor", ::givearmor );
-	}
-	
-	thread watchVar( "admin_kill", ::kill );
-	thread watchVar( "admin_givexp", ::giveXp );
-	thread watchVar( "admin_givekills", ::giveKills );
-	thread watchVar( "admin_gp", ::givePoints );
-	thread watchVar( "admin_say", ::say );
-	thread watchVar( "admin_getid", ::getid );
-	thread watchVar( "admin_updatexp", ::updatexp );
-	thread watchVar( "admin_updatekills", ::updatekills );
-	thread watchVar( "admin_rename", ::rename );
-	
-	thread watchVar( "admin_spank", ::spank );
-	thread watchVar( "admin_slap", ::slap );
+    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_admin.gsc::main()", true );
+
+    precacheModel( "xmodel/vehicle_tank_tiger" );
+
+    level.specthread = maps\mp\gametypes\zombies::spawnSpectator;
+
+    // Insults by Cato
+    insults[0]  = "^1's mom is like a hardware store... 10 cents a screw.";
+    insults[1]  = "^1. I'd like to see things from your point of view but I can't seem to get my head that far up my ass.";
+    insults[2]  = "^1's mom is so poor, she once fought a blind squirrel for a peanut.";
+    insults[3]  = "^1 is so stupid he tried to eat a crayon because it looked fruity!";
+    insults[4]  = "^1 is so stupid he tought a 'quarter back' is a refund.";
+    insults[5]  = "^1 is so poor he uses an ice cube as his A/C.";
+    insults[6]  = "^1. If you were any more stupid, he'd have to be watered twice a week.";
+    insults[7]  = "^1. I could make a monkey out of you, but why should I take all the credit?";
+    insults[8]  = "^1. I heard you got a brain transplant and the brain rejected you!";
+    insults[9]  = "^1. How did you get here? Did someone leave your cage open?";
+    insults[10] = "^1 got more issues than National Geographic!";
+    insults[11] = "^1. If you were my dog, I'd shave your butt and teach you to walk backwards.";
+    insults[12] = "^1. You're the reason God created the middle finger.";
+    insults[13] = "^1. I hear that when your mother first saw you, she decided to leave you on the front steps of a police station while she turned herself in.";
+    insults[14] = "^1. Your IQ involves the square root of -1.";
+    insults[15] = "^1. You know you're a bad gamer when you still miss with an aimbot.";
+    insults[16] = "^1. You're such a nerd that your penis plugs into a flash drive.";
+    insults[17] = "^1's mom is so FAT32, she wouldn't be accepted by NTFS!";
+    insults[18] = "^1. You're not important - you're just an NPC!";
+    insults[19] = "^1, you're so slow, is your ping at 999?";
+    insults[20] = "^1. You're not optimized for life are you?";
+    insults[21] = "^1. You must have been born on a highway because that's where most accidents happen.";
+    insults[22] = "^1. Why don't you slip into something more comfortable... like a coma.";
+    insults[23] = "^1. I had a nightmare. I dreamt I was you.";
+    insults[24] = "^1. Lets play 'house'. You be the door and I'll slam you.";
+    insults[25] = "^1, I'm gonna get you a condom. That way you can have protection when you go fuck yourself.";
+    insults[26] = "^1. Roses are red, violets are blue, I have 5 fingers, the 3rd ones for you.";
+    insults[27] = "^1. Ever since I saw you in your family tree, I've wanted to cut it down.";
+    insults[28] = "^1, your village just called. They're missing an idiot.";
+    insults[29] = "^1, I can't think of an insult stupid enough for you.";
+
+    level.iC = 0;
+    level.insults = array_shuffle(insults);
+
+    thread watchVar( "admin_endgame", ::endGame );
+    thread watchVar( "admin_giveweap", ::giveWeap );
+    thread watchVar( "admin_drop", ::drop );
+    thread watchVar( "admin_giveks", ::giveks );
+    thread watchVar( "admin_givearmor", ::givearmor );
+    
+    thread watchVar( "admin_kill", ::kill );
+    thread watchVar( "admin_givexp", ::giveXp );
+    thread watchVar( "admin_givekills", ::giveKills );
+    thread watchVar( "admin_gp", ::givePoints );
+    thread watchVar( "admin_say", ::say );
+    thread watchVar( "admin_getid", ::getid );
+    thread watchVar( "admin_updatexp", ::updatexp );
+    thread watchVar( "admin_updatekills", ::updatekills );
+    thread watchVar( "admin_rename", ::rename );
+    
+    thread watchVar( "admin_spank", ::spank );
+    thread watchVar( "admin_slap", ::slap );
+
+    thread watchVar( "admin_blind", ::blind );
+    thread watchVar( "admin_forcespec", ::forcespec );
+    //thread watchVar( "admin_toilet", ::toilet );
+    thread watchVar( "admin_runover", ::runover );
+    thread watchVar( "admin_squash", ::squash );
+    thread watchVar( "admin_insult", ::insult );
+    thread watchVar( "admin_rape", ::rape );
+
+    thread watchVar( "admin_moveguid", ::move_guid );
 }
 
 watchVar( varname, func )
 {
-	setCvar( varname, "" );
-	
-	while ( 1 )
-	{
-		if ( getCvar( varname ) != "" )
-		{
-			thread [[ func ]]( getCvar( varname ) );
-			setCvar( varname, "" );
-		}
-			
-		wait 0.05;
-	}
+    setCvar( varname, "" );
+    
+    while ( 1 )
+    {
+        if ( getCvar( varname ) != "" )
+        {
+            thread [[ func ]]( getCvar( varname ) );
+            setCvar( varname, "" );
+        }
+            
+        wait 0.05;
+    }
 }
 
 endGame( value )
 {
-	thread maps\mp\gametypes\_zombie::endGame( "forced" );
+    thread maps\mp\gametypes\_zombie::endGame( "forced" );
 }
 
 kill( value )
 {
-	player = maps\mp\gametypes\_zombie::getPlayerByID( value );
-	
-	if ( isDefined( player ) )
-	{
-		player suicide();
-		playFx( level._effect[ "zombieExplo" ], player.origin );
-		
-		iPrintLn( "^3The Admin killed ^7" + player.name + "^3!" );
-	}
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    
+    if ( isDefined( player ) )
+    {
+        player suicide();
+        playFx( level._effect[ "zombieExplo" ], player.origin );
+        
+        iPrintLn( "^3The Admin killed ^7" + player.name + "^3!" );
+    }
 }
 
 giveXp( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
-	
-	if ( isDefined( player ) )
-	{
-		player.xp += amount;
-		player thread maps\mp\gametypes\_zombie::checkRank();
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+
+    amount = atoi( array[ 1 ] );
+    if ( !isDefined ( amount ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid XP Value^1!" );
+        return;
+    }
+    
+    if ( isDefined( player ) )
+    {
+        player.xp += amount;
+        player thread maps\mp\gametypes\_zombie::checkRank();
+    }
 }
 
 giveKills( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
-	
-	if ( isDefined( player ) )
-	{
-		player.zomxp += amount;
-		player thread maps\mp\gametypes\_zombie::checkRank();
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+
+    amount = atoi( array[ 1 ] );
+    if ( !isDefined ( amount ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid Kill Value^1!" );
+        return;
+    }
+    
+    if ( isDefined( player ) )
+    {
+        player.zomxp += amount;
+        player thread maps\mp\gametypes\_zombie::checkRank();
+    }
 }
 
 givePoints( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	amount = (int)array[ 1 ];
-	
-	if ( isDefined( player ) )
-		player.points += amount;
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    
+    amount = atoi( array[ 1 ] );
+    if ( !isDefined ( amount ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid Point Value^1!" );
+        return;
+    }
+    
+    if ( isDefined( player ) )
+        player.points += amount;
 }
 
 updateXP( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	id = (int)array[ 0 ];
-	amount = (int)array[ 1 ];
-	
-	for ( i = 0; i < level.stats[ "hunters" ].size; i++ )
-	{
-		miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "hunters" ][ i ], "," );
-		if ( id == miniarray[ 0 ] )
-		{
-			miniarray[ 1 ] += amount;
-			
-			string = miniarray[ 0 ] + "," + miniarray[ 1 ] + "," + miniarray[ 2 ];
-			level.stats[ "hunters" ][ i ] = string;
-			break;
-		}
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    id = atoi( array[ 0 ] );
+    if ( !isDefined ( id ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid ID^1!" );
+        return;
+    }
+    amount = atoi( array[ 1 ] );
+    if ( !isDefined ( amount ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid XP Value^1!" );
+        return;
+    }
+    for ( i = 0; i < level.stats[ "hunters" ].size; i++ )
+    {
+        miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "hunters" ][ i ], "," );
+        if ( id == miniarray[ 0 ] )
+        {
+            miniarray[ 1 ] += amount;
+            
+            string = miniarray[ 0 ] + "," + miniarray[ 1 ] + "," + miniarray[ 2 ];
+            level.stats[ "hunters" ][ i ] = string;
+            break;
+        }
+    }
 }
 
 updateKills( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	id = (int)array[ 0 ];
-	amount = (int)array[ 1 ];
-	
-	for ( i = 0; i < level.stats[ "zombies" ].size; i++ )
-	{
-		miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "zombies" ][ i ], "," );
-		if ( id == miniarray[ 0 ] )
-		{
-			miniarray[ 1 ] += amount;
-			
-			string = miniarray[ 0 ] + "," + miniarray[ 1 ] + "," + miniarray[ 2 ];
-			level.stats[ "zombies" ][ i ] = string;
-			break;
-		}
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    id = atoi( array[ 0 ] );
+    if ( !isDefined ( id ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid ID^1!" );
+        return;
+    }
+    amount = atoi( array[ 1 ] );
+    if ( !isDefined ( amount ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid Kill Value^1!" );
+        return;
+    }
+    for ( i = 0; i < level.stats[ "zombies" ].size; i++ )
+    {
+        miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "zombies" ][ i ], "," );
+        if ( id == miniarray[ 0 ] )
+        {
+            miniarray[ 1 ] += amount;
+            
+            string = miniarray[ 0 ] + "," + miniarray[ 1 ] + "," + miniarray[ 2 ];
+            level.stats[ "zombies" ][ i ] = string;
+            break;
+        }
+    }
 }
 
 giveWeap( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	weapon = array[ 1 ];
-	slot = "primaryb";
-	
-	if ( isDefined( array[ 2 ] ) )
-		slot = array[ 2 ];
-		
-	player setWeaponSlotWeapon( slot, weapon );
-	player setWeaponSlotAmmo( slot, 9999 );
-	player switchToWeapon( weapon );
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    weapon = array[ 1 ];
+    slot = "primaryb";
+    
+    if ( isDefined( array[ 2 ] ) )
+        slot = array[ 2 ];
+        
+    player setWeaponSlotWeapon( slot, weapon );
+    player setWeaponSlotAmmo( slot, 9999 );
+    player switchToWeapon( weapon );
 }
 
 say( value )
 {
-	iPrintLnBold( value );
+    iPrintLnBold( value );
 }
 
 getid( value )
 {
-	player = maps\mp\gametypes\_zombie::getPlayerByID( value );
-	
-	if ( isDefined( player ) )
-		iprintlnbold( player.name + " = " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
-		
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    
+    if ( isDefined( player ) )
+        iprintlnbold( player.name + " = " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
+        
 }
 
 drop( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	height = 512;
-	
-	if ( !isDefined( array[ 0 ] ) )
-		return;
-
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	if ( isDefined( array[ 1 ] ) )
-		height = (int)array[ 1 ];
-	
-	if ( isDefined( player ) )
-	{
-		player endon( "disconnect" );
-		
-		player.drop = spawn( "script_origin", player.origin );
-		player linkto( player.drop );
-		
-		player.drop movez( height, 2 );
-		wait 2;
-		player unlink();
-		player.drop delete();
-		
-		iPrintLn( "^3The admin DROPPED ^7" + player.name + "^3!" );
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    height = 512;
+    
+    if ( !isDefined( array[ 0 ] ) )
+        return;
+        
+    if ( isDefined( array[ 1 ] ) )
+    {
+        height = atoi( array[ 1 ] );
+        if ( !isDefined ( height ) && isDefined( self ) )
+        {
+            self iprintln( "^1I^7nvalid Height^1!" );
+            return;
+        }
+    }
+    
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    
+    if ( isDefined( player ) )
+    {
+        player endon( "disconnect" );
+        
+        player.drop = spawn( "script_origin", player.origin );
+        player linkto( player.drop );
+        
+        player.drop movez( height, 2 );
+        wait 2;
+        player unlink();
+        player.drop delete();
+        
+        iPrintLn( "^3The admin DROPPED ^7" + player.name + "^3!" );
+    }
 }
 
 spank( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	time = 30;
-	
-	if ( !isDefined( array[ 0 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	if ( isDefined( array[ 1 ] ) )
-		time = (int)array[ 1 ];
-		
-	if ( isDefined( player ) )
-	{
-		iPrintLn( "^3The admin SPANKED ^7" + player.name + "^3!" );
-			
-		player shellshock( "default", time / 2 );
-		for( i = 0; i < time; i++ )
-		{
-			player playSound( "melee_hit" );
-			player setClientCvar( "cl_stance", 2 );
-			wait randomFloat( 0.5 );
-		}
-		player shellshock( "default", 1 );
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    time = 30;
+    
+    if ( !isDefined( array[ 0 ] ) )
+        return;
+        
+    if ( isDefined( array[ 1 ] ) )
+    {
+        time = atoi( array[ 1 ] );
+        if ( !isDefined ( time ) && isDefined( self ) )
+        {
+            self iprintln( "^1I^7nvalid Time^1!" );
+            return;
+        }
+    }
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+
+    if ( isDefined( player ) )
+    {   
+        iPrintLn( "^3The admin SPANKED ^7" + player.name + "^3!" );
+            
+        player shellshock( "default", time / 2 );
+        for( i = 0; i < time; i++ )
+        {
+            player playSound( "melee_hit" );
+            player setClientCvar( "cl_stance", 2 );
+            wait randomFloat( 0.5 );
+        }
+        player shellshock( "default", 1 );
+    }
 }
 
 slap( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	dmg = 10;
-	
-	if ( !isDefined( array[ 0 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	if ( isDefined( array[ 1 ] ) )
-		dmg = (int)array[ 1 ];
-		
-	if ( isDefined( player ) )
-	{
-		eInflictor = player;
-		eAttacker = player;
-		iDamage = dmg;
-		iDFlags = 0;
-		sMeansOfDeath = "MOD_PROJECTILE";
-		sWeapon = "panzerfaust_mp";
-		vPoint = ( player.origin + ( 0, 0, -1 ) );
-		vDir = vectorNormalize( player.origin - vPoint );
-		sHitLoc = "none";
-		psOffsetTime = 0;
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    dmg = 10;
+    
+    if ( !isDefined( array[ 0 ] ) )
+        return;
+    
+    if ( isDefined( array[ 1 ] ) )
+    {
+        dmg = atoi( array[ 1 ] );
+        if ( !isDefined ( dmg ) && isDefined( self ) )
+        {
+            self iprintln( "^1I^7nvalid Damage Value^1!" );
+            return;
+        }
+    }
+    
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 
-		player playSound( "melee_hit" );
-		player finishPlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime );
-		
-		iPrintLn( "^3The admin SLAPPED ^7" + player.name + "^7!" );
-	}
+    if ( isDefined( player ) )
+    {
+        eInflictor = player;
+        eAttacker = player;
+        iDamage = dmg;
+        iDFlags = 0;
+        sMeansOfDeath = "MOD_PROJECTILE";
+        sWeapon = "panzerfaust_mp";
+        vPoint = ( player.origin + ( 0, 0, -1 ) );
+        vDir = vectorNormalize( player.origin - vPoint );
+        sHitLoc = "none";
+        psOffsetTime = 0;
+
+        player playSound( "melee_hit" );
+        player finishPlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime );
+        
+        iPrintLn( "^3The admin SLAPPED ^7" + player.name + "^7!" );
+    }
 }
 
 giveks( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
-	
-	if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	ks = array[ 1 ];
-	
-	if ( isDefined( player ) )
-	{
-		player.powerup = ks;
-		player thread maps\mp\gametypes\_killstreaks::notifyPowerup();
-	}
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    ks = array[ 1 ];
+    
+    if ( isDefined( player ) )
+    {
+        player.powerup = ks;
+        player thread maps\mp\gametypes\_killstreaks::notifyPowerup();
+    }
 }
 
 rename( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
 
-	if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	
-	if ( isDefined( player ) )
-	{
-		newname = "";
-		for ( i = 1; i < 10; i++ )
-		{
-			if ( isDefined( array[ i ] ) )
-			{
-				newname += " ";
-				newname += array[ i ];
-			}
-		}
-		
-		player setClientCvar( "name", newname );
-	}
+    if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
+        return;
+        
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    
+    if ( isDefined( player ) )
+    {
+        newname = "";
+        for ( i = 1; i < 10; i++ )
+        {
+            if ( isDefined( array[ i ] ) )
+            {
+                newname += " ";
+                newname += array[ i ];
+            }
+        }
+        
+        player setClientCvar( "name", newname );
+    }
 }
 
 givearmor( value )
 {
-	array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
 
-	if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) && !isDefined( array[ 2 ] ) )
-		return;
-		
-	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
-	
-	if ( isDefined( player ) )
-	{
-		if ( array[ 1 ] == "bodyarmor" )
-			player.bodyarmor = (int)array[ 2 ];
-		else if ( array[ 1 ] == "exploarmor" )
-			player.exploarmor = (int)array[ 2 ];
-	}
+    if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) && !isDefined( array[ 2 ] ) )
+        return;
+    
+    armor = atoi( array[ 2 ] );
+    if ( !isDefined ( armor ) && isDefined( self ) )
+    {
+        self iprintln( "^1I^7nvalid Value^1!" );
+        return;
+    }
+    
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    
+    if ( isDefined( player ) )
+    {   
+        if ( array[ 1 ] == "bodyarmor" )
+            player.bodyarmor = armor;
+        else if ( array[ 1 ] == "exploarmor" )
+            player.exploarmor = armor;
+    }
+}
+
+blind( value )
+{
+    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    
+    if ( !isDefined( array[ 0 ] ) )
+        return;
+    
+    time = 10;
+    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    if ( isDefined( array[ 1 ] ) )
+        time = atoi( array[ 1 ] );
+    
+    if( isDefined( player ) )
+    {
+        iPrintLn( "^3The admin BLINDED ^7" + player.name + "^3!" );
+        half = time / 2;
+        
+        player shellshock( "default", time ); 
+        player.blindscreen = newClientHudElem( player );
+        player.blindscreen.x = 0;
+        player.blindscreen.y = 0;
+        player.blindscreen.alpha = 1;
+        player.blindscreen setShader( "white", 640, 480 );
+        
+        wait half;
+        
+        player.blindscreen fadeOverTime( half );
+        player.blindscreen.alpha = 0;
+        wait time;
+        player.blindscreen destroy();
+    }
+}
+
+forcespec( value )
+{
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    if( isDefined( player ) )
+    {
+        player thread [[ level.specthread ]]();
+        iPrintLn( "^3The admin FORCED ^7" + player.name + "^3 to spectator." );
+    }
+}
+
+toilet( value )
+{ 
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    if( isDefined( player ) )
+    {
+        player detachall();
+        player takeAllWeapons();
+        player setmodel( "xmodel/toilet" );
+
+        iPrintLn( "^3The admin turned ^7" + player.name + "^3 into a toilet!" );
+
+        isSet3rdPerson = false;
+
+        while(player.sessionstate == "playing") {
+            if(!isSet3rdPerson) {
+                player setClientCvar("cg_thirdperson", "1");
+                isSet3rdPerson = true;
+            }
+            wait 0.05;  
+        }
+        player setClientCvar("cg_thirdperson", "0");
+    }
+}
+
+insult(value)
+{
+    player = maps\mp\gametypes\_zombie::getPlayerByID(value);
+    if(!isDefined(player))
+        return;
+
+    // Check if all the insults have been displayed
+    if(level.iC >= (level.insults.size - 1)) {
+        // If it is, print the last insult
+        iPrintLnBold(player.name + level.insults[level.insults.size - 1]);
+        // Shuffle the array again so we don't got the same list of insults
+        level.insults = array_shuffle(level.insults);
+        // Reset the insult counter
+        level.iC = 0;
+    } else {
+        iPrintLnBold(player.name + level.insults[level.iC]);
+        level.iC++;
+    }
+}
+
+runover( value )
+{
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    if( isDefined( player ) )
+    {
+        lol = spawn( "script_origin", player getOrigin() );
+        player linkto( lol );
+        tank = spawn( "script_model", player getOrigin() + ( -512, 0, -256 ) );
+        tank setmodel( "xmodel/vehicle_tank_tiger" );
+        angles = vectortoangles( player getOrigin() - ( tank.origin + ( 0, 0, 256 ) ) );
+        tank.angles = angles;
+        tank playloopsound( "tiger_engine_high" );
+        tank movez( 256, 1 );
+        wait 1;
+        tank movex( 1024, 5 );
+        wait 1.8;
+        iPrintLn( "^7" + player.name + "^3 was RUN OVER by a tank!" );
+        player suicide();
+        wait 3.2;
+        tank movez( -256, 1 );
+        wait 1;
+        tank stoploopsound();
+        tank delete();
+        lol delete();
+    }
+}
+
+squash( value )
+{
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    
+    if( isDefined( player ) )
+    {
+        lol = spawn( "script_model", player getOrigin() );
+        player linkto( lol );
+        thing = spawn( "script_model", player getOrigin() + ( 0, 0, 1024 ) );
+        thing setmodel( "xmodel/vehicle_russian_barge" );
+        thing movez( -1024, 2 );
+        wait 2;
+        iPrintLn( "^3The admin SQUASHED ^7" + player.name + "^3 with a russian barge!" );
+        player suicide();
+        thing movez( -512, 5 );
+        wait 5;
+        thing delete();
+        lol delete();
+    }
+}
+
+rape( value ) {
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    
+    if ( isDefined( player ) ) {
+        dumas = spawn( "script_model", ( 0, 0, 0 ) );
+        dumas setmodel( "xmodel/playerbody_russian_conscript" );
+        
+        player thread forceprone();
+        
+        iPrintLnBold( player.name + "^3 is getting RAPED by dumas!" );
+
+        player endon( "spawned" );
+        player endon( "disconnect" );
+        
+        while ( isAlive( player ) ) {
+            tracedir = anglestoforward( player getPlayerAngles() );
+            traceend = player.origin;
+            traceend += maps\mp\_utility::vectorscale( tracedir, -56 );
+            trace = bullettrace( player.origin, traceend, false, player );
+            pos = trace[ "position" ];
+            
+            dumas.origin = pos;
+            dumas.angles = ( 45, player.angles[ 1 ], player.angles[ 2 ] );
+            
+            rapedir = dumas.origin - player.origin;
+
+            dumas moveto( player.origin, 0.5 );
+            wait 0.3;
+            dumas moveto( pos, 0.25 );
+            wait 0.25;
+            player finishplayerdamage( player, player, 20, 0, "MOD_PROJECTILE", "panzerfaust_mp", dumas.origin, vectornormalize( dumas.origin - player.origin ), "none" );
+        }
+        
+        dumas delete();
+    }
+}
+
+forceprone() {
+    self endon( "death" );
+    self endon( "disconnect" );
+    self endon( "spawned" );
+
+    while ( isAlive( self ) ) {
+        self setClientCvar( "cl_stance", 2 );
+        wait 0.05;
+    }
+}
+
+move_guid( value ) {
+    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    if ( isDefined( player ) ) {
+        newguid = maps\mp\gametypes\_zombie::getNumberedName( player.name );
+        if ( newguid == player.guid ) {
+            player iPrintLnBold( "Please change your name to the name you wish to have your stats saved to" );
+            return;
+        }
+
+        player.guid = newguid;
+        player iPrintLnBold( "Your GUID has been changed. Please wait until the end of the game for your stats to save!" );
+    }
+}
+
+array_shuffle(arr)
+{
+  for(i = 0; i < arr.size; i++) {
+    // Store the current array element in a variable
+    _tmp = arr[i];
+    
+    // Generate a random number
+    rN = randomInt(arr.size);
+    
+    // Replace the current with the random
+    arr[i] = arr[rN];
+    // Replace the random with the current
+    arr[rN] = _tmp;
+  }
+  return arr;
+}
+
+atoi( sString ) {
+    sString = maps\mp\gametypes\_zombie::strreplacer( sString, "numeric" );
+    if ( sString == "" )
+        return undefined;
+    return (int)sString;
 }

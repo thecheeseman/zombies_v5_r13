@@ -24,8 +24,12 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.1.2
-#### 10/04/16 - 11/04/16
+#### 10/04/16 - 13/04/16
 
+    * Upped points / xp received for being last hunter
+    + Added back zom_antispec
+    + Added the rest of my admin commands from Cato's Jump Mod
+    - Completely removed the index.dat LUT for stats, instead relying on fexists() now
     # Fixed a bug where Rank health was completely screwed up
     # Fixed a bug where Sniper invisibility could last for a long period of time
     * Increased cooldown time for Sniper invisiblity

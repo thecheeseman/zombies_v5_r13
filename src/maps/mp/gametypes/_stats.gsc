@@ -77,7 +77,7 @@ main() {
 	level.loadingmessage.aligny = "middle";
 	level.loadingmessage setText( &"LOADING STATS" );
 	level.loadingmessage.alpha = 1;
-
+/*
 	level.statsLUT = [];
 
 	
@@ -97,6 +97,8 @@ main() {
 	handle = fopen( lutname, "r" );
 	if ( handle != -1 ) {
 		data = fread( fsize( handle ), handle );
+		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() - reading " + fsize( handle ) + " bytes" );
+
 		if ( !isDefined( data ) || data[ 0 ] == "" ) {
 			[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() -- no stats found in file " + lutname );
 		}
@@ -107,7 +109,8 @@ main() {
 		arr = maps\mp\gametypes\_zombie::explode( data, "," );
 		for ( i = 0; i < arr.size; i++ ) {
 			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "onlynumbers" );
-			level.statsLUT[ level.statsLUT.size ] = guid;
+			if ( statLUTLookup( guid ) )
+				level.statsLUT[ level.statsLUT.size ] = guid;
 		}
 	} else {
 		fse( "problem reading " + lutname, true );
@@ -115,7 +118,7 @@ main() {
 	}
 
 	// end file loading logic
-	
+	*/
 	wait 1;
 	
 	level.loadingstats = false;
@@ -232,7 +235,7 @@ getStatField( fieldname ) {
 
 	return undefined;
 }
-
+/*
 statLUTLookup( guid ) {
 	for ( i = 0; i < level.statsLUT.size; i++ ) {
 		stat = level.statsLUT[ i ];
@@ -274,15 +277,15 @@ writeLUT() {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::writeLUT() -- close file" + lutname, true );
 	fclose( handle );
 }
-
+*/
 saveAll() {
 	players = getEntArray( "player", "classname" );
 	for ( i = 0; i < players.size; i++ ) {
 		players[ i ] saveMyStats();
-		players[ i ] addToLUT();
+		//players[ i ] addToLUT();
 	}
 
-	writeLUT();
+	//writeLUT();
 }
 
 saveMyStats() {
@@ -359,9 +362,9 @@ getMyStats() {
 	self.guid = maps\mp\gametypes\_zombie::getNumberedName( self.oldname );
 
 	// quick check to prevent too much file io
-	if ( !statLUTLookup( self.guid ) ) {
-		return;
-	}
+	//if ( !statLUTLookup( self.guid ) ) {
+	//	return;
+	//}
 
 	lutname = "stats/players/" + self.guid + ".dat";
 	if ( !fexists( lutname ) ) {
@@ -448,33 +451,6 @@ getMyStats() {
 					}
 					break;
 			}
-/*
-			switch ( field ) {
-				case "xp":					self.xp = 								(int) value; break;
-				case "rank":				self.rank = 							(int) value; break;
-				case "points":				self.points = 							(int) value; break;
-				case "zombiexp":			self.zomxp = 							(int) value; break;
-				case "zombierank":			self.zomrank = 							(int) value; break;
-				case "kills":				self.stats[ "totalkills" ] =			(int) value; break;
-				case "deaths":				self.stats[ "totaldeaths" ] =			(int) value; break;
-				case "bashes":				self.stats[ "totalbashes" ] =			(int) value; break;
-				case "damage":				self.stats[ "totaldamage" ] =			(int) value; break;
-				case "headshots":			self.stats[ "totalheadshots" ] =		(int) value; break;
-				case "assists":				self.stats[ "totalassists" ] =			(int) value; break;
-				case "shotsfired":			self.stats[ "totalshotsfired" ] =		(int) value; break;
-				case "shotshit":			self.stats[ "totalshotshit" ] =			(int) value; break;
-				case "jumperzombiekills":	self.stats[ "jumperzombiekills" ] =		(int) value; break;
-				case "fastzombiekills":		self.stats[ "fastzombiekills" ] =		(int) value; break;
-				case "poisonzombiekills":	self.stats[ "poisonzombiekills" ] =		(int) value; break;
-				case "firezombiekills":		self.stats[ "firezombiekills" ] =		(int) value; break;
-				case "killsasjumperzombie":	self.stats[ "killsasjumperzombie" ] = 	(int) value; break;
-				case "killsasfastzombie":	self.stats[ "killsasfastzombie" ] = 	(int) value; break;
-				case "killsaspoisonzombie":	self.stats[ "killsaspoisonzombie" ] = 	(int) value; break;
-				case "killsasfirezombie":	self.stats[ "killsasfirezombie" ] = 	(int) value; break;
-				case "hphealed":			self.stats[ "hphealed" ] =				(int) value; break;
-				default:										 				 	 break;
-			}
-*/
 		}
 
 		self.stats[ "playerName" ] = self.name;

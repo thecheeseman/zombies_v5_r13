@@ -302,9 +302,8 @@ endGame( winner )
 	if ( !level.lasthunter )
 		setCvar( "lasthunter", "" );
 	
-	level.clock destroy();
-	
-	thread maps\mp\gametypes\_stats::resetStatsVars();
+	if ( isDefined( level.clock ) )
+		level.clock destroy();
 	
 	if ( winner == "zombies" )
 		iPrintLnBold( "^1Zombies have killed all the Hunters!" );
@@ -2756,7 +2755,7 @@ isSymbol( cChar )
 		case "}":	case ":":	case ".":
 		case "?":	case "^":	case "+":
 		case "/":	case "~":	case "`":
-		case ";":	
+		case ";":	case "|":
 			bIsSymbol = true;
 			break;
 		default:
