@@ -466,7 +466,6 @@ givearmor( value )
     }
 }
 
-<<<<<<< HEAD
 blind( value )
 {
     array = maps\mp\gametypes\_zombie::explode( value, " " );
@@ -687,57 +686,3 @@ atoi( sString ) {
         return undefined;
     return (int)sString;
 }
-=======
-atoi( sString ) {
-    sString = maps\mp\gametypes\_zombie::strreplacer( sString, "numeric" );
-    if ( sString == "" )
-        return undefined;
-    return (int)sString;
-}
-
-strreplacer( sString, sType ) {
-    switch ( sType ) {
-        case "lower":
-            out = "abcdefghijklmnopqrstuvwxyz";
-            in = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            bIgnoreExtraChars = false;
-            break;
-        case "upper":
-            in = "abcdefghijklmnopqrstuvwxyz";
-            out = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            bIgnoreExtraChars = false;
-            break;
-        case "numeric":
-            in = "0123456789.-";
-            out = "0123456789.-";
-            bIgnoreExtraChars = true;
-            break;
-        case "vector":
-            in = "0123456789.-,()";
-            out = "0123456789.-,()";
-            bIgnoreExtraChars = true;
-            break;
-        default:
-            return sString;
-            break;
-    }
-        
-    sOut = "";
-    for ( i = 0; i < sString.size; i++ ) {
-        bFound = false;
-        cChar = sString[ i ];
-        for ( j = 0; j < in.size; j++ ) {
-            if ( in[ j ] == cChar ) {
-                sOut += out[ j ];
-                bFound = true;
-                break;
-            }
-        }
-        
-        if ( !bFound && !bIgnoreExtraChars )
-            sOut += cChar;
-    }
-    
-    return sOut;
-}
->>>>>>> origin/develop
