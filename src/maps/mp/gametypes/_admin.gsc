@@ -86,7 +86,7 @@ giveXp( value )
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 
 	amount = atoi( array[ 1 ] );
-	if ( !isDefined ( amount ) )
+	if ( !isDefined ( amount ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid XP Value^1!" );
 		return;
@@ -109,7 +109,7 @@ giveKills( value )
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 
 	amount = atoi( array[ 1 ] );
-	if ( !isDefined ( amount ) )
+	if ( !isDefined ( amount ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid Kill Value^1!" );
 		return;
@@ -132,7 +132,7 @@ givePoints( value )
 	player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
 	
 	amount = atoi( array[ 1 ] );
-	if ( !isDefined ( amount ) )
+	if ( !isDefined ( amount ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid Point Value^1!" );
 		return;
@@ -150,13 +150,13 @@ updateXP( value )
 		return;
 		
 	id = atoi( array[ 0 ] );
-	if ( !isDefined ( id ) )
+	if ( !isDefined ( id ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid ID^1!" );
 		return;
 	}
 	amount = atoi( array[ 1 ] );
-	if ( !isDefined ( amount ) )
+	if ( !isDefined ( amount ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid XP Value^1!" );
 		return;
@@ -183,13 +183,13 @@ updateKills( value )
 		return;
 		
 	id = atoi( array[ 0 ] );
-	if ( !isDefined ( id ) )
+	if ( !isDefined ( id ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid ID^1!" );
 		return;
 	}
 	amount = atoi( array[ 1 ] );
-	if ( !isDefined ( amount ) )
+	if ( !isDefined ( amount ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid Kill Value^1!" );
 		return;
@@ -252,7 +252,7 @@ drop( value )
 	if ( isDefined( array[ 1 ] ) )
 	{
 		height = atoi( array[ 1 ] );
-		if ( !isDefined ( height ) )
+		if ( !isDefined ( height ) && isDefined( self ) )
 		{
 			self iprintln( "^1I^7nvalid Height^1!" );
 			return;
@@ -288,7 +288,7 @@ spank( value )
 	if ( isDefined( array[ 1 ] ) )
 	{
 		time = atoi( array[ 1 ] );
-		if ( !isDefined ( time ) )
+		if ( !isDefined ( time ) && isDefined( self ) )
 		{
 			self iprintln( "^1I^7nvalid Time^1!" );
 			return;
@@ -323,7 +323,7 @@ slap( value )
 	if ( isDefined( array[ 1 ] ) )
 	{
 		dmg = atoi( array[ 1 ] );
-		if ( !isDefined ( dmg ) )
+		if ( !isDefined ( dmg ) && isDefined( self ) )
 		{
 			self iprintln( "^1I^7nvalid Damage Value^1!" );
 			return;
@@ -402,7 +402,7 @@ givearmor( value )
 		return;
 	
 	armor = atoi( array[ 2 ] );
-	if ( !isDefined ( armor ) )
+	if ( !isDefined ( armor ) && isDefined( self ) )
 	{
 		self iprintln( "^1I^7nvalid Value^1!" );
 		return;
