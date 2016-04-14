@@ -72,7 +72,7 @@ atoi_mod( tok )
 	if ( tok.size > 2 )
 		return undefined;
 	
-	tokString = maps\mp\gametypes\_admin::strreplacer( tok, "lower" );
+	tokString = maps\mp\gametypes\_zombie::strreplacer( tok, "lower" );
 	tokID = maps\mp\gametypes\_admin::atoi( tok );
 	if ( !isDefined ( tokID ) )
 		return undefined;
