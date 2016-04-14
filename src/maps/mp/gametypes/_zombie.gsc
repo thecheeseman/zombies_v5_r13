@@ -2898,6 +2898,7 @@ charToDigit( ch )
 		case "Y":	return 179; break;	case "Z":	return 180; break;
 		case "/":	return 181; break; 	case "+":	return 182; break;
 		case "~":	return 182; break;	case "`":	return 183; break;
+		default:	return 0;
 	}
 }
 
