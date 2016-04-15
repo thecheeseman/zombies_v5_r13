@@ -27,23 +27,30 @@ Main()
 
 	precache();
 	
-	thread maps\mp\gametypes\_config::main();
-	thread maps\mp\gametypes\_killstreaks::init();
-	thread maps\mp\gametypes\_buymenu::init();
-	thread maps\mp\gametypes\_mapvote::init();
-	thread maps\mp\gametypes\_ammoboxes::main();
-	thread maps\mp\gametypes\_admin::main();
-	thread maps\mp\gametypes\_extra::main();
-	thread maps\mp\gametypes\_weather::main();
-	thread maps\mp\gametypes\_sharkscanner::main();
-	thread maps\mp\gametypes\_hud::init();
-	thread maps\mp\gametypes\_stats::main();
-	thread maps\mp\gametypes\_ranks::init();
-	thread maps\mp\gametypes\_classes::init();
-    thread maps\mp\gametypes\_skins::init();
-	thread zombies\modules::init();
+	maps\mp\gametypes\_config::init();
+	maps\mp\gametypes\_killstreaks::init();
+	maps\mp\gametypes\_buymenu::init();
+	maps\mp\gametypes\_mapvote::init();
+	maps\mp\gametypes\_ammoboxes::init();
+	maps\mp\gametypes\_admin::init();
+	maps\mp\gametypes\_extra::init();
+	maps\mp\gametypes\_weather::init();
+	maps\mp\gametypes\_hud::init();
+	maps\mp\gametypes\_permissions::init();
+	maps\mp\gametypes\_stats::init();
+	maps\mp\gametypes\_ranks::init();
+	maps\mp\gametypes\_classes::init();
+    maps\mp\gametypes\_skins::init();
+	zombies\modules::init();
 	
-	thread weaponremoval();
+	weaponremoval();
+
+	maps\mp\gametypes\_config::main();
+	maps\mp\gametypes\_ammoboxes::main();
+	maps\mp\gametypes\_admin::main();	
+	maps\mp\gametypes\_extra::main();
+	maps\mp\gametypes\_weather::main();
+	maps\mp\gametypes\_sharkscanner::main();
 
 	[[ level.logwrite ]]( "^^---------- _zombie.gsc::Main() ----------^^" );
 }
@@ -615,8 +622,6 @@ onConnect()
 	self.points = 0;
 
 	self.timejoined = gettime();
-
-	self maps\mp\gametypes\_stats::setupPlayer();
 	
 	self.iszombie = false;
 	self.zombietype = "none";
@@ -669,6 +674,9 @@ onConnect()
 	self.preferredtarget = undefined;
 	
 	self.barricades = [];
+
+	self maps\mp\gametypes\_stats::setupPlayer();
+	self maps\mp\gametypes\_permissions::main();
 	
 	if ( toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || toLower( getCvar( "mapname" ) ) == "cp_banana" )
 		self setClientCvar( "r_fastsky", 0 );
@@ -811,7 +819,7 @@ spawnSpectator()
 	self thread cleanUpHud();
 	self thread maps\mp\gametypes\_buymenu::cleanUp();
 	
-	if ( getCvar( "zom_antispec" ) == "1" && !level.mapended )
+	if ( getCvar( "zom_antispec" ) == "1" && !level.mapended && !self maps\mp\gametypes\_permissions::hasPermission( "defeat_antispec" ) )
 	{
 		self.spechud = newClientHudElem( self );
 		self.spechud.sort = -2;
@@ -2400,6 +2408,8 @@ mapChar( str, conv )
 	if ( !isdefined( str ) || ( str == "" ) )
 		return ( "" );
 
+	from = "";
+	to = "";
 	switch ( conv )
 	{
 	  case "U-L":	case "U-l":	case "u-L":	case "u-l":
@@ -2433,6 +2443,8 @@ mapChar( str, conv )
 }
 
 strreplacer( sString, sType ) {
+	out = "";
+	in = "";
     switch ( sType ) {
     	case "alphanumeric":
     		out = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890-=+_/*!@#$%^&*(){}[];'.~` ";

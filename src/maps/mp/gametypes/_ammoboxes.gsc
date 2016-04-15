@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-main()
+init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_ammoboxes.gsc::main()", true );
 	
@@ -29,7 +29,9 @@ main()
 	precacheShader( "gfx/hud/objective.tga" );
 	
 	precacheString( &"Hold [{+activate}] to get ammo/health" );
-	
+}
+
+main() {	
 	locs = [];
 	angs = [];
 	supported = true;

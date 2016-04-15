@@ -20,14 +20,16 @@
 	Extra stuff in stock maps, models, fx, etc.
 */
 
-main()
+init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_extra.gsc::main()", true );
 	precacheModel( "xmodel/vehicle_russian_barge" );
 	precacheModel( "xmodel/vehicle_tank_tiger_d" );
 	precacheModel( "xmodel/playerbody_russian_conscript" );
 	precacheModel( "xmodel/tombstone1" );
-	
+}
+
+main() {	
 	models = [];
 	fx = [];
 	supported = true;

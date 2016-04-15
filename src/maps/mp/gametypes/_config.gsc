@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-main()
+init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_config.gsc::main()", true );
 
@@ -24,16 +24,21 @@ main()
 	precacheString( &"mod by ^3cheese" );
 	precacheString( &"steam^2:^7 thecheeseman999" );
 	precacheString( &"^5http^7:^5//^71.1^1zom^7bies.com" );
+
+	level.servermessages = [];
+	level.welcomemessages = [];
 	
-	thread setupValues();
-	thread setupServerMessages();
-	thread setupWelcomeMessages();
-	thread logo();
+	setupValues();
+	setupServerMessages();
+	setupWelcomeMessages();
 }
 
+main() {
+	thread logo();
+	thread runServerMessages();
+}
 
-logo()
-{
+logo() {
 	level.logo = newHudElem();
 	level.logo.x = 15;
 	level.logo.y = 15;
@@ -156,16 +161,12 @@ setupValues()
 
 setupServerMessages()
 {
-	level.servermessages = [];
 	i = 1;
 	while ( getCvar( "zom_servermessage" + i ) != "" )
 	{
 		level.servermessages[ i - 1 ] = getCvar( "zom_servermessage" + i );
 		i++;
-		wait 0.02;
 	}
-	
-	thread runServerMessages();
 }
 
 runServerMessages()
@@ -194,13 +195,11 @@ runServerMessages()
 
 setupWelcomeMessages()
 {
-	level.welcomemessages = [];
 	i = 1;
 	while ( getCvar( "zom_welcomemessage" + i ) != "" )
 	{
 		level.welcomemessages[ i - 1 ] = getCvar( "zom_welcomemessage" + i );
 		i++;
-		wait 0.02;
 	}
 }
 

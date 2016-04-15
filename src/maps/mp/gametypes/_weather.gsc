@@ -16,22 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-main()
+init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::main()", true );
 	level._effect[ "thunderhead" ] = loadfx( "fx/atmosphere/thunderhead.efx" );
 	level._effect[ "cloudflash" ] = loadfx( "fx/atmosphere/lowlevelburst.efx" );
 
 	level.fogdist = 1500;
-	
-	thread fog();
 }
 
-fog()
-{
-	//if ( level.debug )
-	//	debugfog();
-		
+main() {	
 	mapname = maps\mp\gametypes\_zombie::toLower( getCvar( "mapname" ) );
 	
 	override = true;

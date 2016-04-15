@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-main()
+init()
 {
     [[ level.logwrite ]]( "maps\\mp\\gametypes\\_admin.gsc::main()", true );
 
@@ -59,48 +59,78 @@ main()
     level.iC = 0;
     level.insults = array_shuffle(insults);
 
-    thread watchVar( "admin_endgame", ::endGame );
-    thread watchVar( "admin_giveweap", ::giveWeap );
-    thread watchVar( "admin_drop", ::drop );
-    thread watchVar( "admin_giveks", ::giveks );
-    thread watchVar( "admin_givearmor", ::givearmor );
-    
-    thread watchVar( "admin_kill", ::kill );
-    thread watchVar( "admin_givexp", ::giveXp );
-    thread watchVar( "admin_givekills", ::giveKills );
-    thread watchVar( "admin_gp", ::givePoints );
-    thread watchVar( "admin_say", ::say );
-    thread watchVar( "admin_getid", ::getid );
-    thread watchVar( "admin_updatexp", ::updatexp );
-    thread watchVar( "admin_updatekills", ::updatekills );
-    thread watchVar( "admin_rename", ::rename );
-    
-    thread watchVar( "admin_spank", ::spank );
-    thread watchVar( "admin_slap", ::slap );
+    level.adminvars = [];
 
-    thread watchVar( "admin_blind", ::blind );
-    thread watchVar( "admin_forcespec", ::forcespec );
-    //thread watchVar( "admin_toilet", ::toilet );
-    thread watchVar( "admin_runover", ::runover );
-    thread watchVar( "admin_squash", ::squash );
-    thread watchVar( "admin_insult", ::insult );
-    thread watchVar( "admin_rape", ::rape );
+    addVar( "admin_endgame", ::endGame );
+    addVar( "admin_giveweap", ::giveWeap );
+    addVar( "admin_drop", ::drop );
+    addVar( "admin_giveks", ::giveks );
+    addVar( "admin_givearmor", ::givearmor );
+    
+    addVar( "admin_kill", ::kill );
+    addVar( "admin_givexp", ::giveXp );
+    addVar( "admin_givekills", ::giveKills );
+    addVar( "admin_gp", ::givePoints );
+    addVar( "admin_say", ::say );
+    addVar( "admin_getid", ::getid );
+    addVar( "admin_updatexp", ::updatexp );
+    addVar( "admin_updatekills", ::updatekills );
+    addVar( "admin_rename", ::rename );
+    
+    addVar( "admin_spank", ::spank );
+    addVar( "admin_slap", ::slap );
 
-    thread watchVar( "admin_moveguid", ::move_guid );
+    addVar( "admin_blind", ::blind );
+    addVar( "admin_forcespec", ::forcespec );
+    //addVar( "admin_toilet", ::toilet );
+    addVar( "admin_runover", ::runover );
+    addVar( "admin_squash", ::squash );
+    addVar( "admin_insult", ::insult );
+    addVar( "admin_rape", ::rape );
+
+    addVar( "admin_moveguid", ::move_guid );
 }
 
-watchVar( varname, func )
+main() {
+    thread watchVars();
+}
+
+addVar( varname, func ) {
+    if ( !varExists( varname ) ) {
+        v = spawnstruct();
+        v.varname = varname;
+        v.func = func;
+
+        level.adminvars[ level.adminvars.size ] = v;
+        setCvar( varname, "" );
+    }
+}
+
+varExists( varname ) {
+    for ( i = 0; i < level.adminvars.size; i++ ) {
+        v = level.adminvars[ i ];
+        if ( v.varname == varname )
+            return true;
+    }
+
+    return false;
+}
+
+watchVars()
 {
-    setCvar( varname, "" );
-    
-    while ( 1 )
-    {
-        if ( getCvar( varname ) != "" )
-        {
-            thread [[ func ]]( getCvar( varname ) );
-            setCvar( varname, "" );
+    while ( true ) {
+        resettimeout();
+
+        for ( i = 0; i < level.adminvars.size; i++ ) {
+            v = level.adminvars[ i ];
+
+            if ( getCvar( v.varname ) != "" )
+            {
+                thread [[ v.func ]]( getCvar( v.varname ) );
+                setCvar( v.varname, "" );
+            }
         }
-            
+                
         wait 0.05;
     }
 }

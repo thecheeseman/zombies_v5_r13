@@ -64,11 +64,12 @@
 	shotsfired, shotshit, eof
 */
 
-main() {
+init() {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main()", true );
 
-	level.loadingstats = true;
-	
+	level.loadingstats = false;
+
+/*
 	level.loadingmessage = newHudElem();
 	level.loadingmessage.x = 320;
 	level.loadingmessage.y = 200;
@@ -77,7 +78,7 @@ main() {
 	level.loadingmessage.aligny = "middle";
 	level.loadingmessage setText( &"LOADING STATS" );
 	level.loadingmessage.alpha = 1;
-/*
+
 	level.statsLUT = [];
 
 	
@@ -118,16 +119,16 @@ main() {
 	}
 
 	// end file loading logic
-	*/
-	wait 1;
+	
 	
 	level.loadingstats = false;
-	level.loadingmessage destroy();
+	level.loadingmessage destroy();*/
 
 	level.statsvalidfields = [];
 
 	addStatField( "guid" );
 	addStatField( "playerName", "string" );
+	addStatField( "permissions" );
 
 	// server related
 	addStatField( "joins" );
