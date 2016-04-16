@@ -266,7 +266,7 @@ pickZombie()
 	
 	for ( i = 0; i < guys.size; i++ )
 	{
-		if ( monotone( guys[ i ].name ) == lasthunter )
+		if ( guys[ i ].guid == lasthunter )
 			zom = guys[ i ];
 	}
 	
@@ -276,13 +276,13 @@ pickZombie()
 		zom.nonotice = true;
 		zom thread makeZombie();
 		wait 0.05;
-		setCvar( "lastzom", monotone( zom.name ) );
+		setCvar( "lastzom", zom.guid );
 		return;
 	}
 	
 	int = _randomInt( guys.size );
 	zom = guys[ int ];
-	while ( monotone( zom.name ) == getCvar( "lastzom" ) )
+	while ( zom.guid == getCvar( "lastzom" ) )
 	{
 		iPrintLnBold( cleanString( zom.name ) + "^7 was the ^1Zombie^7 last time... picking someone else..." );
 		wait 2;
@@ -294,7 +294,7 @@ pickZombie()
 	zom.nonotice = true;
 	zom thread makeZombie();
 	wait 0.05;
-	setCvar( "lastzom", monotone( zom.name ) );
+	setCvar( "lastzom", zom.guid );
 }
 
 endGame( winner )
@@ -820,25 +820,38 @@ spawnSpectator()
 	self thread maps\mp\gametypes\_buymenu::cleanUp();
 	
 	if ( getCvar( "zom_antispec" ) == "1" && !level.mapended && !self maps\mp\gametypes\_permissions::hasPermission( "defeat_antispec" ) )
-	{
-		self.spechud = newClientHudElem( self );
-		self.spechud.sort = -2;
-		self.spechud.x = 0;
-		self.spechud.y = 0;
-		self.spechud setShader( "black", 640, 480 );
-		self.spechud.alpha = 1;
-		self.spechud.archived = false;
-		
-		self.specnotice = newClientHudElem( self );
-		self.specnotice.sort = -1;
-		self.specnotice.x = 320;
-		self.specnotice.y = 220;
-		self.specnotice.alignx = "center";
-		self.specnotice.aligny = "middle";
-		self.specnotice setText( &"^3Spectating is not allowed." );
-		self.specnotice.alpha = 1;
-		self.spechud.archived = false;
+		self thread antispec();
+}
+
+antispec() {
+	self.spechud = newClientHudElem( self );
+	self.spechud.sort = -2;
+	self.spechud.x = 0;
+	self.spechud.y = 0;
+	self.spechud setShader( "black", 640, 480 );
+	self.spechud.alpha = 1;
+	self.spechud.archived = false;
+	
+	self.specnotice = newClientHudElem( self );
+	self.specnotice.sort = -1;
+	self.specnotice.x = 320;
+	self.specnotice.y = 220;
+	self.specnotice.alignx = "center";
+	self.specnotice.aligny = "middle";
+	self.specnotice setText( &"^3Spectating is not allowed." );
+	self.specnotice.alpha = 1;
+	self.spechud.archived = false;
+
+	while ( self.sessionstate == "spectator" ) {
+		self.spectatorclient = self getEntityNumber();
+		wait 0.05;
 	}
+
+	if ( isDefined( self.spechud ) ) 
+		self.spechud destroy();
+
+	if ( isDefined( self.specnotice ) )
+		self.specnotice destroy();
 }
 
 spawnIntermission()
@@ -1140,7 +1153,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 
 lastHunter()
 {
-	setCvar( "lasthunter", monotone( self.name ) );
+	setCvar( "lasthunter", self.guid );
 	
 	level notify( "stop ammoboxes" );
 	
