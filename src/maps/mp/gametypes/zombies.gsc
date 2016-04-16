@@ -257,6 +257,11 @@ Callback_PlayerConnect()
 			case "spectator":
 				if(self.pers["team"] != "spectator")
 				{
+					if ( level.firstzombie && self.pers[ "team" ] == "allies" ) {
+						self iPrintLnBold( "Please kill someone before going spectate." );
+						continue;
+					}
+					
 					self.pers["team"] = "spectator";
 					self.pers["weapon"] = undefined;
 					self.pers["savedmodel"] = undefined;
@@ -323,12 +328,13 @@ Callback_PlayerConnect()
 			}
 			else
 			{
-				if ( self.pers[ "team" ] == "allies" )
+				if ( self.pers[ "team" ] == "allies" && isAlive( self ) )
 					self suicide();
 
 				if ( self.pers[ "team" ] == "axis" ) {
 					if ( !level.gamestarted ) {
-						self suicide();
+						if ( isAlive( self ) )
+							self suicide();
 					} else {
 						self iPrintLn( "^1You cannot change your weapon at this time." );
 						continue;
@@ -339,28 +345,6 @@ Callback_PlayerConnect()
 				self.pers["weapon"] = weapon;
 
 				weaponname = maps\mp\gametypes\_teams::getWeaponName(self.pers["weapon"]);
-				/*
-				if ( self.pers[ "team" ] == "axis" )
-				{
-					if ( !level.gamestarted )
-					{
-						self setWeaponSlotWeapon( "primary", self.pers[ "weapon" ] );
-						primarymax = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
-						bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
-						primarymax += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
-
-						self setWeaponSlotAmmo( "primary", primarymax );
-						self.changeweapon = false;
-						
-						self switchToWeapon( self.pers[ "weapon" ] );
-
-						self maps\mp\gametypes\_classes::setup();
-					}
-					else
-					{
-						self iPrintLn( "^1You cannot change your weapon at this time." );
-					}*
-				}*/
 			}
 		}
 		else if(menu == game["menu_viewmap"])

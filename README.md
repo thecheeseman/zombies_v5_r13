@@ -23,6 +23,13 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
+#### Revision 13.1.3
+#### 14/04/16 - 15/04/16
+    
+    + Added a measure to prevent first zombie from spectating (and forcing someone else to be zombie)
+    + Added new permission system
+    * Revised some code to remove too many unnecessary threads
+
 #### Revision 13.1.2
 #### 10/04/16 - 13/04/16
 
