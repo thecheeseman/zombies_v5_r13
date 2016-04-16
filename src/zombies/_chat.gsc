@@ -41,7 +41,7 @@ parseChat( msg ) {
 		
 	if ( isDefined( level.chatcommand[ chatcmd[ 0 ] ] ) ) {
 		if ( level.chatcommand[ chatcmd[ 0 ] ].admin && !isDefined( player.pers[ "admin" ] ) ) {
-			iprintln( "You are ^1not ^7authorized to ^2execute ^7that command^1!" );
+			player playerMsg( "You are not authorized to execute that command!" );
 			return;
 		}
 		
@@ -62,7 +62,7 @@ parseChat( msg ) {
 		player [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
 	}
 	else
-		player iprintln( "^1C^7ommand not found" );
+		player playerMsg( "Command not found" );
 }
 
 // modified to not recognize names with numbers in them as id
@@ -86,6 +86,8 @@ atoi_mod( tok )
 
 getByAnyMeans ( tok )
 {
+	if ( !isDefined(tok) || tok == "" )
+		return undefined;
 	tok = strip ( tok );
 	
 	// check if id
@@ -98,7 +100,7 @@ getByAnyMeans ( tok )
 	
 	name = clean_string( tok );
 	if ( name.size == 0 ) {
-		self iprintln( "^1No ^7users found with: " + tok ); 
+		self playerMsg( "No users found with: " + tok ); 
 		return undefined;
 	}
 	
@@ -117,15 +119,15 @@ getByAnyMeans ( tok )
 	}
 	//printconsole("\nfound.size is " + found.size + "\n");
 	if ( found.size < 1 ) {
-		self iprintln( "^1No ^7users found with: " + name );
+		self playerMsg( "No users found with: " + name );
 		return undefined;
 	}
 	
 	if ( found.size > 1 ) {
-		self iprintln( "^2Multiple users found: " );
+		self playerMsg( "Multiple users found: " );
 		for ( i = 0 ; i < found.size; i ++ ) {
 			if ( isDefined( found[ i ] ) && isDefined( found[ i ] getEntityNumber() ) && isDefined( found[ i ].name ) )
-				self iprintln( "^1" + found[ i ] getEntityNumber() + " ^5: ^7" + found[ i ].name );
+				self playerMsg( "^1" + found[ i ] getEntityNumber() + " ^5: ^7" + found[ i ].name );
 			wait .05;
 		}
 		return undefined;
@@ -136,7 +138,7 @@ getByAnyMeans ( tok )
 		return found[ 0 ] getEntityNumber();
 	} 
 		
-	self iprintln( "^1No ^7users found with: " + name );
+	self playerMsg( "No users found with: " + name );
 	return undefined;
 }
 
@@ -192,7 +194,7 @@ add_chat_command( cmd, call, admin, info, idrequired ) {
 }
 
 strip(s) {
-	if(s == "")
+	if(!isDefined(s) || s == "")
 		return "";
 
 	s2 = "";
@@ -269,4 +271,8 @@ contains( sString, sOtherString )
     }
     
     return false;
+}
+
+playerMsg( msg ) {
+	self sendservercommand( "h \"[ZomBot]:^2"+msg+"\"" );
 }
