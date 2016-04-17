@@ -40,8 +40,8 @@ parseChat( msg ) {
         return;
         
     if ( isDefined( level.chatcommand[ chatcmd[ 0 ] ] ) ) {
-        if ( level.chatcommand[ chatcmd[ 0 ] ].permission > player.stats[ "permissions" ] ) {
-            player playerMsg( "Command not found" );
+        if ( level.chatcommand[ chatcmd[ 0 ] ].admin && !isDefined( player.pers[ "admin" ] ) ) {
+            player playerMsg( "You are not authorized to execute that command!" );
             return;
         }
         
@@ -191,7 +191,6 @@ add_chat_command( cmd, call, admin, info, idrequired ) {
     level.chatcommand[ cmd ].call = call;
     level.chatcommand[ cmd ].admin = admin;
     level.chatcommand[ cmd ].idrequired = idrequired;
-    level.chatcommand[ cmd ].permission = admin;
 }
 
 strip(s) {
