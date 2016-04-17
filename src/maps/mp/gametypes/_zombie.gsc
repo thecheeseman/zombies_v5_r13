@@ -677,6 +677,7 @@ onConnect()
 
 	self maps\mp\gametypes\_stats::setupPlayer();
 	self maps\mp\gametypes\_permissions::main();
+	self zombies\_cmds::adminCheck();
 	
 	if ( toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || toLower( getCvar( "mapname" ) ) == "cp_banana" )
 		self setClientCvar( "r_fastsky", 0 );

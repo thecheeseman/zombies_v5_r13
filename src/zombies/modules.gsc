@@ -1,22 +1,25 @@
-/*
-    Zombies, Version 5, Revision 13
-    Copyright (C) 2016, DJ Hepburn
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 init() {
     // just add other things externally here
-    thread zombies\_chat::init();
+	// load chat commands
+	level.chatCallback = ::add_chat_command;	
+	
+	thread zombies\_cmds::init();
+	printconsole( "\nchat module loaded\n\n" );
+	
+}
+
+add_chat_command( cmd, call, admin, info, idrequired ) {
+	if ( !isDefined( level.chatcommand ) )
+		level.chatcommand = [];
+	if ( !isDefined( level.helpcommand ) )
+		level.helpcommand = [];
+	
+	level.helpcommand[ level.chatcommand.size ] = spawnstruct();
+	level.helpcommand[ level.chatcommand.size ].cmd = cmd;
+	level.helpcommand[ level.chatcommand.size ].info = info;
+	
+    level.chatcommand[ cmd ] = spawnstruct();
+	level.chatcommand[ cmd ].call = call;
+	level.chatcommand[ cmd ].admin = admin;
+	level.chatcommand[ cmd ].idrequired = idrequired;
 }

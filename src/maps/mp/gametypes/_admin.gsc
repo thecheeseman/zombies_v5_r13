@@ -314,7 +314,7 @@ getid( value )
     player = maps\mp\gametypes\_zombie::getPlayerByID( value );
     
     if ( isDefined( player ) )
-        iprintlnbold( player.name + " = " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
+        self iprintlnbold( player.name + " = " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
         
 }
 
@@ -475,10 +475,10 @@ givearmor( value )
 {
     array = maps\mp\gametypes\_zombie::explode( value, " " );
 
-    if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) && !isDefined( array[ 2 ] ) )
+    if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
     
-    armor = atoi( array[ 2 ] );
+    armor = atoi( array[ 1 ] );
     if ( !isDefined ( armor ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Value^1!" );
