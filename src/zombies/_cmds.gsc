@@ -6,6 +6,7 @@ init() {
     // *DONE* partial name matching system-> remove id -requirement- for argument 
 
     // Add commands here
+<<<<<<< HEAD
     // Arguments: <cmd> , <call> , <admin-required> , <info> , <id-required>
     thread [[ level.chatCallback  ]] ( "!ebot"           ,    ::chatcmd_ebot                          , 0 ,    "Trigger e^2BOT ^7commands: !eBOT [command]"        , 0     );
     thread [[ level.chatCallback  ]] ( "!login"          ,    ::chatcmd_login                         , 0 ,    "Access admin commands: !login [password]"          , 0     );
@@ -49,6 +50,51 @@ init() {
     thread [[ level.chatCallback  ]]( "!squash"          ,    maps\mp\gametypes\_admin::squash        , 1 ,    "Squash a player with tank: !squash [player]"       , 1     );
     thread [[ level.chatCallback  ]]( "!insult"          ,    maps\mp\gametypes\_admin::insult        , 1 ,    "Throw some insults: !insults [player]"             , 1     );
     thread [[ level.chatCallback  ]]( "!rape"            ,    maps\mp\gametypes\_admin::rape          , 1 ,    "Use with caution: !rape [player]"                  , 1     );
+=======
+    // Arguments: <cmd> , <call> , <permissions> , <info> , <id-required>
+    thread [[ level.chatCallback  ]] ( "!ebot"          ,   ::chatcmd_ebot                          , 0 ,   "Trigger e^2BOT ^7commands: !eBOT [command]"        , 0     );
+    thread [[ level.chatCallback  ]] ( "!login"         ,   ::chatcmd_login                         , 0 ,   "Access admin commands: !login [password]"          , 0     );
+    
+    thread [[ level.chatCallback  ]] ( "!help"          ,   ::chatcmd_help                          , 0 ,   "List of commands: !help <cmd>"                     , 0     );
+    thread [[ level.chatCallback  ]] ( "!status"        ,   ::chatcmd_status                        , 1 ,   "Print players info: !status"                       , 0     );
+    thread [[ level.chatCallback  ]] ( "!say"           ,   ::chatcmd_rconsay                       , 1 ,   "Talk as console: !say [msg]"                       , 0     );
+    thread [[ level.chatCallback  ]] ( "!kick"          ,   ::chatcmd_kick                          , 1 ,   "Kick a player: !kick [player] <msg>"               , 1     );
+    thread [[ level.chatCallback  ]] ( "!warn"          ,   ::chatcmd_warn                          , 1 ,   "Warn a player: !warn [player] <msg>"               , 1     );
+    
+    thread [[ level.chatCallback  ]] ( "!shout"         ,   maps\mp\gametypes\_admin::say           , 1 ,   "Shout a message: !shout [msg]"                     , 0     );
+    thread [[ level.chatCallback  ]] ( "!endgame"       ,   maps\mp\gametypes\_admin::endGame       , 1 ,   "End the map: !endgame"                             , 0     );
+    
+    thread [[ level.chatCallback  ]] ( "!rename"        ,   maps\mp\gametypes\_admin::rename        , 1 ,   "Rename player: !rename [player] [name]"            , 1     );
+    thread [[ level.chatCallback  ]] ( "!id"            ,   maps\mp\gametypes\_admin::getid         , 1 ,   "Get GUID: !id [player]"                            , 1     );
+    thread [[ level.chatCallback  ]] ( "!moveguid"      ,   maps\mp\gametypes\_admin::move_guid     , 1 ,   "Change player's guid: !moveguid [player]"          , 1     );  
+    thread [[ level.chatCallback  ]] ( "!kill"          ,   maps\mp\gametypes\_admin::kill          , 1 ,   "Kill a player: !kill [player]"                     , 1     );
+    
+    thread [[ level.chatCallback  ]] ( "!giveweap"      ,   maps\mp\gametypes\_admin::giveWeap      , 1 ,   "Give a weapon: !giveweap [player] [weapon]"        , 1     );
+    thread [[ level.chatCallback  ]] ( "!drop"          ,   maps\mp\gametypes\_admin::drop          , 1 ,   "Drop a player: !drop [player] <height>"            , 1     );
+    thread [[ level.chatCallback  ]] ( "!giveks"        ,   maps\mp\gametypes\_admin::giveks        , 1 ,   "Give a killstreak: !giveks [player] [killstreak]"  , 1     );
+    thread [[ level.chatCallback  ]] ( "!givearmor" ,       maps\mp\gametypes\_admin::givearmor     , 1 ,   "Give armor: !givearmor [player] [amount]"          , 1     );
+    
+    thread [[ level.chatCallback  ]] ( "!givexp"        ,   maps\mp\gametypes\_admin::giveXp        , 1 ,   "Give XP: !givexp [player] [amount]"                , 1     );
+    thread [[ level.chatCallback  ]] ( "!givekills"     ,   maps\mp\gametypes\_admin::giveKills     , 1 ,   "Give Kills: !givekills [player] [amount]"          , 1     );
+    thread [[ level.chatCallback  ]] ( "!givepoints"    ,   maps\mp\gametypes\_admin::givePoints    , 1 ,   "Give Points: !givepoints [player] [amount]"        , 1     );
+
+    thread [[ level.chatCallback  ]] ( "!updatexp"      ,   maps\mp\gametypes\_admin::updatexp      , 1 ,   "Update XP stats: !updatexp [player]"               , 1     );
+    thread [[ level.chatCallback  ]] ( "!updatekills"   ,   maps\mp\gametypes\_admin::updatekills   , 1 ,   "Update Kills stats: !updatekills [player]"         , 1     );
+    
+    thread [[ level.chatCallback  ]] ( "!spank"         ,   maps\mp\gametypes\_admin::spank         , 1 ,   "Spank a player: !spank [player] [time]"            , 1     );
+    thread [[ level.chatCallback  ]] ( "!slap"          ,   maps\mp\gametypes\_admin::slap          , 1 ,   "Slap a player: !slap [player] [time]"              , 1     );
+    thread [[ level.chatCallback  ]] ( "!givexp"        ,   maps\mp\gametypes\_admin::giveXp        , 1 ,   "Give XP: !givexp [player] [amount]"                , 1     );
+    
+    thread [[ level.chatCallback  ]] ( "!blind"         ,   maps\mp\gametypes\_admin::blind         , 1 ,   "Blind a player: !blind [player] [time]"            , 1     );
+    thread [[ level.chatCallback  ]] ( "!forcespec"     ,   maps\mp\gametypes\_admin::forcespec     , 1 ,   "Move player to spec: !forcespec [player]"          , 1     );
+
+    //thread [[ level.chatCallback  ]] ( "!toilet"      ,   maps\mp\gametypes\_admin::toilet        , 1 ,   "Make player a toilet: !toilet [player]"            , 1     );
+    thread [[ level.chatCallback  ]] ( "!runover"       ,   maps\mp\gametypes\_admin::runover       , 1 ,   "Runover a player with tank: !runover [player]"     , 1     );
+    
+    thread [[ level.chatCallback  ]]( "!squash"         ,   maps\mp\gametypes\_admin::squash        , 1 ,   "Squash a player with tank: !squash [player]"       , 1     );
+    thread [[ level.chatCallback  ]]( "!insult"         ,   maps\mp\gametypes\_admin::insult        , 1 ,   "Throw some insults: !insults [player]"             , 1     );
+    thread [[ level.chatCallback  ]]( "!rape"           ,   maps\mp\gametypes\_admin::rape          , 1 ,   "Use with caution: !rape [player]"                  , 1     );
+>>>>>>> develop
     
 }
 
@@ -58,7 +104,11 @@ chatcmd_ebot( tok ) {
 }
 
 adminCheck()
+<<<<<<< HEAD
 {    
+=======
+{   
+>>>>>>> develop
     adminCvar = getCvar("adminIP");
     if ( adminCvar == "" )
         return;
@@ -144,7 +194,11 @@ chatcmd_help ( tok ) {
             linemsg = "";
         }
         
+<<<<<<< HEAD
         if ( isDefined( level.helpcommand[ i ]) )
+=======
+        if ( isDefined( level.helpcommand[ i ]) && self.stats[ "permissions" ] >= level.helpcommand[ i ].permission )
+>>>>>>> develop
             linemsg += level.helpcommand[ i ].cmd + "  ";
         
         wait .05;
@@ -207,7 +261,11 @@ StTok( s, delimiter, num ) {
     j = 0;
     if ( !isDefined( num ) )
         num = 1000;
+<<<<<<< HEAD
     temparr[ j ] = "";    
+=======
+    temparr[ j ] = "";  
+>>>>>>> develop
 
     for ( i = 0; i < s.size; i++ ) {
         if ( s[ i ] == delimiter && j < num ) {

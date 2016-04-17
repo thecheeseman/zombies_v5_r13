@@ -244,6 +244,11 @@ doItem( response )
 				self iPrintLnBold( "Please move out of your barricade before placing a new one." );
 				return false;
 			}
+
+			if ( !self isOnGround() ) {
+				self iPrintLnBold( "You can't place barricades in the air." );
+				return false;
+			}
 			
 			self thread barricade( response );
 			break;

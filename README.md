@@ -26,6 +26,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.1.3
 #### 14/04/16 - 15/04/16
     
+    # Fixed a bug/glitch where people could place barrels on ladders and block Zombies
+    - Fire now only affects Hunters (Zombies can't catch each other on fire)
+    + Added Indy's updated chat commands
     + Added a measure to prevent first zombie from spectating (and forcing someone else to be zombie)
     + Added new permission system
     * Revised some code to remove too many unnecessary threads

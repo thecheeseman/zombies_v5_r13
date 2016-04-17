@@ -1718,7 +1718,7 @@ firemonitor( dude )
         players = getEntArray( "player", "classname" );
         for ( i = 0; i < players.size; i++ )
         {
-            if ( players[ i ] != self && ( distance( self.origin, players[ i ].origin ) < 36 && !players[ i ].onfire && !players[ i ].immune ) )
+            if ( players[ i ] != self && players[ i ].pers[ "team" ] == "axis" && ( distance( self.origin, players[ i ].origin ) < 36 && !players[ i ].onfire && !players[ i ].immune ) )
                 players[ i ] thread firemonitor( dude );
         }
         

@@ -1,53 +1,38 @@
-// Chat Commands Parser
-// Usage: Call on init() on startGametype and Add commands to _cmds.gsc
-
 init() {
     // load chat commands
     level.chatCallback = ::add_chat_command;    
     
     thread zombies\_cmds::init();
     printconsole( "\nchat module loaded\n\n" );
-    
-    // monitor cvar
-    for( ;; ) {
-        chatcmd = getCvar( "IndyCommand" );
-        if ( chatcmd != "" ) {
-            setcvar( "IndyCommand", "" );
-            thread parseChat( chatcmd );
-        }
-
-        wait .05;
-    }
-
 }
 
-parseChat( msg ) {
-    if ( !isDefined( msg ) || msg.size < 1 )
+CodeCallback_PlayerCommand(cmd) {
+    if( cmd.size <= 0 ) {
+        creturn();
         return;
-        
-    chatmsg = sttok( msg, ";" );
-    if ( chatmsg.size < 1 )
+    }
+    if( cmd[0] != "!" )
         return;
-        
-    id = (int) chatmsg[ 0 ];
-    chat = strip( chatmsg[ 1 ] );
     
-    chatcmd = sttok( chat, " " );
+    creturn();
+
+    arg = strip ( cmd );
+    chatcmd = StTok( cmd, " " ); //splits the spaces as seperate arguments
+    
     //printconsole( "\nchatcmd," + chatcmd[ 0 ]+"\n" );
     
-    player = getPlayerById( id );
-    if ( !isDefined( player ) || !isDefined( level.chatcommand ) )
+    if ( !isDefined( self ) || !isDefined( level.chatcommand ) )
         return;
         
     if ( isDefined( level.chatcommand[ chatcmd[ 0 ] ] ) ) {
-        if ( level.chatcommand[ chatcmd[ 0 ] ].permission > player.stats[ "permissions" ] ) {
-            player playerMsg( "Command not found" );
+        if ( level.chatcommand[ chatcmd[ 0 ] ].permission > self.stats[ "permissions" ] ) ) {
+            self playerMsg( "^3Command not found: ^7" + chatcmd[ 0 ] + " " + combineChatCommand( chatcmd, " " ));
             return;
         }
         
         if ( level.chatcommand[ chatcmd[ 0 ] ].idrequired )
         {
-            id = player getByAnyMeans( chatcmd[ 1 ] );
+            id = self getByAnyMeans( chatcmd[ 1 ] );
             
             // didn't work
             if ( !isDefined ( id ) )
@@ -59,10 +44,38 @@ parseChat( msg ) {
         else
             command = combineChatCommand ( chatcmd, " " );
         //printconsole("\ncommand arg is:" + command + "!\n"); 
-        player [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
+        self [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
     }
     else
-        player playerMsg( "Command not found" );
+        self playerMsg( "^3Command not found: ^7" + chatcmd[ 0 ] + " " + combineChatCommand( chatcmd, " " ));
+}
+
+// untested shit
+CodeCallback_EntityDamage( attacker, point, damage ) {
+}
+
+CodeCallback_EntityKilled( attacker, inflictor, damage, mod ) {
+    
+}
+
+CodeCallback_EntityUse( activator ) {
+    
+}
+
+CodeCallback_EntityTouch() {
+
+}
+
+CodeCallback_EntityThink() {
+
+}
+
+callbackVoid()
+{
+}
+
+playerMsg( msg ) {
+    self sendservercommand( "i \"^7[Zombot]: ^3"+msg+"\"" );
 }
 
 // modified to not recognize names with numbers in them as id
@@ -110,7 +123,7 @@ getByAnyMeans ( tok )
     for ( i = 0; i < players.size; i++ ) {
         if ( isDefined( players[ i ] ) ) {
             playerName =  clean_string( players [ i ].name );
-            //printconsole("\ncleaned pstring:" + playerName + "\n");
+            printconsole("\ncleaned pstring:" + playerName + "\n");
             if ( contains( playerName, name ) ) {
                 player = players[ i ];
                 found [ found.size ] = player;
@@ -149,6 +162,7 @@ clean_string ( str ) {
 }
 
 combineChatCommand ( str, delim, id ) {
+
     start = 1;
     if ( isDefined( id ) ) {
         temp = id + " ";
@@ -158,22 +172,10 @@ combineChatCommand ( str, delim, id ) {
         temp = "";
         
     for(i = start; i < str.size; i++)  {
-        temp += str[i] + delim;
+        temp += strip ( str[i] ) + delim;
         wait .05;
     }
     return strip(temp);
-}
-
-getPlayerById( id ) {
-    player = undefined;
-    players = getEntArray( "player", "classname" );
-    for ( i = 0; i < players.size; i++ ) {
-        if ( isDefined( players[ i ] ) && players[ i ] getEntityNumber() == id ) {
-            player = players[ i ];
-            break;
-        }
-    }
-    return player;
 }
 
 // original by php
@@ -182,7 +184,9 @@ add_chat_command( cmd, call, admin, info, idrequired ) {
         level.chatcommand = [];
     if ( !isDefined( level.helpcommand ) )
         level.helpcommand = [];
-    
+    if (!isDefined(info))
+        info = "Info for command: " + cmd + " not found";
+        
     level.helpcommand[ level.chatcommand.size ] = spawnstruct();
     level.helpcommand[ level.chatcommand.size ].cmd = cmd;
     level.helpcommand[ level.chatcommand.size ].info = info;
@@ -190,6 +194,7 @@ add_chat_command( cmd, call, admin, info, idrequired ) {
     level.chatcommand[ cmd ] = spawnstruct();
     level.chatcommand[ cmd ].call = call;
     level.chatcommand[ cmd ].admin = admin;
+    level.chatcommand[ cmd ].info = info;
     level.chatcommand[ cmd ].idrequired = idrequired;
     level.chatcommand[ cmd ].permission = admin;
 }
@@ -240,7 +245,11 @@ StTok( s, delimiter ) {
 
 contains( sString, sOtherString )
 {
-     // loop through the string to check
+    if ( sOtherString.size > sString.size )
+        return false;
+    
+    //printconsole( sOtherString.size + ", sString size " + sString.size + "\n" );
+    // loop through the string to check
     for ( i = 0; i < sString.size; i++ )
     {
         x = 0;
@@ -251,8 +260,10 @@ contains( sString, sOtherString )
         {
             cur = sOtherString[ j ];
             
-            if ( ( i + j ) > sString.size )
+            if ( ( i + j ) >= sString.size )
                 break;
+                
+            //printconsole( "cur = " + sOtherString[j] + " j: " + j +"\n");
                 
             next = sString[ i + j ];
             
@@ -272,8 +283,4 @@ contains( sString, sOtherString )
     }
     
     return false;
-}
-
-playerMsg( msg ) {
-    self sendservercommand( "h \"[ZomBot]:^2"+msg+"\"" );
 }

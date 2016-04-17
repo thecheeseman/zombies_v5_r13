@@ -143,10 +143,10 @@ Callback_PlayerConnect()
 
 	iprintln( self.name + "^7 joined the game." );
 	
-	while ( level.loadingstats )
-		wait 0.05;
+	//while ( level.loadingstats )
+	//	wait 0.05;
 		
-	wait 0.45;
+	//wait 0.45;
 
 	self thread maps\mp\gametypes\_zombie::onConnect();
 
