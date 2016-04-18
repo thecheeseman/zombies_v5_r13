@@ -37,6 +37,11 @@
 <p>Zombies is a modification for Call of Duty 1.1. It is my take on the classic Zombies gamemodes as seen in many, many other games, but built to work within the limitations and confines of the original Call of Duty. It is meant to act as a (mostly) server-side only modification, requiring no downloads. This version was originally built/"completed" in May of 2011, but I have since resurrected it due to renewed interest by several other parties. I have slowly begun reworking and fixing various bugs, removing old and bad coding habits, and importing new features along the way. </p>
 
 <h3>
+<a id="bug-report" class="anchor" href="#bug-report" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bug Report/Feature Request</h3>
+
+<p>Click <a href="http://goo.gl/forms/yXOYSL3tup">here</a> to submit a bug report or feature request!</p>
+
+<h3>
 <a id="buy-menu-and-map-packs" class="anchor" href="#buy-menu-and-map-packs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Buy Menu and Map Packs</h3>
 
 <p><a href="https://github.com/thecheeseman/zombies_v5_upd/raw/master/buymenu/zombies_addon_points.pk3">Buy Menu</a></p>
