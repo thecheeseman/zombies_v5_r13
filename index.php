@@ -78,12 +78,36 @@
 </code></pre>
 
 <h4>
+<a id="revision-1313" class="anchor" href="#revision-1313" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Revision 13.1.3 (wip)</h4>
+
+<h4>
+<a id="100416---110416" class="anchor" href="#100416---110416" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>14/04/16 - 18/04/16</h4>
+
+<pre><code>+ Added buy menu and some other commands to Indy's chat commands
+# Fixed a bug/glitch where people could place barrels on ladders and block Zombies
+- Fire now only affects Hunters (Zombies can't catch each other on fire)
++ Added Indy's updated chat commands
++ Added a measure to prevent first zombie from spectating (and forcing someone else to be zombie)
++ Added new permission system
+* Revised some code to remove too many unnecessary threads
+</code></pre>
+
+<h4>
 <a id="revision-1312" class="anchor" href="#revision-1312" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Revision 13.1.2</h4>
 
 <h4>
-<a id="100416---110416" class="anchor" href="#100416---110416" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>10/04/16 - 11/04/16</h4>
+<a id="100416---110416" class="anchor" href="#100416---110416" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>10/04/16 - 13/04/16</h4>
 
-<pre><code>+ Add stats for times played as Last Hunter and Last Hunter kills
+<pre><code>* Upped points / xp received for being last hunter
++ Added back zom_antispec
++ Added the rest of my admin commands from Cato's Jump Mod
+- Completely removed the index.dat LUT for stats, instead relying on fexists() now
+# Fixed a bug where Rank health was completely screwed up
+# Fixed a bug where Sniper invisibility could last for a long period of time
+* Increased cooldown time for Sniper invisiblity
+* Updated Fade and Majdrew's skin ID's
+# Fixed a bug where first zombie wouldn't receive 2000 health
++ Add stats for times played as Last Hunter and Last Hunter kills
 + Add stats: kills for engineers, medics, supports, snipers, recons, and sentries (and their combat cousins)
 + Medics are now immue to poison and fire (up to 200 dmg)
 * Combat Snipers can now double tap F to go invisible
