@@ -11,10 +11,18 @@ init() {
     thread [[ level.chatCallback  ]] ( "!login"         ,   ::chatcmd_login                         , 0 ,   "Access admin commands: !login [password]"          , 0     );
     
     thread [[ level.chatCallback  ]] ( "!help"          ,   ::chatcmd_help                          , 0 ,   "List of commands: !help <cmd>"                     , 0     );
+    addAlias( "!help", "!?" );
+
     thread [[ level.chatCallback  ]] ( "!status"        ,   ::chatcmd_status                        , 1 ,   "Print players info: !status"                       , 0     );
+    addAlias( "!status", "!s" );
+
     thread [[ level.chatCallback  ]] ( "!say"           ,   ::chatcmd_rconsay                       , 1 ,   "Talk as console: !say [msg]"                       , 0     );
+    
     thread [[ level.chatCallback  ]] ( "!kick"          ,   ::chatcmd_kick                          , 1 ,   "Kick a player: !kick [player] <msg>"               , 1     );
+    addAlias( "!kick", "!k" );
+
     thread [[ level.chatCallback  ]] ( "!warn"          ,   ::chatcmd_warn                          , 1 ,   "Warn a player: !warn [player] <msg>"               , 1     );
+    addAlias( "!warn", "!w" );
     
     thread [[ level.chatCallback  ]] ( "!shout"         ,   maps\mp\gametypes\_admin::say           , 1 ,   "Shout a message: !shout [msg]"                     , 0     );
     thread [[ level.chatCallback  ]] ( "!endgame"       ,   maps\mp\gametypes\_admin::endGame       , 1 ,   "End the map: !endgame"                             , 0     );
@@ -49,7 +57,24 @@ init() {
     thread [[ level.chatCallback  ]]( "!squash"         ,   maps\mp\gametypes\_admin::squash        , 1 ,   "Squash a player with tank: !squash [player]"       , 1     );
     thread [[ level.chatCallback  ]]( "!insult"         ,   maps\mp\gametypes\_admin::insult        , 1 ,   "Throw some insults: !insults [player]"             , 1     );
     thread [[ level.chatCallback  ]]( "!rape"           ,   maps\mp\gametypes\_admin::rape          , 1 ,   "Use with caution: !rape [player]"                  , 1     );
+
+    thread [[ level.chatCallback ]]( "!buy"             ,   ::buymenu                               , 0 ,   "Buy an item: !buy [item]"                          , 0     );
+    addAlias( "!buy", "!b" );
+
+    thread [[ level.chatCallback ]]( "!random"          ,   ::buymenu_rnd                           , 0 ,   "Buy a random item: !random"                        , 0     );
+    addAlias( "!random", "!rnd" );
+
+    thread [[ level.chatCallback ]]( "!healthpack"      ,   ::buymenu_hp                            , 0 ,   "Buy a health pack: !healthpack"                    , 0     );
+    addAlias( "!healthpack", "!hp" );
     
+}
+
+addAlias( command, alias ) {
+    if ( !isDefined( level.chatcommand[ command ] ) )
+        return;
+
+    cmd = level.chatcommand[ command ];
+    level.chatcommand[ alias ] = cmd;
 }
 
 chatcmd_ebot( tok ) {
@@ -181,6 +206,66 @@ chatcmd_warn ( tok )
     player = getPlayerById( tok[ 0 ] );
     if ( isDefined ( player ) )
         player playerMsg ( warnmsg );
+}
+
+buymenu( tok ) {
+    if ( tok == "" ) {
+        self playerMsg( "Buy Menu -- Available items" );
+        self playerMsg( "armor (100, 250, 500), explosionarmor (100, 250, 500 or just 'explo'), damage (10 or 25)" );
+        self playerMsg( "healthpack (hp), proxy, crate, barrel, panzerfaust, flashbangs, rocket, mortar, artillery" );
+        self playerMsg( "gatlin, airstrike, carpetbomb, nuke, or random" );
+        return;
+    }
+
+    item = tok;
+    switch ( item ) {
+        case "armor":
+        case "armor100":            item = "buy_armor_10"; break;
+        case "armor250":            item = "buy_armor_25"; break;
+        case "armor500":            item = "buy_armor_50"; break;
+        case "explo":
+        case "explo100":
+        case "explosionarmor":  
+        case "explosionarmor100":   item = "buy_explo_10"; break;
+        case "explo250":
+        case "explosionarmor250":   item = "buy_explo_25"; break;
+        case "explo500":
+        case "explosionarmor500":   item = "buy_explo_50"; break;
+        case "dmg":
+        case "dmg10":
+        case "damage":
+        case "damage10":            item = "buy_damage_10"; break;
+        case "dmg25":
+        case "damage25":            item = "buy_damage_25"; break;
+        case "hp":
+        case "health":
+        case "healthpack":          item = "buy_healthpack"; break;
+        case "proxy":               item = "buy_proxy"; break;
+        case "crate":               item = "buy_crate"; break;
+        case "barrel":              item = "buy_barrel"; break;
+        case "panzer":
+        case "panzerfaust":         item = "buy_panzer"; break;
+        case "flashbangs":          item = "buy_flashnades"; break;
+        case "random":
+        case "rocket":
+        case "mortar":
+        case "artillery":
+        case "gatlin":
+        case "airstrike":
+        case "carpetbomb":
+        case "nuke":                break;
+        default:                    self playerMsg( "Buy Menu -- unknown item: " + item ); return; break;
+    }
+
+    self maps\mp\gametypes\_buymenu::buymenu( item );
+}
+
+buymenu_rnd( tok ) {
+    self maps\mp\gametypes\_buymenu::buymenu( "random" );
+}
+
+buymenu_hp( tok ) {
+    self maps\mp\gametypes\_buymenu::buymenu( "buy_healthpack" );
 }
 
 getPlayerById( id ) {

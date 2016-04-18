@@ -23,9 +23,10 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
-#### Revision 13.1.3
+#### Revision 13.1.3 (wip)
 #### 14/04/16 - 15/04/16
     
+    + Added buy menu and some other commands to Indy's chat commands
     # Fixed a bug/glitch where people could place barrels on ladders and block Zombies
     - Fire now only affects Hunters (Zombies can't catch each other on fire)
     + Added Indy's updated chat commands

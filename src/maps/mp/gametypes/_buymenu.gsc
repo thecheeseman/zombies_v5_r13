@@ -126,13 +126,13 @@ buymenu( response )
 		
 	if ( !isDefined( level.points[ response ] ) )
 	{
-		self iPrintLnBold( "No such item exists." );
+		self iPrintLnBold( "No such item exists: " + response );
 		return;
 	}
 	
 	if ( self.points < level.points[ response ] )
 	{
-		self iPrintLnBold( "You don't have enough points to buy that item." );
+		self iPrintLnBold( "You don't have enough points to buy that item (needed: " + level.points[ response ] + ")" );
 		return;
 	}
 	
