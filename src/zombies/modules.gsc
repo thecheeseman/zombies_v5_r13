@@ -1,11 +1,8 @@
 init() {
     // just add other things externally here
+    
 	// load chat commands
-	level.chatCallback = ::add_chat_command;	
-	
-	thread zombies\_cmds::init();
-	printconsole( "\nchat module loaded\n\n" );
-	
+    thread callback::init();
 }
 
 add_chat_command( cmd, call, admin, info, idrequired ) {

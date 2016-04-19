@@ -675,9 +675,9 @@ onConnect()
 	
 	self.barricades = [];
 
-	self maps\mp\gametypes\_stats::setupPlayer();
+    // moved above so server doesnt crash when player types during stats load
 	self maps\mp\gametypes\_permissions::main();
-	self zombies\_cmds::adminCheck();
+	self maps\mp\gametypes\_stats::setupPlayer();
 	
 	if ( toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || toLower( getCvar( "mapname" ) ) == "cp_banana" )
 		self setClientCvar( "r_fastsky", 0 );

@@ -18,19 +18,25 @@
 
 init() {
     level.permissions = [];
-
-    addPermissionSlot( 0, "guest" );
-    addPermissionSlot( 1, "vip" );
-    addPermissionSlot( 2, "admin" );
-    addPermissionSlot( 3, "god" );
+    
+    // cvar names increasing in permission levels
+    level.permission_ips = "0 vipIP modIP adminIP godIP";
+    level.permission_pws = "0 vipPassword modPassword adminPassword godPassword";
+    
+    addPermissionSlot( 0, "guest", ::guest );
+    addPermissionSlot( 1, "vip", ::vip );
+    addPermissionSlot( 2, "mod", ::mod );
+    addPermissionSlot( 3, "admin", ::admin );
+    addPermissionSlot( 4, "god", ::god );
 
     addPermission( 2, "defeat_antispec", true );
 }
 
-addPermissionSlot( id, name ) {
+addPermissionSlot( id, name, call ) {
     p = spawnstruct();
     p.id = id;
     p.name = name;
+    p.call = call;
     p.permissions = [];
 
     level.permissions[ id ] = p;
@@ -96,7 +102,40 @@ hasPermissionAvailable( slot, permission ) {
     return false;
 }
 
+Array ( str ) {
+    // makeshift function till i add Array in codextended
+    return callback::StTok( str, " " );
+}
+
 main() {
+    // save permissions to stats?
+    self.stats[ "permissions" ] = "";
+    
+    self.muted = 0;
+    self.permissions = 0;
+    ips = Array( level.permission_ips );
+
+    for ( i = 1; i < ips.size; i++ ) {
+        cvar = getCvar( ips[ i ] );
+        newCvar = "";
+        if ( cvar == "" )
+            continue;
+
+        // check for multiple admins
+        if ( callback::contains( cvar, " " ) )
+            admins = callback::StTok( cvar, " " );
+        else
+            admins[ 0 ] = cvar;
+
+        for (k = 0; k < admins.size; k++ ) {
+            if ( self getIP() == admins[ k ] ) {
+                self.permissions = i;
+                break;
+            }
+            wait .05;
+        }
+        
+    }
 
 }
 
@@ -104,14 +143,40 @@ guest() {
 
 }
 
-vip() {
+// updates ip cvars for permission checks
 
+vip() {
+    vip = getCvar( "vipIP" );
+    newCvar = vip + " " + self getIP();
+
+    if ( vip == "" )
+        newCvar = self getIP();
+    setCvar( "vipIP", newCvar );
+}
+
+mod() {
+    mod = getCvar( "modIP" );
+    newCvar = mod + " " + self getIP();
+
+    if ( mod == "" )
+        newCvar = self getIP();
+    setCvar( "modIP", newCvar );
 }
 
 admin() {
-    self.isadmin = true;
+    admins = getCvar( "adminIP" );
+    newCvar = admins + " " + self getIP();
+
+    if ( admins == "" )
+        newCvar = self getIP();
+    setCvar("adminIP", newCvar);
 }
 
 god() {
-    self.isadmin = true;
+    god = getCvar( "godIP" );
+    newCvar = god + " " + self getIP();
+
+    if ( god == "" )
+        newCvar = self getIP();
+    setCvar( "godIP", newCvar );
 }

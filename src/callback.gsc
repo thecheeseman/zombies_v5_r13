@@ -1,9 +1,14 @@
+// Chat Module 
 init() {
     // load chat commands
     level.chatCallback = ::add_chat_command;    
     
     thread zombies\_cmds::init();
-    printconsole( "\nchat module loaded\n\n" );
+    printconsole( "\n\nChat Module Loaded\n\n" );
+}
+
+suffixMsg ( suffix, msg ) {
+    sendservercommand( "i \"^1^7" + self.name + " ^7" + suffix +"^7: "+msg+"\"" );
 }
 
 CodeCallback_PlayerCommand(cmd) {
@@ -11,7 +16,35 @@ CodeCallback_PlayerCommand(cmd) {
         creturn();
         return;
     }
-    if( cmd[0] != "!" )
+
+    if ( !isDefined( self ) || !isDefined( level.chatcommand ) )
+        return;
+
+    // Check if player is muted
+    if ( self.muted ) {
+        self playerMsg( "You are muted!" );
+        creturn();
+        return;
+    }
+    
+    // Custom suffixes for groups -- experimental
+    if ( self.permissions && cmd[0] != "!" )
+    {
+        suffix = "";
+        switch ( self.permissions )
+        {
+            case 1: suffix =   "^7[^2VIP^7]"; break;
+            case 2: suffix =   "^7[^4Mod^7]"; break;
+            case 3: suffix = "^7[^3Admin^7]"; break;
+            case 4: suffix =   "^7[^1God^7]"; break;
+            default: break;
+        }
+        self suffixMsg( suffix, cmd );
+        creturn();
+    }
+    
+    // sometimes crashes on map change-> could be this?
+    if( cmd[0] != "!" || level.mapended)
         return;
     
     creturn();
@@ -20,29 +53,32 @@ CodeCallback_PlayerCommand(cmd) {
     chatcmd = StTok( cmd, " " ); //splits the spaces as seperate arguments
     
     //printconsole( "\nchatcmd," + chatcmd[ 0 ]+"\n" );
-    
-    if ( !isDefined( self ) || !isDefined( level.chatcommand ) )
-        return;
         
     if ( isDefined( level.chatcommand[ chatcmd[ 0 ] ] ) ) {
-        if ( level.chatcommand[ chatcmd[ 0 ] ].admin && !isDefined( self.pers[ "admin" ] ) ) {
+        if ( level.chatcommand[ chatcmd[ 0 ] ].permissions && !self checkPermissions( chatcmd[ 0 ] ) ) {
             self playerMsg( "You are not authorized to execute that command!" );
             return;
         }
         
+        id = undefined;
         if ( level.chatcommand[ chatcmd[ 0 ] ].idrequired )
         {
             id = self getByAnyMeans( chatcmd[ 1 ] );
-            
-            // didn't work
+
             if ( !isDefined ( id ) )
                 return;
-                
-            command = combineChatCommand ( chatcmd, " ", id );
             
+            if ( level.chatcommand[ chatcmd[ 0 ] ].permissions ) {
+                player = getPlayerById ( id );
+                permission = self checkPermissions( chatcmd[ 0 ], player );
+                if ( !permission ) {
+                    self playerMsg( "You do not have permission to execute commands on " + player.name);
+                    return;
+                }
+            }
         }
-        else
-            command = combineChatCommand ( chatcmd, " " );
+        
+        command = combineChatCommand ( chatcmd, " ", id );
         //printconsole("\ncommand arg is:" + command + "!\n"); 
         self [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
     }
@@ -70,8 +106,34 @@ CodeCallback_EntityThink() {
 
 }
 
-callbackVoid()
-{
+callbackVoid() {
+}
+
+getPlayerById( id ) {
+    player = undefined;
+    players = getEntArray( "player", "classname" );
+    for ( i = 0; i < players.size; i++ ) {
+        if ( isDefined( players[ i ] ) && players[ i ] getEntityNumber() == id ) {
+            player = players[ i ];
+            break;
+        }
+    }
+    return player;
+}
+
+checkPermissions( command, player ) {
+    
+    if ( self.permissions >= level.chatcommand[ command ].permissions ) {
+        // player not involved in command
+        if ( !isDefined( player ) )
+            return true;
+            
+        // victim must have lower permissions
+        if ( self.permissions > player.permissions )
+            return true;
+    }
+   
+    return false;
 }
 
 playerMsg( msg ) {
@@ -79,8 +141,7 @@ playerMsg( msg ) {
 }
 
 // modified to not recognize names with numbers in them as id
-atoi_mod( tok )
-{
+atoi_mod( tok ) {
     // make sure tok <= 2 digits
     if ( tok.size > 2 )
         return undefined;
@@ -97,8 +158,7 @@ atoi_mod( tok )
     return tokID;
 }
 
-getByAnyMeans ( tok )
-{
+getByAnyMeans ( tok ) {
     if ( !isDefined(tok) || tok == "" )
         return undefined;
     tok = strip ( tok );
@@ -110,7 +170,6 @@ getByAnyMeans ( tok )
     }
 
     // nop, it's a string
-    
     name = clean_string( tok );
     if ( name.size == 0 ) {
         self playerMsg( "No users found with: " + tok ); 
@@ -123,7 +182,7 @@ getByAnyMeans ( tok )
     for ( i = 0; i < players.size; i++ ) {
         if ( isDefined( players[ i ] ) ) {
             playerName =  clean_string( players [ i ].name );
-            printconsole("\ncleaned pstring:" + playerName + "\n");
+            //printconsole("\ncleaned pstring:" + playerName + "\n");
             if ( contains( playerName, name ) ) {
                 player = players[ i ];
                 found [ found.size ] = player;
@@ -162,7 +221,6 @@ clean_string ( str ) {
 }
 
 combineChatCommand ( str, delim, id ) {
-
     start = 1;
     if ( isDefined( id ) ) {
         temp = id + " ";
@@ -179,21 +237,24 @@ combineChatCommand ( str, delim, id ) {
 }
 
 // original by php
-add_chat_command( cmd, call, admin, info, idrequired ) {
+add_chat_command( cmd, call, permissions, info, idrequired ) {
     if ( !isDefined( level.chatcommand ) )
         level.chatcommand = [];
     if ( !isDefined( level.helpcommand ) )
         level.helpcommand = [];
-    if (!isDefined(info))
+    if ( !isDefined(info) )
         info = "Info for command: " + cmd + " not found";
-        
+    
+    // save keys of chatcommand -> change to getArrayKeys()?
     level.helpcommand[ level.chatcommand.size ] = spawnstruct();
     level.helpcommand[ level.chatcommand.size ].cmd = cmd;
     level.helpcommand[ level.chatcommand.size ].info = info;
+    level.helpcommand[ level.chatcommand.size ].permissions = permissions;
     
     level.chatcommand[ cmd ] = spawnstruct();
     level.chatcommand[ cmd ].call = call;
-    level.chatcommand[ cmd ].admin = admin;
+    level.chatcommand[ cmd ].id = level.chatcommand.size;
+    level.chatcommand[ cmd ].permissions = permissions;
     level.chatcommand[ cmd ].info = info;
     level.chatcommand[ cmd ].idrequired = idrequired;
 }
@@ -242,21 +303,18 @@ StTok( s, delimiter ) {
     return temparr;
 }
 
-contains( sString, sOtherString )
-{
+contains( sString, sOtherString ) {
     if ( sOtherString.size > sString.size )
         return false;
     
     //printconsole( sOtherString.size + ", sString size " + sString.size + "\n" );
     // loop through the string to check
-    for ( i = 0; i < sString.size; i++ )
-    {
+    for ( i = 0; i < sString.size; i++ ) {
         x = 0;
         tmp = "";
         
         // string to check against
-        for ( j = 0; j < sOtherString.size; j++ )
-        {
+        for ( j = 0; j < sOtherString.size; j++ ) {
             cur = sOtherString[ j ];
             
             if ( ( i + j ) >= sString.size )
@@ -266,8 +324,7 @@ contains( sString, sOtherString )
                 
             next = sString[ i + j ];
             
-            if ( cur == next ) 
-            {
+            if ( cur == next ) {
                 tmp += cur;
                 x++;
                 continue;
