@@ -342,6 +342,7 @@ saveMyStats() {
 			case "shotsFired":
 			case "shotsHit":
 			case "sentryKills":
+			case "combatSentryKills":
 			case "playerName":
 				continue;
 				break;

@@ -24,8 +24,18 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.1.3 (wip)
-#### 14/04/16 - 15/04/16
+#### 14/04/16 - 19/04/16
     
+    + Added !spectate command for quick spectating of players
+    + Jumper Zombies now take 75% less fall damage than other Zombies
+    - Hitmarker no longer shows when your sentry shoots a Zombie
+    # Fixed a bug where Last Hunter would lose their armor 
+    # Fixed a bug where combatSentryKills would add up incorrectly over time
+    + Added !restart and !map commands
+    + Added updated version of Indy's chat commands
+    * Rocket attack no longer throws you if you shoot beneath yourself
+    * Rocket attack now gives +500 armor/explosion armor
+    # Fixed a problem where Rocket Attack could drop someone into another player
     + Added buy menu and some other commands to Indy's chat commands
     # Fixed a bug/glitch where people could place barrels on ladders and block Zombies
     - Fire now only affects Hunters (Zombies can't catch each other on fire)

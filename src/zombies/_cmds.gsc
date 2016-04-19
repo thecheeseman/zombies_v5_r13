@@ -4,7 +4,8 @@
 // todo: better alias system
 
 init() {
-
+    if ( getCvar( "availablemaps" ) == "" )
+        setCvar( "availablemaps", "mp_harbor mp_carentan mp_depot mp_dawnville mp_railyard mp_powcamp mp_pavlov mp_rocket mp_hurtgen mp_ship mp_chateau" );
     // Permisions:
     // 0 = Guest 1 = VIP 2 = Moderator 3 = Admin 4 = God 
 
@@ -29,6 +30,7 @@ init() {
     thread [[ level.chatCallback  ]] ( "!mute"          ,   ::chatcmd_mute                          , 2 ,   "Mute a player: !mute [player]"                     , 1     );
     thread [[ level.chatCallback  ]] ( "!unmute"        ,   ::chatcmd_unmute                        , 2 ,   "Unmute a muted player: !unmute [player]"           , 1     );
     thread [[ level.chatCallback  ]] ( "!warn"          ,   ::chatcmd_warn                          , 2 ,   "Warn a player: !warn [player] <msg>"               , 1     );
+    thread [[ level.chatCallback  ]] ( "!spectate"      ,   ::spectate_player                       , 2 ,   "Spectate player: !spectate [player]"               , 1     );
     
     // Admin Commands //
     thread [[ level.chatCallback  ]] ( "!say"           ,   ::chatcmd_rconsay                       , 3 ,   "Talk as console: !say [msg]"                       , 0     );
@@ -36,9 +38,8 @@ init() {
     thread [[ level.chatCallback  ]] ( "!shout"         ,   maps\mp\gametypes\_admin::say           , 3 ,   "Shout a message: !shout [msg]"                     , 0     );
     thread [[ level.chatCallback  ]] ( "!endgame"       ,   maps\mp\gametypes\_admin::endGame       , 3 ,   "End the map: !endgame"                             , 0     );
     
-    thread [[ level.chatCallback  ]] ( "!resetlogins"    ,   ::chatcmd_resetlogins                  , 4 ,   "Resets current logins and cvars: !resetlogins"     , 0     );
     thread [[ level.chatCallback  ]] ( "!rename"        ,   maps\mp\gametypes\_admin::rename        , 3 ,   "Rename player: !rename [player] [name]"            , 1     );
-    thread [[ level.chatCallback  ]] ( "!id"            ,   maps\mp\gametypes\_admin::getid         , 3 ,   "Get GUID: !id [player]"                            , 1     );
+    thread [[ level.chatCallback  ]] ( "!id"            ,   ::getid                                 , 3 ,   "Get GUID: !id [player]"                            , 1     );
     thread [[ level.chatCallback  ]] ( "!moveguid"      ,   maps\mp\gametypes\_admin::move_guid     , 3 ,   "Change player's guid: !moveguid [player]"          , 1     );  
     thread [[ level.chatCallback  ]] ( "!kill"          ,   maps\mp\gametypes\_admin::kill          , 3 ,   "Kill a player: !kill [player]"                     , 1     );
     
@@ -63,11 +64,15 @@ init() {
 
     //thread [[ level.chatCallback  ]] ( "!toilet"      ,   maps\mp\gametypes\_admin::toilet        , 3 ,   "Make player a toilet: !toilet [player]"            , 1     );
     thread [[ level.chatCallback  ]] ( "!runover"       ,   maps\mp\gametypes\_admin::runover       , 3 ,   "Runover a player with tank: !runover [player]"     , 1     );
-    thread [[ level.chatCallback  ]]( "!squash"         ,   maps\mp\gametypes\_admin::squash        , 3 ,   "Squash a player with tank: !squash [player]"       , 1     );
-    thread [[ level.chatCallback  ]]( "!insult"         ,   maps\mp\gametypes\_admin::insult        , 3 ,   "Throw some insults: !insults [player]"             , 1     );
-    thread [[ level.chatCallback  ]]( "!rape"           ,   maps\mp\gametypes\_admin::rape          , 3 ,   "Use with caution: !rape [player]"                  , 1     );
-    
+    thread [[ level.chatCallback  ]] ( "!squash"        ,   maps\mp\gametypes\_admin::squash        , 3 ,   "Squash a player with tank: !squash [player]"       , 1     );
+    thread [[ level.chatCallback  ]] ( "!insult"        ,   maps\mp\gametypes\_admin::insult        , 3 ,   "Throw some insults: !insults [player]"             , 1     );
+    thread [[ level.chatCallback  ]] ( "!rape"          ,   maps\mp\gametypes\_admin::rape          , 3 ,   "Use with caution: !rape [player]"                  , 1     );
+
+    thread [[ level.chatCallback  ]] ( "!restart"       ,   ::map_restart                           , 3 ,   "Restart map: !restart"                             , 0     );
+    thread [[ level.chatCallback  ]] ( "!map"           ,   ::switch_map                            , 3 ,   "Change map: !map [mapname]"                        , 0     );
+
     // TODO: God Commands //
+    thread [[ level.chatCallback  ]] ( "!resetlogins"    ,   ::chatcmd_resetlogins                  , 4 ,   "Resets current logins and cvars: !resetlogins"     , 0     );
     
     // Aliases todo- multiple aliases? // 
     addAlias( "!login", "!log" );
@@ -83,6 +88,7 @@ init() {
     addAlias( "!kick", "!k" );
     addAlias( "!kill", "!ki" );
     addAlias( "!warn", "!w" );
+    addAlias( "!spectate", "!spec" );
     addAlias( "!endgame", "!eg" );
     addAlias( "!forcespec", "!fs" );
     addAlias( "!giveweap", "!gwp" );
@@ -386,6 +392,80 @@ buymenu_rnd( tok ) {
 
 buymenu_hp( tok ) {
     self maps\mp\gametypes\_buymenu::buymenu( "buy_healthpack" );
+}
+
+map_restart( tok ) {
+    setCvar( "sv_maprotationcurrent", "" );
+    sendservercommand( "i \"^7[Zombot]: ^3Restarting map...\"" );
+
+    wait 3;
+
+    exitLevel( false );
+}
+
+switch_map( tok ) {
+    if ( tok == "" )
+        return;
+
+    tok = maps\mp\gametypes\_zombie::tolower( tok );
+    maps = StTok( getCvar( "availablemaps" ), " " );
+    found = [];
+    for ( i = 0; i < maps.size; i++ ) {
+        if ( callback::contains( maps[ i ], tok ) ) {
+            found[ found.size ] = maps[ i ];
+        }
+    }
+
+    if ( found.size < 1 ) {
+        self playerMsg( "Unknown map: " + tok );
+        return;
+    }
+
+    if ( found.size > 1 ) {
+        self playerMsg( "Multiple maps found: " );
+
+        maplist = "";
+        first = true;
+        for ( i = 0; i < found.size; i++ ) {
+            if ( !first ) {
+                maplist += ", " + found[ i ];
+            }
+            else {
+                first = false;
+                maplist += found[ i ];
+            }
+        }
+
+        self playerMsg( maplist );
+        return;
+    }
+
+    if ( isDefined( found[ 0 ] ) ) {
+        map = found[ 0 ];
+
+        setCvar( "sv_maprotationcurrent", " gametype zombies map " + map );
+        sendservercommand( "i \"^7[Zombot]: ^3Switching map to " + map + "...\"" );
+
+        wait 3;
+
+        exitLevel( false );
+    }
+}
+
+spectate_player( tok ) {
+    player = getPlayerById( tok[ 0 ] );
+    if ( isDefined ( player ) && player.sessionstate == "playing" && player != self ) {
+        self.specplayer = player getEntityNumber();
+        wait 0.05;
+        self maps\mp\gametypes\zombies::spawnSpectator();
+    }
+}
+
+getid( tok ) {
+    player = getPlayerById( tok[ 0 ] );
+    if ( isDefined( player ) ) {
+        self playerMsg( player.name + "^7's ID is " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
+    }
 }
 
 getPlayerById( id ) {

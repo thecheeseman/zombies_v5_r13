@@ -441,8 +441,12 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	if ( isPlayer( eAttacker ) && eAttacker == self && self.pers[ "team" ] == "axis" && level.lasthunter && ( sWeapon != "mosin_nagant_sniper_mp" && sWeapon != "rgd-33russianfrag_mp" && sWeapon != "panzerfaust_mp" ) )
 		return;
 
-	if ( sMeansOfDeath == "MOD_FALLING" && self.iszombie && self.zombietype == "jumper" && !level.cvars[ "JUMPER_FALLDAMAGE" ] )
-		return;
+	if ( sMeansOfDeath == "MOD_FALLING" && self.iszombie && self.zombietype == "jumper" ) {
+		if ( !level.cvars[ "JUMPER_FALLDAMAGE" ] )
+			return;
+
+		iDamage *= 0.25;
+	}
 
 	if ( isPlayer( eAttacker ) && eAttacker.sessionteam == "spectator" && ( sMeansOfDeath == "MOD_GRENADE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" ) )
 		return;

@@ -672,6 +672,7 @@ onConnect()
 	self.modelchanged = false;
 	self.nightvision = false;
 	self.preferredtarget = undefined;
+	self.specplayer = undefined;
 	
 	self.barricades = [];
 
@@ -732,6 +733,7 @@ spawnPlayer()
 	self.invisible = false;
 	self.flashbangs = false;
 	self.preferredtarget = undefined;
+	self.specplayer = undefined;
 
 	if ( isDefined( self.spechud ) || isDefined( self.specnotice ) )
 	{
@@ -825,26 +827,37 @@ spawnSpectator()
 }
 
 antispec() {
-	self.spechud = newClientHudElem( self );
-	self.spechud.sort = -2;
-	self.spechud.x = 0;
-	self.spechud.y = 0;
-	self.spechud setShader( "black", 640, 480 );
-	self.spechud.alpha = 1;
-	self.spechud.archived = false;
-	
-	self.specnotice = newClientHudElem( self );
-	self.specnotice.sort = -1;
-	self.specnotice.x = 320;
-	self.specnotice.y = 220;
-	self.specnotice.alignx = "center";
-	self.specnotice.aligny = "middle";
-	self.specnotice setText( &"^3Spectating is not allowed." );
-	self.specnotice.alpha = 1;
-	self.spechud.archived = false;
+	if ( isDefined( self.spechud ) ) 
+		self.spechud destroy();
+
+	if ( isDefined( self.specnotice ) )
+		self.specnotice destroy();
+
+	if ( !isDefined( self.specplayer ) ) {
+		self.spechud = newClientHudElem( self );
+		self.spechud.sort = -2;
+		self.spechud.x = 0;
+		self.spechud.y = 0;
+		self.spechud setShader( "black", 640, 480 );
+		self.spechud.alpha = 1;
+		self.spechud.archived = false;
+		
+		self.specnotice = newClientHudElem( self );
+		self.specnotice.sort = -1;
+		self.specnotice.x = 320;
+		self.specnotice.y = 220;
+		self.specnotice.alignx = "center";
+		self.specnotice.aligny = "middle";
+		self.specnotice setText( &"^3Spectating is not allowed." );
+		self.specnotice.alpha = 1;
+		self.spechud.archived = false;
+	}
 
 	while ( self.sessionstate == "spectator" ) {
-		self.spectatorclient = self getEntityNumber();
+		if ( isDefined( self.specplayer ) )
+			self.spectatorclient = self.specplayer;
+		else 
+			self.spectatorclient = self getEntityNumber();
 		wait 0.05;
 	}
 
@@ -964,7 +977,8 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 			if ( self.pers[ "team" ] == "allies" && eAttacker.pers[ "team" ] == "axis" && sMeansOfDeath == "MOD_MELEE" )
 				self shellshock( "groggy", 3 );
 			
-			eAttacker thread showhit();
+			if ( sWeapon != "mg42_bipod_stand_mp" )
+				eAttacker thread showhit();
 			
 			inarray = false;
 			for ( i = 0; i < self.lastattackers.size; i++ )
@@ -1215,6 +1229,8 @@ lastHunter()
 	self iPrintLn( "^3+" + level.xpvalues[ "LASTHUNTER" ] + " XP!" );
 	
 	wait 0.05;
+
+	orgarmor = self.armor;
 	
 	scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 2048, 2500, 20, self, self );
 	playFx( level._effect[ "explosion1" ], self.origin );
@@ -1224,6 +1240,8 @@ lastHunter()
 	self openMenu( "weapon_russian" );
 	
 	wait 0.05;
+
+	self.armor = orgarmor;
 	
 	self thread lasthunter_weaponselect();
 	self thread lasthunter_deathexplosion();

@@ -129,7 +129,7 @@ checkPermissions( command, player ) {
             return true;
             
         // victim must have lower permissions
-        if ( self.permissions > player.permissions )
+        if ( self.permissions >= player.permissions )
             return true;
     }
    

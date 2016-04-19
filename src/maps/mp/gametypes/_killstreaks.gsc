@@ -206,8 +206,13 @@ rocket()
 	startbody = self.bodyarmor;
 	startexplo = self.exploarmor;
 	
-	self.bodyarmor += 100;
-	self.exploarmor += 50;
+	self.bodyarmor += 500;
+	self.exploarmor += 500;
+
+	if ( self.bodyarmor > 1500 )
+		self.bodyarmor = 1500;
+	if ( self.exploarmor > 1500 )
+		self.exploarmor = 1500;
 	
 	self.rocketattack = true;
 	
@@ -215,7 +220,7 @@ rocket()
 	
 	self.lol = spawn( "script_origin", self.origin );
 	self linkto( self.lol );
-	
+
 	self.lol movez( 256, 2 );
 	wait 2;
 	
@@ -237,17 +242,23 @@ rocket()
 			self switchToWeapon( self.pers[ "weapon" ] );
 		}
 
-		self.lol movez( -256, 2 );
+		// prevent getting stuck inside people
+		trace = bullettrace( self.origin, self.origin + ( 0, 0, -256 ), true, self );
+		zdist = distance( trace[ "position" ], self.origin );
+
+		self.lol movez( zdist * -1, 2 );
 		wait 2;
 		self.lol delete();
 	}
-	
+
+	// negate any velocity added via panzers
+	self setVelocity( ( 0, 0, 0 ) );
 	self.rocketattack = false;
-	
-	if ( startbody == 0 && self.bodyarmor > 0 )
-		self.bodyarmor = 0;
-	else if ( startexplo == 0 && self.exploarmor > 0 )
-		self.exploarmor = 0;
+
+	if ( self.bodyarmor > startbody )
+		self.bodyarmor = startbody;
+	if ( self.exploarmor > startexplo )
+		self.exploarmor = startexplo;
 }
 
 rocket_waittimer()
