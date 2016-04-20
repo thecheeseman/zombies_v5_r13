@@ -2461,12 +2461,14 @@ mapChar( str, conv )
 	{
 		ch = str[ i ];
 
-		for ( j = 0; j < from.size; j++ )
+		for ( j = 0; j < from.size; j++ ) {
+			resettimeout();
 			if ( ch == from[ j ] )
 			{
 				ch = to[ j ];
 				break;
 			}
+		}
 
 		s += ch;
 	}
@@ -2830,6 +2832,8 @@ explode( s, delimiter )
 strip(s) {
 	if(!isDefined(s) || s == "")
 		return "";
+
+	resettimeout();
 
 	s2 = "";
 	s3 = "";

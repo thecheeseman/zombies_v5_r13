@@ -229,7 +229,7 @@ addStatField( fieldname, type ) {
 getStatField( fieldname ) {
 	for ( i = 0; i < level.statsvalidfields.size; i++ ) {
 		field = level.statsvalidfields[ i ];
-		if ( maps\mp\gametypes\_zombie::toLower( field.name ) == maps\mp\gametypes\_zombie::toLower( fieldname ) ) {
+		if ( field.name == fieldname ) {
 			return field;
 		}
 	}
@@ -403,7 +403,7 @@ getMyStats() {
 			}
 
 			// reached end of file
-			if ( field == "eof" ) {
+			if ( field == "eof" ) {	
 				break;
 			}
 

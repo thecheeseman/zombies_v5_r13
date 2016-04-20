@@ -289,7 +289,7 @@ chatcmd_warn ( tok ) {
 }
 
 chatcmd_mute ( tok ) {
-    player = getPlayerById( tok[ 0 ] );
+    player = getPlayerById( tok );
     if ( isDefined ( player ) ) {
         player.muted = true;
         player playerMsg( "You have been muted by " + self.name );
@@ -297,7 +297,7 @@ chatcmd_mute ( tok ) {
 }
 
 chatcmd_unmute ( tok ) {
-    player = getPlayerById( tok[ 0 ] );
+    player = getPlayerById( tok );
     if ( isDefined ( player ) && player.muted ) {
         player.muted = false;
         player playerMsg( "You have been unmuted by " + self.name );
@@ -453,7 +453,7 @@ switch_map( tok ) {
 }
 
 spectate_player( tok ) {
-    player = getPlayerById( tok[ 0 ] );
+    player = getPlayerById( tok );
     if ( isDefined ( player ) && player.sessionstate == "playing" && player != self ) {
         self.specplayer = player getEntityNumber();
         wait 0.05;
@@ -462,7 +462,7 @@ spectate_player( tok ) {
 }
 
 getid( tok ) {
-    player = getPlayerById( tok[ 0 ] );
+    player = getPlayerById( tok );
     if ( isDefined( player ) ) {
         self playerMsg( player.name + "^7's ID is " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
     }
