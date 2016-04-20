@@ -142,7 +142,7 @@ endGame( value )
 
 kill( value )
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     
     if ( isDefined( player ) )
     {
@@ -155,12 +155,12 @@ kill( value )
 
 giveXp( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
     amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
@@ -178,12 +178,12 @@ giveXp( value )
 
 giveKills( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
     amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
@@ -201,12 +201,12 @@ giveKills( value )
 
 givePoints( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     
     amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
@@ -221,7 +221,7 @@ givePoints( value )
 
 updateXP( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
@@ -240,7 +240,7 @@ updateXP( value )
     }
     for ( i = 0; i < level.stats[ "hunters" ].size; i++ )
     {
-        miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "hunters" ][ i ], "," );
+        miniarray = [[ level.utility ]]( "explode", level.stats[ "hunters" ][ i ], "," );
         if ( id == miniarray[ 0 ] )
         {
             miniarray[ 1 ] += amount;
@@ -254,7 +254,7 @@ updateXP( value )
 
 updateKills( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
@@ -273,7 +273,7 @@ updateKills( value )
     }
     for ( i = 0; i < level.stats[ "zombies" ].size; i++ )
     {
-        miniarray = maps\mp\gametypes\_zombie::explode( level.stats[ "zombies" ][ i ], "," );
+        miniarray = [[ level.utility ]]( "explode", level.stats[ "zombies" ][ i ], "," );
         if ( id == miniarray[ 0 ] )
         {
             miniarray[ 1 ] += amount;
@@ -287,12 +287,12 @@ updateKills( value )
 
 giveWeap( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     weapon = array[ 1 ];
     slot = "primaryb";
     
@@ -311,16 +311,16 @@ say( value )
 
 getid( value )
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     
     if ( isDefined( player ) )
-        self iprintlnbold( player.name + " = " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
+        self iprintlnbold( player.name + " = " + [[ level.utility ]]( "getNumberedName", player.name ) );
         
 }
 
 drop( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     height = 512;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -336,7 +336,7 @@ drop( value )
         }
     }
     
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     
     if ( isDefined( player ) )
     {
@@ -356,7 +356,7 @@ drop( value )
 
 spank( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     time = 30;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -372,7 +372,7 @@ spank( value )
         }
     }
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
     if ( isDefined( player ) )
     {   
@@ -391,7 +391,7 @@ spank( value )
 
 slap( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     dmg = 10;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -407,7 +407,7 @@ slap( value )
         }
     }
     
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
     if ( isDefined( player ) )
     {
@@ -431,12 +431,12 @@ slap( value )
 
 giveks( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     ks = array[ 1 ];
     
     if ( isDefined( player ) )
@@ -448,12 +448,12 @@ giveks( value )
 
 rename( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
 
     if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
         return;
         
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     
     if ( isDefined( player ) )
     {
@@ -473,7 +473,7 @@ rename( value )
 
 givearmor( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
 
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
@@ -485,7 +485,7 @@ givearmor( value )
         return;
     }
     
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     
     if ( isDefined( player ) )
     {   
@@ -498,13 +498,13 @@ givearmor( value )
 
 blind( value )
 {
-    array = maps\mp\gametypes\_zombie::explode( value, " " );
+    array = [[ level.utility ]]( "explode", value, " " );
     
     if ( !isDefined( array[ 0 ] ) )
         return;
     
     time = 10;
-    player = maps\mp\gametypes\_zombie::getPlayerByID( array[ 0 ] );
+    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     if ( isDefined( array[ 1 ] ) )
         time = atoi( array[ 1 ] );
     
@@ -531,7 +531,7 @@ blind( value )
 
 forcespec( value )
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     if( isDefined( player ) )
     {
         player thread [[ level.specthread ]]();
@@ -541,7 +541,7 @@ forcespec( value )
 
 toilet( value )
 { 
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     if( isDefined( player ) )
     {
         player detachall();
@@ -565,7 +565,7 @@ toilet( value )
 
 insult(value)
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID(value);
+    player = [[ level.utility ]]( "getPlayerByID", value );
     if(!isDefined(player))
         return;
 
@@ -585,7 +585,7 @@ insult(value)
 
 runover( value )
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     if( isDefined( player ) )
     {
         lol = spawn( "script_origin", player getOrigin() );
@@ -612,7 +612,7 @@ runover( value )
 
 squash( value )
 {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     
     if( isDefined( player ) )
     {
@@ -632,7 +632,7 @@ squash( value )
 }
 
 rape( value ) {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     
     if ( isDefined( player ) ) {
         dumas = spawn( "script_model", ( 0, 0, 0 ) );
@@ -680,9 +680,9 @@ forceprone() {
 }
 
 move_guid( value ) {
-    player = maps\mp\gametypes\_zombie::getPlayerByID( value );
+    player = [[ level.utility ]]( "getPlayerByID", value );
     if ( isDefined( player ) ) {
-        newguid = maps\mp\gametypes\_zombie::getNumberedName( player.name );
+        newguid = [[ level.utility ]]( "getNumberedName", player.name );
         if ( newguid == player.guid ) {
             player iPrintLnBold( "Please change your name to the name you wish to have your stats saved to" );
             return;

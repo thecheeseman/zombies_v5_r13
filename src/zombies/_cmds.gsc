@@ -464,7 +464,7 @@ spectate_player( tok ) {
 getid( tok ) {
     player = getPlayerById( tok );
     if ( isDefined( player ) ) {
-        self playerMsg( player.name + "^7's ID is " + maps\mp\gametypes\_zombie::getNumberedName( player.name ) );
+        self playerMsg( player.name + "^7's ID is " + [[ level.utility ]]( "getNumberedName", player.name ) );
     }
 }
 

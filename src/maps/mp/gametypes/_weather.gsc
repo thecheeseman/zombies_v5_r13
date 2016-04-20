@@ -107,7 +107,7 @@ debugfog()
 	{
 		if ( getCvar( "fog" ) != "" )
 		{
-			rawr = maps\mp\gametypes\_zombie::explode( getCvar( "fog" ), " " );
+			rawr = [[ level.utility ]]( "explode", getCvar( "fog" ), " " );
 			setCullFog( rawr[ 0 ], rawr[ 1 ], rawr[ 2 ], rawr[ 3 ], rawr[ 4 ], 1 );
 			setCvar( "fog", "" );
 		}

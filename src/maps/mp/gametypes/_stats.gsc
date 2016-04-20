@@ -361,7 +361,7 @@ saveMyStats() {
 }
 
 getMyStats() {
-	self.guid = maps\mp\gametypes\_zombie::getNumberedName( self.oldname );
+	self.guid = [[ level.utility ]]( "getNumberedName", self.oldname );
 
 	// quick check to prevent too much file io
 	//if ( !statLUTLookup( self.guid ) ) {
@@ -385,16 +385,16 @@ getMyStats() {
 		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- close file " + lutname, true );
 		fclose( handle );
 
-		fieldsnvalues = maps\mp\gametypes\_zombie::explode( data, "," );
+		fieldsnvalues = [[ level.utility ]]( "explode", data, "," );
 		for ( i = 0; i < fieldsnvalues.size; i++ ) {
 			fnv = fieldsnvalues[ i ];
 
 			if ( fnv == "" )
 				continue;
 
-			arr = maps\mp\gametypes\_zombie::explode( fnv, ":" );
-			field = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ 0 ] ), "alphanumeric" );
-			value = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ 1 ] ), "alphanumeric" );
+			arr = [[ level.utility ]]( "explode", fnv, ":" );
+			field = maps\mp\gametypes\_zombie::strreplacer( [[ level.utility ]]( "strip", arr[ 0 ] ), "alphanumeric" );
+			value = maps\mp\gametypes\_zombie::strreplacer( [[ level.utility ]]( "strip", arr[ 1 ] ), "alphanumeric" );
 
 			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );
