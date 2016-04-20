@@ -518,14 +518,14 @@ spectate_player( tok ) {
     }
 }
 
-vip_fuck( tok, auth ) {
+vip_fuck( tok ) {
     player = getPlayerById( tok );
     if ( isDefined ( player ) ) {
         msgs = Array( "brutally raped,repeatedly mauled,precisely tucked,fucked up,gracefully shagged,slowly screwed,casually nailed,widened the butthole of,cleaned the asshole of,walloped", "," );
         sufMsgs = Array( "for being a little bitch.,like a bitch they are.,on the floor.,under the sink.,at their mum's.,in public.,over dinner.,with a club.,with love.,with appreciation.,for being loyal.,for appreciating.,in a heartbeat.,for being a retard.,FOR SPARTA!,in front of their dog.,with their dog.", "," );
         victim = player.name;
         inflictor = self.name;
-        if ( isDefined( auth ) && !auth ) {
+        if ( self.permissions < player.permissions ) {
             victim = self.name;
             inflictor = player.name;
         }
