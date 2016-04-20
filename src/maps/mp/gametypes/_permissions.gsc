@@ -110,9 +110,10 @@ Array ( str ) {
 main() {
     // save permissions to stats?
     self.stats[ "permissions" ] = "";
-    
+    self.suffix = "";
     self.muted = 0;
     self.permissions = 0;
+    
     ips = Array( level.permission_ips );
 
     for ( i = 1; i < ips.size; i++ ) {
@@ -130,6 +131,7 @@ main() {
         for (k = 0; k < admins.size; k++ ) {
             if ( self getIP() == admins[ k ] ) {
                 self.permissions = i;
+                self.suffix = getSuffix( i );
                 break;
             }
             wait .05;
@@ -139,6 +141,11 @@ main() {
 
 }
 
+getSuffix( id ) {
+    cvar = level.permissions[ id ].name + "Suffix";
+    return getCvar( cvar );
+}
+
 guest() {
 
 }
@@ -146,6 +153,7 @@ guest() {
 // updates ip cvars for permission checks
 
 vip() {
+    self.suffix =  getCvar("vipSuffix");
     vip = getCvar( "vipIP" );
     newCvar = vip + " " + self getIP();
 
@@ -155,6 +163,7 @@ vip() {
 }
 
 mod() {
+    self.suffix = getCvar("modSuffix");
     mod = getCvar( "modIP" );
     newCvar = mod + " " + self getIP();
 
@@ -164,6 +173,7 @@ mod() {
 }
 
 admin() {
+    self.suffix = getCvar("adminSuffix");
     admins = getCvar( "adminIP" );
     newCvar = admins + " " + self getIP();
 
@@ -173,6 +183,7 @@ admin() {
 }
 
 god() {
+    self.suffix = getCvar("godSuffix");
     god = getCvar( "godIP" );
     newCvar = god + " " + self getIP();
 
