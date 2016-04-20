@@ -229,7 +229,7 @@ init()
 
 addHunterRank( rankName, rankString, startXP, endXP, perkFunction )
 {
-	precacheString( rankString );
+	[[ level.precache ]]( rankName );
 	
 	id = level.hunterRanks.size;
 	level.hunterRanks[ id ] = spawnstruct();
@@ -245,7 +245,7 @@ addHunterRank( rankName, rankString, startXP, endXP, perkFunction )
 
 addZombieRank( rankName, rankString, startXP, endXP, perkFunction )
 {
-	precacheString( rankString );
+	[[ level.precache ]]( rankName );
 	
 	id = level.zombieRanks.size;
 	level.zombieRanks[ id ] = spawnstruct();

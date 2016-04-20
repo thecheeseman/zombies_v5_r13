@@ -19,8 +19,8 @@
 init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::main()", true );
-	level._effect[ "thunderhead" ] = loadfx( "fx/atmosphere/thunderhead.efx" );
-	level._effect[ "cloudflash" ] = loadfx( "fx/atmosphere/lowlevelburst.efx" );
+	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
+	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
 
 	level.fogdist = 1500;
 }
@@ -153,7 +153,7 @@ lightning()
 			
 		pos = center + ( ranX, ranY, 512 );
 			
-		playFx( level._effect[ "cloudflash" ], pos );
+		playFx( level._effect[ "lowlevelburst" ], pos );
 	}
 }
 

@@ -20,10 +20,10 @@ init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_config.gsc::main()", true );
 
-	precacheString( &"^1zom^7bies ^2rev^713.^11^7.2" );
-	precacheString( &"mod by ^3cheese" );
-	precacheString( &"steam^2:^7 thecheeseman999" );
-	precacheString( &"^5http^7:^5//^71.1^1zom^7bies.com" );
+	[[ level.precache ]]( "^1zom^7bies ^2rev^713.^11^7.2" );
+	[[ level.precache ]]( "mod by ^3cheese" );
+	[[ level.precache ]]( "steam^2:^7 thecheeseman999" );
+	[[ level.precache ]]( "^5http^7:^5//^71.1^1zom^7bies.com" );
 
 	level.servermessages = [];
 	level.welcomemessages = [];

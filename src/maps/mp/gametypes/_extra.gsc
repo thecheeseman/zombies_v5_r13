@@ -23,10 +23,11 @@
 init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_extra.gsc::main()", true );
-	precacheModel( "xmodel/vehicle_russian_barge" );
-	precacheModel( "xmodel/vehicle_tank_tiger_d" );
-	precacheModel( "xmodel/playerbody_russian_conscript" );
-	precacheModel( "xmodel/tombstone1" );
+	
+	[[ level.precache ]]( "xmodel/vehicle_russian_barge" );
+	[[ level.precache ]]( "xmodel/vehicle_tank_tiger_d" );
+	[[ level.precache ]]( "xmodel/playerbody_russian_conscript" );
+	[[ level.precache ]]( "xmodel/tombstone1" );
 }
 
 main() {	

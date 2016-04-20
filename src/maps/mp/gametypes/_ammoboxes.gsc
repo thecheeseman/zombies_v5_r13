@@ -20,15 +20,11 @@ init()
 {
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_ammoboxes.gsc::main()", true );
 	
-	precacheModel( "xmodel/crate_misc1" );
-	precacheModel( "xmodel/crate_champagne3" );
-	precacheModel( "xmodel/ammo_stielhandgranate1" );
-	
-	precacheShader( "white" );
-	precacheShader( "black" );
-	precacheShader( "gfx/hud/objective.tga" );
-	
-	precacheString( &"Hold [{+activate}] to get ammo/health" );
+	[[ level.precache ]]( "xmodel/crate_misc1" );
+	[[ level.precache ]]( "xmodel/crate_champagne3" );
+	[[ level.precache ]]( "xmodel/ammo_stielhandgranate1" );
+	[[ level.precache ]]( "gfx/hud/objective.tga" );
+	[[ level.precache ]]( "Hold [{+activate}] to get ammo/health" );
 }
 
 main() {	

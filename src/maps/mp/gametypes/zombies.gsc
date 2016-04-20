@@ -29,10 +29,10 @@ main()
 	allowed[0] = "tdm";
 	maps\mp\gametypes\_gameobjects::main(allowed);
 	
-	if (getcvar("scr_zom_timelimit") == "")
-		setcvar("scr_zom_timelimit", "30");
-	else if (getcvarfloat("scr_zom_timelimit") > 1440)
-		setcvar("scr_zom_timelimit", "1440");
+	if (getcvar("zom_timelimit") == "")
+		setcvar("zom_timelimit", "30");
+	else if (getcvarfloat("zom_timelimit") > 1440)
+		setcvar("zom_timelimit", "1440");
 	level.timelimit = getcvarfloat("scr_zom_timelimit");
 
 	level.scorelimit = 0;
@@ -81,7 +81,6 @@ Callback_StartGameType()
 	if(!isdefined(game["layoutimage"]))
 		game["layoutimage"] = "default";
 	layoutname = "levelshots/layouts/hud@layout_" + game["layoutimage"];
-	precacheShader(layoutname);
 	setcvar("scr_layoutimage", layoutname);
 	makeCvarServerInfo("scr_layoutimage", "");
 
@@ -96,27 +95,29 @@ Callback_StartGameType()
 	game["headicon_allies"] = "gfx/hud/headicon@allies.tga";
 	game["headicon_axis"] = "gfx/hud/headicon@axis.tga";
 
-	precacheString(&"MPSCRIPT_PRESS_ACTIVATE_TO_RESPAWN");
-	precacheString(&"MPSCRIPT_KILLCAM");
-	precacheString( &"lol." );
+	maps\mp\gametypes\_zombie::Main();
 
-	precacheMenu(game["menu_team"]);
-	precacheMenu(game["menu_weapon_allies"]);
-	precacheMenu(game["menu_weapon_axis"]);
-	precacheMenu(game["menu_viewmap"]);
-	precacheMenu(game["menu_callvote"]);
-	precacheMenu(game["menu_quickcommands"]);
-	precacheMenu(game["menu_quickstatements"]);
-	precacheMenu(game["menu_quickresponses"]);
+	[[ level.precache ]]( layoutname );
 
-	precacheShader("black");
-	precacheShader("hudScoreboard_mp");
-	precacheShader("gfx/hud/hud@mpflag_spectator.tga");
-	precacheStatusIcon("gfx/hud/hud@status_dead.tga");
-	precacheStatusIcon("gfx/hud/hud@status_connecting.tga");
-	precacheHeadIcon(game["headicon_allies"]);
-	precacheHeadIcon(game["headicon_axis"]);
-	precacheItem("item_health");
+	[[ level.precache ]]( &"MPSCRIPT_PRESS_ACTIVATE_TO_RESPAWN" );
+	[[ level.precache ]]( &"MPSCRIPT_KILLCAM" );
+
+	[[ level.precache ]]( game[ "menu_team" ], "menu" );
+	[[ level.precache ]]( game[ "menu_weapon_allies" ], "menu" );
+	[[ level.precache ]]( game[ "menu_weapon_axis" ], "menu" );
+	[[ level.precache ]]( game[ "menu_viewmap" ], "menu" );
+	[[ level.precache ]]( game[ "menu_callvote" ], "menu" );
+	[[ level.precache ]]( game[ "menu_quickcommands" ], "menu" );
+	[[ level.precache ]]( game[ "menu_quickstatements" ], "menu" );
+	[[ level.precache ]]( game[ "menu_quickresponses" ], "menu" );
+
+	[[ level.precache ]]( "hudScoreboard_mp", "shader" );
+	[[ level.precache ]]( "gfx/hud/hud@mpflag_spectator.tga" );
+	[[ level.precache ]]( "gfx/hud/hud@status_dead.tga", "statusicon");
+	[[ level.precache ]]( "gfx/hud/hud@status_connecting.tga", "statusicon" );
+	[[ level.precache ]]( game[ "headicon_allies" ], "headicon");
+	[[ level.precache ]]( game[ "headicon_axis" ], "headicon" );
+	[[ level.precache ]]( "item_health" );
 
 	maps\mp\gametypes\_teams::precache();
 	maps\mp\gametypes\_teams::scoreboard();
@@ -124,11 +125,6 @@ Callback_StartGameType()
 	maps\mp\gametypes\_teams::restrictPlacedWeapons();
 
 	setClientNameMode("auto_change");
-	
-	if ( level.loled )
-		return;
-		
-	thread maps\mp\gametypes\_zombie::Main();
 	
 	thread startGame();
 	

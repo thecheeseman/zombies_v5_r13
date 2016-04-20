@@ -20,7 +20,7 @@ init()
 {
     [[ level.logwrite ]]( "maps\\mp\\gametypes\\_admin.gsc::main()", true );
 
-    precacheModel( "xmodel/vehicle_tank_tiger" );
+    [[ level.precache ]](  "xmodel/vehicle_tank_tiger" );
 
     level.specthread = maps\mp\gametypes\zombies::spawnSpectator;
 

@@ -24,8 +24,10 @@ init() {
 
     addUtilityFunction( "showpos",          ::showPos                                                                                       );
 
+    addUtilityFunction( "contains",         ::contains,             addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
     addUtilityFunction( "cleanString",      ::cleanString,          addParams( 2,   "string,boolean",       "false,false",      "true,true"     ) );
     addUtilityFunction( "charToDigit",      ::charToDigit,          addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "endsWith",         ::endsWith,             addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
     addUtilityFunction( "explode",          ::explode,              addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
     addUtilityFunction( "getNumberedName",  ::getNumberedName,      addParams( 2,   "string,string",        "false,false",      "false,false"   ) );
     addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        addParams( 1,   "integer",              "true",             "true"          ) );
@@ -34,6 +36,7 @@ init() {
     addUtilityFunction( "isChar",           ::isChar,               addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "isDigit",          ::isDigit,              addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "isSymbol",         ::isSymbol,             addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "startsWith",       ::startsWith,           addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
     addUtilityFunction( "strip",            ::strip,                addParams( 1,   "string",               "false",            "true"          ) );
 }
 
@@ -250,6 +253,79 @@ utility_runner( function, args ) {
 // ------------------------------------------------------------------------- //
 // utility functions 
 // ------------------------------------------------------------------------- //
+
+startsWith( string, start ) {
+    if ( !isDefined( string ) || !isDefined( start ) )
+        return false;
+
+    if ( string == "" || start == "" )
+        return false;
+
+    if ( start.size > string.size )
+        return false;
+
+    for ( i = 0; i < start.size; i++ ) {
+        if ( string[ i ] != start[ i ] )
+            return false;
+    }
+
+    return true;
+}
+
+endsWith( string, end ) {
+    if ( !isDefined( string ) || !isDefined( end ) )
+        return false;
+
+    if ( string == "" || end == "" )
+        return false;
+
+    if ( end.size > string.size )
+        return false;
+
+    for ( i = 0; i < end.size; i++ ) {
+        if ( string[ string.size - 1 - i ] != end[ end.size - 1 - i ] )
+            return false;
+    }
+
+    return true;
+}
+
+contains( sString, sOtherString ) {
+    if ( sOtherString.size > sString.size )
+        return false;
+    
+    // loop through the string to check
+    for ( i = 0; i < sString.size; i++ ) {
+        x = 0;
+        tmp = "";
+        
+        // string to check against
+        for ( j = 0; j < sOtherString.size; j++ ) {
+            cur = sOtherString[ j ];
+            
+            if ( ( i + j ) >= sString.size )
+                break;
+                
+            //printconsole( "cur = " + sOtherString[j] + " j: " + j +"\n");
+                
+            next = sString[ i + j ];
+            
+            if ( cur == next ) {
+                tmp += cur;
+                x++;
+                continue;
+            }
+            
+            break;
+        }
+        
+        // looped through entire string, found it
+        if ( x == sOtherString.size && tmp == sOtherString )
+            return true;
+    }
+    
+    return false;
+}
 
 cleanString( str, ignorespaces )
 {

@@ -31,10 +31,9 @@ init()
 	game["TimeLeft"] = &"Time Left: ";
 	game["MapVoteHeader"] = &"Next Map Vote";
 
-	precacheShader("white");
-	precacheString(game["MapVote"]);
-	precacheString(game["TimeLeft"]);
-	precacheString(game["MapVoteHeader"]);
+	[[ level.precache ]]( game[ "MapVote" ] );
+	[[ level.precache ]]( game[ "TimeLeft" ] );
+	[[ level.precache ]]( game[ "MapVoteHeader" ] );
 }
 
 Initialize()

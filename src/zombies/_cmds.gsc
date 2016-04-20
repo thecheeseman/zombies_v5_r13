@@ -4,7 +4,7 @@
 
 init() {
     if ( getCvar( "availablemaps" ) == "" )
-        setCvar( "availablemaps", "mp_harbor mp_carentan mp_depot mp_dawnville mp_railyard mp_powcamp mp_pavlov mp_rocket mp_hurtgen mp_ship mp_chateau" );
+        setCvar( "availablemaps", "mp_brecourt mp_harbor mp_carentan mp_depot mp_dawnville mp_railyard mp_powcamp mp_pavlov mp_rocket mp_hurtgen mp_ship mp_chateau" );
         
     // Permisions:
     // 0 = Guest 1 = VIP 2 = Moderator 3 = Admin 4 = God 
@@ -28,6 +28,7 @@ init() {
     
     // VIP Commands //
     thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                              , 1 ,   "Appreciate another player: !fuck [player]"         , -1     );
+    thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                             , 1 ,   "Slap another player: !trout [player]"              , 1     );
     
     // Mod Commands //
     thread [[ level.chatCallback ]] ( "!status"        ,   ::chatcmd_status                        , 2 ,   "Print players info: !status"                       , 0     );
@@ -521,6 +522,11 @@ spectate_player( tok ) {
 vip_fuck( tok ) {
     player = getPlayerById( tok );
     if ( isDefined ( player ) ) {
+        if ( player == self ) {
+            self playerMsg( "If you want to fuck yourself, get off CoD and rub one out." );
+            return;
+        }
+        
         msgs = Array( "brutally raped,repeatedly mauled,precisely tucked,fucked up,gracefully shagged,slowly screwed,casually nailed,widened the butthole of,cleaned the asshole of,walloped", "," );
         sufMsgs = Array( "for being a little bitch.,like a bitch they are.,on the floor.,under the sink.,at their mum's.,in public.,over dinner.,with a club.,with love.,with appreciation.,for being loyal.,for appreciating.,in a heartbeat.,for being a retard.,FOR SPARTA!,in front of their dog.,with their dog.", "," );
         victim = player.name;
@@ -530,6 +536,13 @@ vip_fuck( tok ) {
             inflictor = player.name;
         }
         serverMsg( inflictor + " ^3" + msgs[ randomInt( msgs.size ) ] + " " + victim + " ^3" + sufMsgs[ randomInt( sufMsgs.size ) ] );
+    }
+}
+
+vip_trout( tok ) {
+    player = getPlayerById( tok );
+    if ( isDefined( player ) ) {
+        serverMsg( self.name + " ^3slaps " + player.name + " ^3around a bit with a large trout." );
     }
 }
 

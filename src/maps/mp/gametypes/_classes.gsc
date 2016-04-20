@@ -17,27 +17,27 @@
 */
 
 init() {
-    precacheModel( "xmodel/USAirborneHelmet_Medic" );
-    precacheModel( "xmodel/barrel_black1" );
-    precacheModel( "xmodel/mg42_bipod" );
+    [[ level.precache ]]( "xmodel/USAirborneHelmet_Medic" );
+    [[ level.precache ]]( "xmodel/barrel_black1" );
+    [[ level.precache ]]( "xmodel/mg42_bipod" );
 
-    precacheString( &"Sentry status: " );
-    precacheString( &"Sentry health: " );
-    precacheString( &"Sentry kills: " );
-    precacheString( &"Firing" );
-    precacheString( &"Reloading" );
-    precacheString( &"Disabled" );
-    precacheString( &"Idle" );
-    precacheString( &"Hold [{+activate}] to move turret" );
-    precacheString( &"Invisibility status: " );
-    precacheString( &"Ready" );
-    precacheString( &"Recharging" );
-    precacheString( &"Invisible" );
-    precacheString( &"Cooldown" );
+    [[ level.precache ]]( "Sentry status: " );
+    [[ level.precache ]]( "Sentry health: " );
+    [[ level.precache ]]( "Sentry kills: " );
+    [[ level.precache ]]( "Firing" );
+    [[ level.precache ]]( "Reloading" );
+    [[ level.precache ]]( "Disabled" );
+    [[ level.precache ]]( "Idle" );
+    [[ level.precache ]]( "Hold [{+activate}] to move turret" );
+    [[ level.precache ]]( "Invisibility status: " );
+    [[ level.precache ]]( "Ready" );
+    [[ level.precache ]]( "Recharging" );
+    [[ level.precache ]]( "Invisible" );
+    [[ level.precache ]]( "Cooldown" );
 
-    level._effect[ "sentry_fire" ] = loadfx( "fx/muzzleflashes/mg42flash.efx" );
-    level._effect[ "sentry_onfire" ] = loadfx( "fx/fire/barrelfire.efx" );
-    level._effect[ "sentry_explode" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
+    [[ level.precache ]]( "fx/muzzleflashes/mg42flash.efx",         "fx", "sentry_fire" );
+    [[ level.precache ]]( "fx/fire/barrelfire.efx",                 "fx", "sentry_onfire" );
+    [[ level.precache ]]( "fx/explosions/pathfinder_explosion.efx", "fx", "sentry_explode" );
 }
 
 setup() {

@@ -56,62 +56,61 @@ Main()
 	maps\mp\gametypes\_sharkscanner::main();
 
 	[[ level.logwrite ]]( "^^---------- _zombie.gsc::Main() ----------^^" );
+
+	maps\mp\gametypes\_precache::dump_precache();
 }
 
 precache()
 {
-	precacheShader( "white" );
-	precacheShader( "black" );
+	[[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga", 	"headicon" );
+	[[ level.precache ]]( "gfx/hud/headicon@axis.tga", 				"headicon" );
+	[[ level.precache ]]( "gfx/hud/headicon@allies.tga", 			"headicon" );
+	[[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga", 	"statusicon" );
+	[[ level.precache ]]( "gfx/hud/headicon@axis.tga", 				"statusicon" );
+	[[ level.precache ]]( "gfx/hud/headicon@allies.tga", 			"statusicon" );
+	[[ level.precache ]]( "gfx/hud/hud@health_cross.tga",			"statusicon" );
+	[[ level.precache ]]( "gfx/hud/hud@death_m1carbine.tga",		"statusicon" );
+	[[ level.precache ]]( "gfx/hud/hud@objective_bel.tga" );
+	[[ level.precache ]]( "gfx/hud/hud@objectivegoal.tga" );
+	[[ level.precache ]]( "gfx/hud/hud@fire_ready.tga" );
+	[[ level.precache ]]( "gfx/hud/headicon@axis.tga" );
+	[[ level.precache ]]( "gfx/hud/headicon@allies.tga" );
+	[[ level.precache ]]( "gfx/hud/hud@health_cross.tga" );
+	[[ level.precache ]]( "killiconmelee", "shader" );
+	[[ level.precache ]]( "killicondied", "shader" );
+	[[ level.precache ]]( "killiconheadshot", "shader" );
+	[[ level.precache ]]( "killiconsuicide", "shader" );
+	[[ level.precache ]]( "gfx/impact/flesh_hit1.tga" );
+	[[ level.precache ]]( "gfx/impact/flesh_hit2.tga" );
+	[[ level.precache ]]( "gfx/hud/hud@health_back.dds" );
+	[[ level.precache ]]( "gfx/hud/hud@health_bar.dds" );
 	
-	precacheHeadIcon( "gfx/hud/headicon@re_objcarrier.tga" );
-	precacheHeadIcon( "gfx/hud/headicon@axis.tga" );
-	precacheHeadIcon( "gfx/hud/headicon@allies.tga" );
-	precacheStatusIcon( "gfx/hud/headicon@re_objcarrier.tga" );
-	precacheStatusIcon( "gfx/hud/headicon@axis.tga" );
-	precacheStatusIcon( "gfx/hud/headicon@allies.tga" );
-	precacheShader( "gfx/hud/hud@objective_bel.tga" );
-	precacheShader( "gfx/hud/hud@objectivegoal.tga" );
-	precacheShader( "gfx/hud/hud@fire_ready.tga" );
-	precacheShader( "gfx/hud/headicon@axis.tga" );
-	precacheShader( "gfx/hud/headicon@allies.tga" );
-	precacheShader( "gfx/hud/hud@health_cross.tga" );
-	precacheShader( "killiconmelee" );
-	precacheShader( "killicondied" );
-	precacheShader( "killiconheadshot" );
-	precacheShader( "killiconsuicide" );
-	precacheShader( "gfx/impact/flesh_hit1.tga" );
-	precacheShader( "gfx/impact/flesh_hit2.tga" );
-	precacheShader( "gfx/hud/hud@health_back.dds" );
-	precacheShader( "gfx/hud/hud@health_bar.dds" );
+	[[ level.precache ]]( "fg42_mp" );
+	[[ level.precache ]]( "panzerfaust_mp" );
+	
+	[[ level.precache ]]( "weapon_russian", 						"menu" );
+	
+	[[ level.precache ]]( "default", 								"shellshock" );
+	[[ level.precache ]]( "groggy",									"shellshock" );
 
-	precacheStatusIcon( "gfx/hud/hud@health_cross.tga" );
-	precacheStatusIcon( "gfx/hud/hud@death_m1carbine.tga" );
-	
-	precacheItem( "fg42_mp" );
-	precacheItem( "panzerfaust_mp" );
-	
-	precacheMenu( "weapon_russian" );
-	
-	precacheShellshock( "default" );
-	precacheShellshock( "groggy" );
+	[[ level.precache ]]( "^3Spectating is not allowed." );
+	[[ level.precache ]]( "Waiting for ^22 ^7players..." );
 
-	precacheString( &"^3Spectating is not allowed." );
-
-	precacheModel( "xmodel/health_large" );
-	precacheModel( "xmodel/gear_russian_load_coat" );
-	precacheModel( "xmodel/gear_russian_ppsh_coat" );
-	precacheModel( "xmodel/gear_russian_pack_ocoat" );
+	[[ level.precache ]]( "xmodel/health_large" );
+	[[ level.precache ]]( "xmodel/gear_russian_load_coat" );
+	[[ level.precache ]]( "xmodel/gear_russian_ppsh_coat" );
+	[[ level.precache ]]( "xmodel/gear_russian_pack_ocoat" );
 	
-	level._effect[ "zombieFire" ] = loadFx( "fx/fire/tinybon.efx" );
-	level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
-	level._effect[ "fleshhit" ] = loadfx( "fx/impacts/flesh_hit.efx" );
-	level._effect[ "fleshhit2" ] = loadfx( "fx/impacts/flesh_hit5g.efx" );
-	level._effect[ "bombexplosion" ]= loadfx( "fx/explosions/grenade3.efx" );
-	level._effect[ "explosion1" ] = loadfx( "fx/explosions/explosion1.efx" );
-	level._effect[ "v2" ] = loadfx( "fx/explosions/v2_exlosion.efx" );
-	level._effect[ "aftermath" ] = loadfx( "fx/smoke/aftermath1.efx" );	
-	level._effect[ "cratersmoke" ] = loadfx( "fx/smoke/cratersmoke.efx" );
-	level._effect[ "stage1" ] = loadfx( "fx/fire/stage1.efx" );
+	[[ level.precache ]]( "fx/fire/tinybon.efx", 					"fx", "zombieFire" );
+	[[ level.precache ]]( "fx/explosions/pathfinder_explosion.efx", "fx", "zombieExplo" );
+	[[ level.precache ]]( "fx/impacts/flesh_hit.efx", 				"fx", "fleshhit" );
+	[[ level.precache ]]( "fx/impacts/flesh_hit5g.efx", 			"fx", "fleshhit2" );
+	[[ level.precache ]]( "fx/explosions/grenade3.efx", 			"fx", "bombexplosion" );
+	[[ level.precache ]]( "fx/explosions/explosion1.efx" );
+	[[ level.precache ]]( "fx/explosions/v2_exlosion.efx",			"fx", "v2" );
+	[[ level.precache ]]( "fx/smoke/aftermath1.efx",				"fx", "aftermath" );	
+	[[ level.precache ]]( "fx/smoke/cratersmoke.efx" );
+	[[ level.precache ]]( "fx/fire/stage1.efx" );
 	
 	level.voices[ "german" ] = 3;
 	level.voices[ "american" ] = 7;

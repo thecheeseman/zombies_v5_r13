@@ -373,32 +373,32 @@ modeltype()
 
 precache()
 {
-	precacheHeadIcon("gfx/hud/headicon@quickmessage");
+	[[ level.precache ]]( "gfx/hud/headicon@quickmessage", "headicon" );
 
-		precacheItem("fraggrenade_mp");
-		precacheItem("colt_mp");
-		precacheItem("m1carbine_mp");
-		precacheItem("m1garand_mp");
-		precacheItem("thompson_mp");
-		precacheItem("bar_mp");
-		precacheItem("springfield_mp");
+	[[ level.precache ]]( "fraggrenade_mp" );
+	[[ level.precache ]]( "colt_mp" );
+	[[ level.precache ]]( "m1carbine_mp" );
+	[[ level.precache ]]( "m1garand_mp" );
+	[[ level.precache ]]( "thompson_mp" );
+	[[ level.precache ]]( "bar_mp" );
+	[[ level.precache ]]( "springfield_mp" );
 
-		precacheItem("mk1britishfrag_mp");
-		precacheItem("enfield_mp");
-		precacheItem("sten_mp");
-		precacheItem("bren_mp");
+	[[ level.precache ]]( "mk1britishfrag_mp" );
+	[[ level.precache ]]( "enfield_mp" );
+	[[ level.precache ]]( "sten_mp" );
+	[[ level.precache ]]( "bren_mp" );
 
-		precacheItem("rgd-33russianfrag_mp");
-		precacheItem("luger_mp");
-		precacheItem("mosin_nagant_mp");
-		precacheItem("ppsh_mp");
-		precacheItem("mosin_nagant_sniper_mp");
+	[[ level.precache ]]( "rgd-33russianfrag_mp" );
+	[[ level.precache ]]( "luger_mp" );
+	[[ level.precache ]]( "mosin_nagant_mp" );
+	[[ level.precache ]]( "ppsh_mp" );
+	[[ level.precache ]]( "mosin_nagant_sniper_mp" );
 
-		precacheItem("stielhandgranate_mp");
-		precacheItem("kar98k_mp");
-		precacheItem("mp40_mp");
-		precacheItem("mp44_mp");
-		precacheItem("kar98k_sniper_mp");
+	[[ level.precache ]]( "stielhandgranate_mp" );
+	[[ level.precache ]]( "kar98k_mp" );
+	[[ level.precache ]]( "mp40_mp" );
+	[[ level.precache ]]( "mp44_mp" );
+	[[ level.precache ]]( "kar98k_sniper_mp" );
 }
 	
 scoreboard()

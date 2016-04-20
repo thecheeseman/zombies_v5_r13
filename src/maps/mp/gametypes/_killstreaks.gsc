@@ -22,8 +22,8 @@ init()
 	
 	level.killstreaks = [];
 	
-	precacheString( &"^3Press [{+melee}]x4 to activate" );
-	precacheString( &"Feet to target: " );
+	[[ level.precache ]]( &"^3Press [{+melee}]x4 to activate" );
+	[[ level.precache ]]( &"Feet to target: " );
 	
 	addKillStreak( "armor", 10, &"^310 Killstreak : Armor", ::armor );
 	addKillStreak( "rocket", 20, &"^320 Killstreak : Rocket Attack", ::rocket );
@@ -34,19 +34,19 @@ init()
 	addKillStreak( "carpetbomb", 100, &"^3100 Killstreak : Carpet Bomb", ::carpetbomb );
 	addKillStreak( "nuke", 200, &"^3200 Killstreak : Nuke", ::nuke );
 
-	precacheModel( "xmodel/v2rocket" );
-	precacheModel( "xmodel/vehicle_plane_stuka" );
-	precacheModel( "xmodel/vehicle_german_condor" );
-	precacheModel( "xmodel/105" );
+	[[ level.precache ]]( "xmodel/v2rocket" );
+	[[ level.precache ]]( "xmodel/vehicle_plane_stuka" );
+	[[ level.precache ]]( "xmodel/vehicle_german_condor" );
+	[[ level.precache ]]( "xmodel/105" );
 	
-	level._effect[ "mortar" ] = loadfx( "fx/impacts/mortar1.efx" );
-	level._effect[ "artillery" ] = loadfx( "fx/impacts/largemortar_dirt3.efx" );
-	level._effect[ "airstrike" ] = loadfx( "fx/explosions/mutha1.efx" );
+	[[ level.precache ]]( "fx/impacts/mortar1.efx",				"fx", "mortar" );
+	[[ level.precache ]]( "fx/impacts/largemortar_dirt3.efx",	"fx", "artillery" );
+	[[ level.precache ]]( "fx/explosions/mutha1.efx",			"fx", "airstrike" );
 }
 
 addKillStreak( sName, iKills, sKillString, fFunc, oArgs )
 {
-	precacheString( sKillString );
+	[[ level.precache ]]( sKillString );
 
 	killstreak = spawnstruct();
 	killstreak.sName = sName;

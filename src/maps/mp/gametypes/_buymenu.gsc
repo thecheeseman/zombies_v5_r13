@@ -110,8 +110,8 @@ init()
 	level.potentialwinlistprimes[ 15 ] = 503;	// 0.19%
 	level.potentialwinlistprimes[ 16 ] = 701;	// 0.14%
 	
-	precacheModel( "xmodel/barrel_black1" );
-	precacheModel( "xmodel/crate_misc_red2" );
+	[[ level.precache ]]( "xmodel/barrel_black1" );
+	[[ level.precache ]]( "xmodel/crate_misc_red2" );
 	
 	level.barricades = 0;
 }

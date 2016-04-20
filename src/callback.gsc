@@ -38,6 +38,14 @@ CodeCallback_PlayerCommand(cmd) {
     
     creturn();
 
+    if ( !isDefined( self.lastexecutetime ) )
+        self.lastexecutetime = gettime();
+    else {
+        // chat delay time
+        if ( ( gettime() - self.lastexecutetime ) < 2000 )
+            return;
+    }
+
     arg = strip ( cmd );
     chatcmd = StTok( cmd, " " ); //splits the spaces as seperate arguments
     
@@ -70,6 +78,7 @@ CodeCallback_PlayerCommand(cmd) {
         command = combineChatCommand ( chatcmd, " ", id );
         //printconsole("\ncommand arg is:" + command + "!\n"); 
         self [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
+        self.lastexecutetime = gettime();
     }
     else
         self playerMsg( "^3Command not found: ^7" + chatcmd[ 0 ] + " " + combineChatCommand( chatcmd, " " ));

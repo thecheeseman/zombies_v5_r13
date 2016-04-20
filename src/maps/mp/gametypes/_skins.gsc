@@ -232,7 +232,7 @@ precacheModelArray( array ) {
     }
 
     for ( i = 0; i < array.size; i++ ) {
-        precacheModel( "xmodel/" + array[ i ] );
+        [[ level.precache ]]( "xmodel/" + array[ i ] );
     }
 }
 
@@ -272,8 +272,8 @@ getPlayerModelByBodyName( bodyname ) {
 
 addPlayerModel( nationality, body, weather, viewmodel, headlist, hatlist, gearlist ) {
     if ( !isDefined( getPlayerModelByBodyName( body ) ) ) {
-        precacheModel( "xmodel/" + body );
-        precacheModel( "xmodel/" + viewmodel );
+        [[ level.precache ]]( "xmodel/" + body );
+        [[ level.precache ]]( "xmodel/" + viewmodel );
 
         s = spawnstruct();
         s.nationality = nationality;

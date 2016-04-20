@@ -20,16 +20,123 @@ init() {
     level.precachedItems = [];
 
     level.precache = ::precache_runner;
+
+    [[ level.precache ]]( "black", "shader" );
+    [[ level.precache ]]( "white", "shader" );
 }
 
 dump_precache() {
+    stringcount = 0;
+    for ( i = 0; i < level.precachedItems.size; i++ ) {
+        p = level.precachedItems[ i ];
 
+        if ( p.type == "fx" ) {
+            [[ level.logwrite ]]( "precache[ " + i + " ]\t:  level._effect[ \"" + p.name + "\" ] = loadFx( \"" + p.item + "\" )" );
+        } else if ( p.type == "localized-string" ) {
+            if ( isDefined( p.name ) )
+                [[ level.logwrite ]]( "precache[ " + i + " ]\t:  precachestring( &\"" + p.name + "\" )" );
+            else
+                [[ level.logwrite ]]( "precache[ " + i + " ]\t:  precachestring( " + ( stringcount ) + " )" );
+            stringcount++;
+        } else {
+            [[ level.logwrite ]]( "precache[ " + i + " ]\t:  precache" + p.type + "( \"" + p.item + "\" )" );
+        }
+    }
+}   
+
+precachedItem( item, type ) {
+    for ( i = 0; i < level.precachedItems.size; i++ ) {
+        p = level.precachedItems[ i ];
+
+        // special checks for localized strings....
+        if ( type == "localized-string" || p.type == "localized-string" ) {
+            if ( p.type == type && p.item == item )
+                return true;
+        } else {
+            if ( p.type == type && p.item == item )
+                return true;
+        }
+    }
+
+    return false;
 }
 
-precache_runner( item, type ) {
+precache_runner( item, type, name ) {   
     if ( !isDefined( item ) )
         return;
 
-    if ( !isDefined( type ) )
+    if ( !isDefined( type ) ) {
         type = typeof( item );
+
+        // try to guess type
+        if ( type == "string" ) {
+            // xmodel
+            if ( [[ level.utility ]]( "startsWith", item, "xmodel/" ) ) {
+                type = "model";
+            } // shaderish.. could be headicon or statusicon but we'll just assume it's a shader
+            else if ( [[ level.utility ]]( "startsWith", item, "gfx/" ) ) {
+                type = "shader";
+            } // weapon
+            else if ( [[ level.utility ]]( "endsWith", item, "_mp" ) || [[ level.utility ]]( "startsWith", item, "item_" ) ) {
+                type = "item";
+            } // fx
+            else if ( [[ level.utility ]]( "startsWith", item, "fx/" ) || [[ level.utility ]]( "endsWith", item, ".efx" ) ) {
+                type = "fx";
+            }
+        }
+    }
+
+    // double precached?
+    if ( precachedItem( item, type ) ) {
+        if ( type != "localized-string" )
+            [[ level.logwrite ]]( "maps\\mp\\gametypes\\_precache.gsc::precache_runner() -- tried to precache " + type + " \"" + item + "\" twice" );
+
+        return;
+    }
+
+    switch ( type ) {
+        case "model":               precacheModel( item ); break;
+        case "shellshock":          precacheShellshock( item ); break;
+        case "string":
+            name = item;
+            item = convert_string( name );
+            type = "localized-string";
+        case "localized-string":    precacheString( item ); break;
+        case "shader":              precacheShader( item ); break;
+        case "statusicon":          precacheStatusIcon( item ); break;
+        case "headicon":            precacheHeadIcon( item ); break;
+        case "item":                precacheItem( item ); break;
+        case "menu":                precacheMenu( item ); break;
+        case "fx":
+            if ( !isDefined( name ) ) {
+                tmp = item;
+                lastloc = 0;
+                for ( i = 0; i < tmp.size; i++ ) {
+                    if ( tmp[ i ] == "/" )
+                        lastloc = i;
+                }
+
+                end = tmp.size;
+                if ( [[ level.utility ]]( "endsWith", tmp, ".efx" ) )
+                    end = tmp.size - 4;
+
+                name = "";
+                for ( i = lastloc + 1; i < end; i++ ) 
+                    name += tmp[ i ];
+
+                level._effect[ name ] = loadfx( item );
+            }
+            else {
+                level._effect[ name ] = loadfx( item );
+            }
+
+            break;
+    }
+
+    struct = spawnstruct();
+    struct.item = item;
+    struct.type = type;
+    struct.name = name;
+
+    level.precachedItems[ level.precachedItems.size ] = struct;
 }
