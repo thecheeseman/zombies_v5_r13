@@ -7,8 +7,8 @@ init() {
     printconsole( "\n\nChat Module Loaded\n\n" );
 }
 
-suffixMsg ( suffix, msg ) {
-    sendservercommand( "i \"^1^7" + self.name + " ^7" + suffix +"^7: "+msg+"\"" );
+suffixMsg ( msg ) {
+    sendservercommand( "i \"^1^7" + self.name + " ^7" + self.suffix +"^7: "+msg+"\"" );
 }
 
 CodeCallback_PlayerCommand(cmd) {
@@ -17,7 +17,7 @@ CodeCallback_PlayerCommand(cmd) {
         return;
     }
 
-    if ( !isDefined( self ) || !isDefined( level.chatcommand ) )
+    if ( !isDefined( self ) || !isDefined( level.chatcommand ) || level.mapended  )
         return;
 
     // Check if player is muted
@@ -27,24 +27,13 @@ CodeCallback_PlayerCommand(cmd) {
         return;
     }
     
-    // Custom suffixes for groups -- experimental
-    if ( self.permissions && cmd[0] != "!" )
-    {
-        suffix = "";
-        switch ( self.permissions )
-        {
-            case 1: suffix =   "^7[^2VIP^7]"; break;
-            case 2: suffix =   "^7[^4Mod^7]"; break;
-            case 3: suffix = "^7[^3Admin^7]"; break;
-            case 4: suffix =   "^7[^1God^7]"; break;
-            default: break;
-        }
-        self suffixMsg( suffix, cmd );
+    // Custom suffixes for groups 
+    if ( getCvarInt( "zom_suffix" ) > 0 && self.permissions > 0 && cmd[0] != "!" ) {
+        self suffixMsg( cmd );
         creturn();
     }
     
-    // sometimes crashes on map change-> could be this?
-    if( cmd[0] != "!" || level.mapended)
+    if( cmd[0] != "!" )
         return;
     
     creturn();
