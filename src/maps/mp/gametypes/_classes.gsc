@@ -20,7 +20,6 @@ init() {
     precacheModel( "xmodel/USAirborneHelmet_Medic" );
     precacheModel( "xmodel/barrel_black1" );
     precacheModel( "xmodel/mg42_bipod" );
-    precacheModel( "xmodel/mp_crate_misc_red1" );
 
     precacheString( &"Sentry status: " );
     precacheString( &"Sentry health: " );
