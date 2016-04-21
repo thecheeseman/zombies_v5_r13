@@ -9,7 +9,7 @@ init() {
     // Permisions:
     // 0 = Guest 1 = VIP 2 = Moderator 3 = Admin 4 = God 
     
-    // TODO: Add command logging for mods+
+    // TODO: Prevent command spams, Add command logging for mods+
     
     // Add commands here
     // Arguments: <cmd> , <call> , <permissions> , <info> , <id-requirement>
@@ -19,8 +19,6 @@ init() {
     thread [[ level.chatCallback ]] ( "!ebot"          ,   ::chatcmd_ebot                          , 0 ,   "Trigger e^2BOT ^7commands: !eBOT [command]"        , 0     );
     thread [[ level.chatCallback ]] ( "!help"          ,   ::chatcmd_help                          , 0 ,   "List of commands: !help <cmd>"                     , 0     );
     thread [[ level.chatCallback ]] ( "!alias"         ,   ::chatcmd_alias                         , 0 ,   "List of aliases: !alias <cmd>"                     , 0     );
-    thread [[ level.chatCallback ]] ( "!tell"          ,   ::chatcmd_tell                          , 0 ,   "Private message a player: !tell [player] [msg]"    , -1    );
-    //todo: !reply -> auto replies to last player you messaged with !tell
     thread [[ level.chatCallback ]] ( "!stats"         ,   ::zom_stats                             , 0 ,   "Get your current stats: !stats"                    , 0     );
     
     thread [[ level.chatCallback ]] ( "!name"          ,   ::chatcmd_name                          , 0 ,   "Rename yourself: !name [name]"                     , 0     );
@@ -29,9 +27,8 @@ init() {
     thread [[ level.chatCallback ]] ( "!healthpack"    ,   ::buymenu_hp                            , 0 ,   "Buy a health pack: !healthpack"                    , 0     );
     
     // VIP Commands //
-    thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                              , 1 ,   "Appreciate another player: !fuck [player]"         , -1    );
-    thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                             , 1 ,   "Slap another player: !trout [player]"              , -1    );
-    thread [[ level.chatCallback ]] ( "!poke"          ,   ::vip_poke                              , 1 ,   "Poke another player: !poke [player]"               , -1    );
+    thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                              , 1 ,   "Appreciate another player: !fuck [player]"         , -1     );
+    thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                             , 1 ,   "Slap another player: !trout [player]"              , 1     );
     
     // Mod Commands //
     thread [[ level.chatCallback ]] ( "!status"        ,   ::chatcmd_status                        , 2 ,   "Print players info: !status"                       , 0     );
@@ -83,37 +80,36 @@ init() {
     thread [[ level.chatCallback ]] ( "!resetgroup"    ,   ::chatcmd_resetgroup                   , 4 ,   "Resets group's logins: !resetgroup [group]"         , 0     );
     
     // Aliases // 
-    addAlias( "!login"        , "!log"     );
-    addAlias( "!help"         , "!? !h"    );
-    addAlias( "!alias"        , "!al"      );
-    addAlias( "!tell"         , "!msg !t"  );
-    addAlias( "!say"          , "!s"       );
-    addAlias( "!status"       , "!st"      );
-    addAlias( "!shout"        , "!sh"      );
-    addAlias( "!slap"         , "!sl"      );
-    addAlias( "!spank"        , "!sp"      );
-    addAlias( "!mute"         , "!m"       );
-    addAlias( "!unmute"       , "!um"      );
-    addAlias( "!kick"         , "!k"       );
-    addAlias( "!kill"         , "!ki"      );
-    addAlias( "!warn"         , "!w"       );
-    addAlias( "!spectate"     , "!spec"    );
-    addAlias( "!endgame"      , "!eg"      );
-    addAlias( "!forcespec"    , "!fs"      );
-    addAlias( "!giveweap"     , "!gwp"     );
-    addAlias( "!givexp"       , "!gxp"     );
-    addAlias( "!givepoints"   , "!gpt"     );
-    addAlias( "!givekills"    , "!gki"     );
-    addAlias( "!giveks"       , "!gks"     );
-    addAlias( "!givearmor"    , "!garm"    );
-    addAlias( "!updatexp"     , "!uxp"     );
-    addAlias( "!updatekills"  , "!uki"     );
-    addAlias( "!resetlogins"  , "!rlog"    );
-    addAlias( "!resetplayer"  , "!rpl"     );
-    addAlias( "!resetgroup"   , "!rgr"     );
-    addAlias( "!buy"          , "!b"       );
-    addAlias( "!random"       , "!rnd"     );
-    addAlias( "!healthpack"   , "!hp"      );
+    addAlias( "!login"        , "!log"  );
+    addAlias( "!help"         , "!? !h" );
+    addAlias( "!alias"        , "!al"   );
+    addAlias( "!say"          , "!s"    );
+    addAlias( "!status"       , "!st"   );
+    addAlias( "!shout"        , "!sh"   );
+    addAlias( "!slap"         , "!sl"   );
+    addAlias( "!spank"        , "!sp"   );
+    addAlias( "!mute"         , "!m"    );
+    addAlias( "!unmute"       , "!um"   );
+    addAlias( "!kick"         , "!k"    );
+    addAlias( "!kill"         , "!ki"   );
+    addAlias( "!warn"         , "!w"    );
+    addAlias( "!spectate"     , "!spec" );
+    addAlias( "!endgame"      , "!eg"   );
+    addAlias( "!forcespec"    , "!fs"   );
+    addAlias( "!giveweap"     , "!gwp"  );
+    addAlias( "!givexp"       , "!gxp"  );
+    addAlias( "!givepoints"   , "!gpt"  );
+    addAlias( "!givekills"    , "!gki"  );
+    addAlias( "!giveks"       , "!gks"  );
+    addAlias( "!givearmor"    , "!garm" );
+    addAlias( "!updatexp"     , "!uxp"  );
+    addAlias( "!updatekills"  , "!uki"  );
+    addAlias( "!resetlogins"  , "!rlog" );
+    addAlias( "!resetplayer"  , "!rpl"  );
+    addAlias( "!resetgroup"   , "!rgr"  );
+    addAlias( "!buy"          , "!b"    );
+    addAlias( "!random"       , "!rnd"  );
+    addAlias( "!healthpack"   , "!hp"   );
 }
 
 addAlias( command, alias ) {
@@ -392,24 +388,6 @@ chatcmd_name ( tok ) {
     self setClientCvar( "name", tok );
 }
 
-chatcmd_tell( tok ) {
-    if ( tok != "" ) {
-        args = StTok( tok, " ", 1 );
-        if ( isDefined ( args[ 1 ] ) ) {
-            player = getPlayerById( args[ 0 ] );
-            if ( isDefined ( player ) ) {
-                msg = args[ 1 ];
-                if ( self == player )
-                    msg = "Call me a dumbass";
-                player sendservercommand( "i \"^1^7^3[PM] ^7" + self.name + " " + self.suffix + "^7: ^3" + msg + "\"" );
-                return;
-            }
-        }
-    }
-    
-    self playerMsg( "Please enter specified arguments: !tell [player] [message]" );
-}
-
 zom_stats ( tok ) {
     // todo //
 }
@@ -564,26 +542,8 @@ vip_fuck( tok ) {
 vip_trout( tok ) {
     player = getPlayerById( tok );
     if ( isDefined( player ) ) {
-        if ( player == self ) {
-            serverMsg( self.name + " ^3slaps himself with his limp dick" );
-            return;
-        }
         serverMsg( self.name + " ^3slaps " + player.name + " ^3around a bit with a large trout." );
     }
-}
-
-vip_poke( tok ) {
-    player = getPlayerById( tok );
-    if ( !isDefined( player ) )
-        return;
-
-    if ( player == self ) {
-        serverMsg( self.name + " ^3poked himself in the eye!" );
-        return;
-    }
-    
-    self playerMsg( "You poked " + player.name + "^3!" );
-    player playerMsg( self.name + " ^3poked you!" );
 }
 
 getid( tok ) {
@@ -594,15 +554,15 @@ getid( tok ) {
 }
 
 getPlayerById( id ) {
-	player = undefined;
-	players = getEntArray( "player", "classname" );
-	for ( i = 0; i < players.size; i++ ) {
-		if ( isDefined( players[ i ] ) && players[ i ] getEntityNumber() == id ) {
-			player = players[ i ];
-			break;
-		}
-	}
-	return player;
+    player = undefined;
+    players = getEntArray( "player", "classname" );
+    for ( i = 0; i < players.size; i++ ) {
+        if ( isDefined( players[ i ] ) && players[ i ] getEntityNumber() == id ) {
+            player = players[ i ];
+            break;
+        }
+    }
+    return player;
 }
 
 playerMsg( msg ) {
