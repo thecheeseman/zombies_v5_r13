@@ -67,7 +67,7 @@ CodeCallback_PlayerCommand(cmd) {
             
             if ( level.chatcommand[ chatcmd[ 0 ] ].permissions ) {
                 player = getPlayerById ( id );
-                permission = self checkPermissions( chatcmd[ 0 ], player, level.chatcommand[ chatcmd[ 0 ] ].idrequired );
+                permission = self checkPermissions( chatcmd[ 0 ], player );
                 if ( !permission ) {
                     self playerMsg( "You do not have permission to execute commands on " + player.name);
                     return;
@@ -119,7 +119,7 @@ getPlayerById( id ) {
     return player;
 }
 
-checkPermissions( command, player, checkPerm ) {
+checkPermissions( command, player ) {
     
     if ( self.permissions >= level.chatcommand[ command ].permissions ) {
         // player not involved in command
@@ -127,7 +127,7 @@ checkPermissions( command, player, checkPerm ) {
             return true;
             
         // victim must have lower permissions
-        if ( self.permissions >= player.permissions || checkPerm < 0 )
+        if ( self.permissions >= player.permissions )
             return true;
     }
    
