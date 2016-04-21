@@ -29,7 +29,7 @@ init() {
     addUtilityFunction( "charToDigit",      ::charToDigit,          addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "endsWith",         ::endsWith,             addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
     addUtilityFunction( "explode",          ::explode,              addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "getNumberedName",  ::getNumberedName,      addParams( 2,   "string,string",        "false,false",      "false,false"   ) );
+    addUtilityFunction( "getNumberedName",  ::getNumberedName,      addParams( 2,   "string,boolean",       "false,false",      "false,false"   ) );
     addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        addParams( 1,   "integer",              "true",             "true"          ) );
     addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "getStance",        ::getStance,            addParams( 1,   "boolean",              "false",            "true"          ) );
