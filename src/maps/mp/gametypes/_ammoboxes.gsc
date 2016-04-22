@@ -36,7 +36,7 @@ main() {
 	level.planttime = 5;
 	level.plantdist = 32;
 	
-	switch ( maps\mp\gametypes\_zombie::toLower( getCvar( "mapname" ) ) )
+	switch ( toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_brecourt":
 			locs[ 0 ] = ( -2711, 1965, 34 );

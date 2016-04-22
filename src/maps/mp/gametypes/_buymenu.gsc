@@ -295,7 +295,7 @@ doItem( response )
 
 doRandom()
 {
-	rnd = maps\mp\gametypes\_zombie::_randomInt( 10000 );
+	rnd = [[ level.utility ]]( "_randomInt", 10000 );
 	
 	self iPrintLnBold( "You spent 100 points for a random item and got..." );
 
@@ -377,7 +377,7 @@ spawn_barricade( model, clip, trigdistance )
 
 	self.insidebarricade = true;
 
-	while ( isAlive( self ) && maps\mp\gametypes\_zombie::distance2d( self.origin, org ) < trigdistance )
+	while ( isAlive( self ) && [[ level.utility ]]( "distance2D", self.origin, org ) < trigdistance )
 		wait 0.05;
 
 	self.insidebarricade = undefined;

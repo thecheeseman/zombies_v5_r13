@@ -393,8 +393,8 @@ getMyStats() {
 				continue;
 
 			arr = [[ level.utility ]]( "explode", fnv, ":" );
-			field = maps\mp\gametypes\_zombie::strreplacer( [[ level.utility ]]( "strip", arr[ 0 ] ), "alphanumeric" );
-			value = maps\mp\gametypes\_zombie::strreplacer( [[ level.utility ]]( "strip", arr[ 1 ] ), "alphanumeric" );
+			field = [[ level.utility ]]( "strreplacer", [[ level.utility ]]( "strip", arr[ 0 ] ), "alphanumeric" );
+			value = [[ level.utility ]]( "strreplacer", [[ level.utility ]]( "strip", arr[ 1 ] ), "alphanumeric" );
 
 			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );
@@ -421,7 +421,7 @@ getMyStats() {
 
 			// clean up any extraneous characters
 			if ( fieldstruct.type == "int" || fieldstruct.type == "float" ) {
-				value = maps\mp\gametypes\_zombie::strreplacer( value, "numeric" );
+				value = [[ level.utility ]]( "strreplacer", value, "numeric" );
 			}
 
 			switch ( field ) {

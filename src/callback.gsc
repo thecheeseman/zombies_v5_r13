@@ -144,8 +144,8 @@ atoi_mod( tok ) {
     if ( tok.size > 2 )
         return undefined;
     
-    tokString = maps\mp\gametypes\_zombie::strreplacer( tok, "lower" );
-    tokID = maps\mp\gametypes\_admin::atoi( tok );
+    tokString = [[ level.utility ]]( "strreplacer", tok, "lower" );
+    tokID = [[ level.utility ]]( "atoi", tok );
     if ( !isDefined ( tokID ) )
         return undefined;
         
@@ -213,7 +213,7 @@ getByAnyMeans ( tok ) {
 }
 
 clean_string ( str ) {
-    lower = maps\mp\gametypes\_zombie::strreplacer(str, "lower");
+    lower = [[ level.utility ]]( "strreplacer", str, "lower");
     mono = maps\mp\gametypes\_zombie::monotone( lower );
     return maps\mp\gametypes\_zombie::monotone( mono );
 }

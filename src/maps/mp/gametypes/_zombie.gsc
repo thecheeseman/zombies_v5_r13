@@ -282,13 +282,13 @@ pickZombie()
 		return;
 	}
 	
-	int = _randomInt( guys.size );
+	int = [[ level.utility ]]( "_randomInt", guys.size );
 	zom = guys[ int ];
 	while ( zom.guid == getCvar( "lastzom" ) )
 	{
 		iPrintLnBold( [[ level.utility ]]( "cleanString", zom.name ) + "^7 was the ^1Zombie^7 last time... picking someone else..." );
 		wait 2;
-		int = _randomInt( guys.size );
+		int = [[ level.utility ]]( "_randomInt", guys.size );
 		zom = guys[ int ];
 	}
 	
@@ -1161,7 +1161,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 	self.killstreak = 0;
 	self.changeweapon = false;
 	
-	if ( self.pers[ "team" ] == "allies" && _randomInt( 100 ) > 85 && !level.lasthunter )
+	if ( self.pers[ "team" ] == "allies" && [[ level.utility ]]( "_randomInt", 100 ) > 85 && !level.lasthunter )
 		self dropHealth();
 	
 	self thread cleanUpHud();
@@ -1263,7 +1263,12 @@ lastHunter()
 		self giveWeapon( "panzerfaust_mp" );
 		self giveWeapon( "colt_mp" );
 		self giveWeapon( "rgd-33russianfrag_mp" );
-		
+
+		amt = ( self getLastHunterNadeAmmo() / 2 ) - self.stickynades;
+		if ( amt < 0 )
+			amt = 0;
+		self.stickynades += amt;
+
 		self setWeaponSlotAmmo( "grenade", self getLastHunterNadeAmmo() );
 		self giveMaxAmmo( "colt_mp" );
 
@@ -2336,7 +2341,7 @@ painsound()
 		return;
 		
 	self.painsound = true;
-	num = _randomInt( level.voices[ self.nationality ] ) + 1;
+	num = [[ level.utility ]]( "_randomInt", level.voices[ self.nationality ] ) + 1;
 	scream = "generic_pain_" + self.nationality + "_" + num;
 	self playSound( scream );
 	wait 3;
@@ -2478,64 +2483,6 @@ mapChar( str, conv )
 	return ( s );
 }
 
-strreplacer( sString, sType ) {
-	out = "";
-	in = "";
-    switch ( sType ) {
-    	case "alphanumeric":
-    		out = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890-=+_/*!@#$%^&*(){}[];'.~` ";
-    		in = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890-=+_/*!@#$%^&*(){}[];'.~` ";
-    		bIgnoreExtraChars = true;
-    		break;
-        case "lower":
-            out = "abcdefghijklmnopqrstuvwxyz";
-            in = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            bIgnoreExtraChars = false;
-            break;
-        case "upper":
-            in = "abcdefghijklmnopqrstuvwxyz";
-            out = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            bIgnoreExtraChars = false;
-            break;
-        case "onlynumbers":
-        	in = "0123456789";
-        	out = "0123456789";
-        	bIgnoreExtraChars = true;
-        	break;
-        case "numeric":
-            in = "0123456789.-";
-            out = "0123456789.-";
-            bIgnoreExtraChars = true;
-            break;
-        case "vector":
-            in = "0123456789.-,()";
-            out = "0123456789.-,()";
-            bIgnoreExtraChars = true;
-            break;
-        default:
-            return sString;
-            break;
-    }
-        
-    sOut = "";
-    for ( i = 0; i < sString.size; i++ ) {
-        bFound = false;
-        cChar = sString[ i ];
-        for ( j = 0; j < in.size; j++ ) {
-            if ( in[ j ] == cChar ) {
-                sOut += out[ j ];
-                bFound = true;
-                break;
-            }
-        }
-        
-        if ( !bFound && !bIgnoreExtraChars )
-            sOut += cChar;
-    }
-    
-    return sOut;
-}
-
 monotone( str )
 {
 	if ( !isdefined( str ) || ( str == "" ) )
@@ -2620,7 +2567,7 @@ scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
 		if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace[ "fraction" ] == 1 )
 		{
 			s = "left";
-			if ( _randomInt( 100 ) > 50 )
+			if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
 				s = "right";
 				
 			hitloc = s + "_leg_upper";
@@ -2758,66 +2705,4 @@ getHitLoc( sHitloc )
 		default:
 			return sHitloc; break;
 	}
-}
-
-_randomInt( iMax )
-{
-	oArray = [];
-	
-	for ( i = 0; i < 100; i++ ) 
-		oArray[ i ] = randomInt( iMax );
-	
-	for ( k = 0; k < 50; k++ )
-	{
-		for ( i = 0; i < oArray.size; i++ )
-		{
-			j = randomInt( oArray.size );
-			oElem = oArray[ i ];
-			oArray[ i ] = oArray[ j ];
-			oArray[ j ] = oElem;
-		}
-	}
-	
-	return oArray[ randomInt( oArray.size ) ];
-}
-
-_randomIntRange( min, max ) {
-	temparr = [];
-	for ( i = 0; i < 1024; i++ )
-		temparr[ i ] = randomInt( max );
-		
-	goods = [];
-	for ( i = 0; i < temparr.size; i++ ) {
-		if ( temparr[ i ] < min )
-			continue;
-		goods[ goods.size ] = temparr[ i ];
-	}
-	
-	thisint = goods[ randomInt( goods.size ) ];
-	return thisint;
-}
-
-getStance( returnValue )
-{
-    if ( !self isOnGround() && !isDefined( returnValue ) )
-        return "in air";
- 
-    org = spawn( "script_model", self.origin );
-    org linkto( self, "tag_helmet", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    wait 0.03;  // this is required, or else the model will not move to tag_helmet by the time it's removed
- 
-    z = org.origin[ 2 ] - self.origin[ 2 ];
- 
-    org delete();
-    
-    if ( isDefined( returnValue ) && returnValue )
-        return z;
- 
-    if ( z < 20 )   return "prone";
-    if ( z < 50 )   return "crouch";
-    if ( z < 70 )   return "stand";
-}
-
-distance2D( origin1, origin2 ) {
-	return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
 }

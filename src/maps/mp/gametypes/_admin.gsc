@@ -57,7 +57,7 @@ init()
     insults[29] = "^1, I can't think of an insult stupid enough for you.";
 
     level.iC = 0;
-    level.insults = array_shuffle(insults);
+    level.insults = [[ level.utility ]]( "arrayShuffle", insults );
 
     level.adminvars = [];
 
@@ -162,7 +162,7 @@ giveXp( value )
         
     player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
-    amount = atoi( array[ 1 ] );
+    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -185,7 +185,7 @@ giveKills( value )
         
     player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
 
-    amount = atoi( array[ 1 ] );
+    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -208,7 +208,7 @@ givePoints( value )
         
     player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     
-    amount = atoi( array[ 1 ] );
+    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Point Value^1!" );
@@ -226,13 +226,13 @@ updateXP( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = atoi( array[ 0 ] );
+    id = [[ level.utility ]]( "atoi", array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = atoi( array[ 1 ] );
+    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -259,13 +259,13 @@ updateKills( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = atoi( array[ 0 ] );
+    id = [[ level.utility ]]( "atoi", array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = atoi( array[ 1 ] );
+    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -328,7 +328,7 @@ drop( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        height = atoi( array[ 1 ] );
+        height = [[ level.utility ]]( "atoi", array[ 1 ] );
         if ( !isDefined ( height ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Height^1!" );
@@ -364,7 +364,7 @@ spank( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        time = atoi( array[ 1 ] );
+        time = [[ level.utility ]]( "atoi", array[ 1 ] );
         if ( !isDefined ( time ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Time^1!" );
@@ -399,7 +399,7 @@ slap( value )
     
     if ( isDefined( array[ 1 ] ) )
     {
-        dmg = atoi( array[ 1 ] );
+        dmg = [[ level.utility ]]( "atoi", array[ 1 ] );
         if ( !isDefined ( dmg ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Damage Value^1!" );
@@ -478,7 +478,7 @@ givearmor( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
     
-    armor = atoi( array[ 1 ] );
+    armor = [[ level.utility ]]( "atoi", array[ 1 ] );
     if ( !isDefined ( armor ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Value^1!" );
@@ -506,7 +506,7 @@ blind( value )
     time = 10;
     player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
     if ( isDefined( array[ 1 ] ) )
-        time = atoi( array[ 1 ] );
+        time = [[ level.utility ]]( "atoi", array[ 1 ] );
     
     if( isDefined( player ) )
     {
@@ -574,7 +574,7 @@ insult(value)
         // If it is, print the last insult
         iPrintLnBold(player.name + level.insults[level.insults.size - 1]);
         // Shuffle the array again so we don't got the same list of insults
-        level.insults = array_shuffle(level.insults);
+        level.insults = [[level.utility]]("arrayShuffle", level.insults);
         // Reset the insult counter
         level.iC = 0;
     } else {
@@ -691,28 +691,4 @@ move_guid( value ) {
         player.guid = newguid;
         player iPrintLnBold( "Your GUID has been changed. Please wait until the end of the game for your stats to save!" );
     }
-}
-
-array_shuffle(arr)
-{
-  for(i = 0; i < arr.size; i++) {
-    // Store the current array element in a variable
-    _tmp = arr[i];
-    
-    // Generate a random number
-    rN = randomInt(arr.size);
-    
-    // Replace the current with the random
-    arr[i] = arr[rN];
-    // Replace the random with the current
-    arr[rN] = _tmp;
-  }
-  return arr;
-}
-
-atoi( sString ) {
-    sString = maps\mp\gametypes\_zombie::strreplacer( sString, "numeric" );
-    if ( sString == "" )
-        return undefined;
-    return (int)sString;
 }
