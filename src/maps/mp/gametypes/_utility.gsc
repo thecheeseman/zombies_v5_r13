@@ -35,7 +35,7 @@ init() {
     addUtilityFunction( "endsWith",         ::endsWith,             addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
     addUtilityFunction( "explode",          ::explode,              addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
     addUtilityFunction( "getNumberedName",  ::getNumberedName,      addParams( 2,   "string,boolean",       "false,false",      "false,false"   ) );
-    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        addParams( 1,   "string",               "true",             "true"          ) );
+    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        addParams( 1,   "integer",              "true",             "true"          ) );
     addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "getStance",        ::getStance,            addParams( 1,   "boolean",              "false",            "true"          ) );
     addUtilityFunction( "isChar",           ::isChar,               addParams( 1,   "string",               "true",             "false"         ) );
@@ -241,7 +241,7 @@ utility_runner( function, args ) {
             }
 
             // try to cast to int
-            if ( type == "int" && actualtype == "string" ) {
+            if ( type == "integer" && actualtype == "string" ) {
                 tmp = atoi( args[ i ] );
                 if ( isDefined( tmp ) ) {
                     args[ i ] = tmp;
@@ -524,14 +524,22 @@ endsWith( string, end ) {
     return true;
 }
 
-explode( s, delimiter )
+explode( s, delimiter, num )
 {
+    temparr = [];
+    
+    if ( !isDefined ( s ) || s == "" )
+        return temparr;
+        
+    if ( !isDefined( num ) )
+        num = 1024;
+        
     j = 0;
     temparr[ j ] = "";  
 
     for ( i = 0; i < s.size; i++ )
     {
-        if ( s[ i ] == delimiter )
+        if ( s[ i ] == delimiter && j < num )
         {
             j++;
             temparr[ j ] = "";
