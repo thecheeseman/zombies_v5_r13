@@ -24,10 +24,10 @@ init() {
     level.permission_pws = "0 vipPassword modPassword adminPassword godPassword";
     
     addPermissionSlot( 0, "guest", ::guest );
-    addPermissionSlot( 1, "vip", ::vip );
-    addPermissionSlot( 2, "mod", ::mod );
+    addPermissionSlot( 1, "vip",   ::vip   );
+    addPermissionSlot( 2, "mod",   ::mod   );
     addPermissionSlot( 3, "admin", ::admin );
-    addPermissionSlot( 4, "god", ::god );
+    addPermissionSlot( 4, "god",   ::god   );
 
     addPermission( 2, "defeat_antispec", true );
 }
@@ -163,7 +163,7 @@ vip() {
 }
 
 mod() {
-    self.suffix = getCvar("modSuffix");
+    self.suffix = getCvar( "modSuffix" );
     mod = getCvar( "modIP" );
     newCvar = mod + " " + self getIP();
 
@@ -173,7 +173,7 @@ mod() {
 }
 
 admin() {
-    self.suffix = getCvar("adminSuffix");
+    self.suffix = getCvar( "adminSuffix" );
     admins = getCvar( "adminIP" );
     newCvar = admins + " " + self getIP();
 
@@ -183,7 +183,7 @@ admin() {
 }
 
 god() {
-    self.suffix = getCvar("godSuffix");
+    self.suffix = getCvar( "godSuffix" );
     god = getCvar( "godIP" );
     newCvar = god + " " + self getIP();
 

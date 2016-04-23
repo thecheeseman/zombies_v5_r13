@@ -25,7 +25,7 @@ init() {
     addUtilityFunction( "showpos",          ::showPos                                                                                           );
 
     addUtilityFunction( "_randomInt",       ::_randomInt,           addParams( 1,   "integer",              "true",             "false"         ) );
-    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      addParams( 1,   "integer,integer",      "true,true",        "false,false"   ) );
+    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      addParams( 2,   "integer,integer",      "true,true",        "false,false"   ) );
     addUtilityFunction( "arrayShuffle",     ::arrayShuffle,         addParams( 1,   "array",                "true",             "false"         ) );
     addUtilityFunction( "atoi",             ::atoi,                 addParams( 1,   "string",               "true",             "false"         ) );
     addUtilityFunction( "contains",         ::contains,             addParams( 2,   "string,string",        "true,true",        "false,false"   ) );

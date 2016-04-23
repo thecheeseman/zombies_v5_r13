@@ -2,6 +2,7 @@
 
 // todo: better alias system
 // todo: command logging for mods+
+// todo: !stats
 
 init() {
     if ( getCvar( "availablemaps" ) == "" )
@@ -31,6 +32,7 @@ init() {
     thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                              , 1 ,  "Appreciate another player: !fuck [player]"         , -1     );
     thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                             , 1 ,  "Slap another player: !trout [player]"              , -1     );
     thread [[ level.chatCallback ]] ( "!poke"          ,   ::vip_poke                              , 1 ,  "Poke another player: !poke [player]"               , -1     );
+    thread [[ level.chatCallback ]] ( "!rainbow"       ,   ::vip_rainbow                           , 1 ,  "Color messages, the fancy way: !rainbow [msg]"     ,  0     );
     
     // Mod Commands //
     thread [[ level.chatCallback ]] ( "!status"        ,   ::chatcmd_status                        , 2 ,  "Print players info: !status"                       , 0      );
@@ -88,6 +90,10 @@ init() {
     addAlias( "!reply"        , "!r"       );
     addAlias( "!say"          , "!s"       );
     addAlias( "!status"       , "!st"      );
+    addAlias( "!fuck"         , "!f"       ); 
+    addAlias( "!poke"         , "!p"       );
+    addAlias( "!trout"        , "!tr"      );
+    addAlias( "!rainbow"      , "!rb"      );
     addAlias( "!shout"        , "!sh"      );
     addAlias( "!slap"         , "!sl"      );
     addAlias( "!spank"        , "!sp"      );
@@ -589,6 +595,25 @@ vip_poke( tok ) {
     
     self playerMsg( "You poked " + player.name + "^3!" );
     player playerMsg( self.name + " ^3poked you!" );
+}
+
+vip_rainbow ( tok ) {
+    colorMsg = colorMsg( tok );
+    self privateMsg( colorMsg, self, "" );
+}
+
+colorMsg ( msg ) {
+    temp = "";
+    for ( i = 0; i < msg.size; i++ ) {
+        if ( msg[ i ] == " " ) {
+            temp += " ";
+            continue;
+        }
+        
+        randColor = "^" + [[ level.utility ]]( "_randomIntRange", 1, 7 );
+        temp += randColor + msg[ i ]; 
+    }
+    return temp;
 }
 
 getid( tok ) {
