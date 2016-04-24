@@ -20,30 +20,31 @@ init() {
     level.utility = ::utility_call;
     level.utilityFunctions = [];
 
-                        // function name    function ptr            paramslist #    types                   required            can be undefined?
+                        // function name    function ptr            returnType  paramslist #    types                   required            can be undefined?
 
-    addUtilityFunction( "showpos",          ::showPos                                                                                           );
+    addUtilityFunction( "showpos",          ::showPos                                                                                                       );
 
-    addUtilityFunction( "_randomInt",       ::_randomInt,           addParams( 1,   "integer",              "true",             "false"         ) );
-    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      addParams( 2,   "integer,integer",      "true,true",        "false,false"   ) );
-    addUtilityFunction( "arrayShuffle",     ::arrayShuffle,         addParams( 1,   "array",                "true",             "false"         ) );
-    addUtilityFunction( "atoi",             ::atoi,                 addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "contains",         ::contains,             addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "cleanString",      ::cleanString,          addParams( 2,   "string,boolean",       "false,false",      "true,true"     ) );
-    addUtilityFunction( "charToDigit",      ::charToDigit,          addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "distance2D",       ::distance2D,           addParams( 2,   "vector,vector",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "endsWith",         ::endsWith,             addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
-    addUtilityFunction( "explode",          ::explode,              addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "getNumberedName",  ::getNumberedName,      addParams( 2,   "string,boolean",       "false,false",      "false,false"   ) );
-    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        addParams( 1,   "integer",              "true",             "true"          ) );
-    addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "getStance",        ::getStance,            addParams( 1,   "boolean",              "false",            "true"          ) );
-    addUtilityFunction( "isChar",           ::isChar,               addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "isDigit",          ::isDigit,              addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "isSymbol",         ::isSymbol,             addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "startsWith",       ::startsWith,           addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
-    addUtilityFunction( "strip",            ::strip,                addParams( 1,   "string",               "false",            "true"          ) );
-    addUtilityFunction( "strreplacer",      ::strreplacer,          addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
+    addUtilityFunction( "_randomInt",       ::_randomInt,           "integer",  addParams( 1,   "integer",              "true",             "false"         ) );
+    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      "integer",  addParams( 2,   "integer,integer",      "true,true",        "false,false"   ) );
+    addUtilityFunction( "arrayShuffle",     ::arrayShuffle,         "array",    addParams( 1,   "array",                "true",             "false"         ) );
+    addUtilityFunction( "atoi",             ::atoi,                 "integer",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "contains",         ::contains,             "boolean",  addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
+    addUtilityFunction( "cleanScreen",      ::cleanScreen                                                                                                   );
+    addUtilityFunction( "cleanString",      ::cleanString,          "string",   addParams( 2,   "string,boolean",       "false,false",      "true,true"     ) );
+    addUtilityFunction( "charToDigit",      ::charToDigit,          "integer",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "distance2D",       ::distance2D,           "float",    addParams( 2,   "vector,vector",        "true,true",        "false,false"   ) );
+    addUtilityFunction( "endsWith",         ::endsWith,             "boolean",  addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
+    addUtilityFunction( "explode",          ::explode,              "array",    addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
+    addUtilityFunction( "getNumberedName",  ::getNumberedName,      "integer",  addParams( 2,   "string,boolean",       "false,false",      "false,false"   ) );
+    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        "object",   addParams( 1,   "integer",              "true",             "true"          ) );
+    addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     "integer",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "getStance",        ::getStance,            "string",   addParams( 1,   "boolean",              "false",            "true"          ) );
+    addUtilityFunction( "isChar",           ::isChar,               "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "isDigit",          ::isDigit,              "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "isSymbol",         ::isSymbol,             "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
+    addUtilityFunction( "startsWith",       ::startsWith,           "boolean",  addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
+    addUtilityFunction( "strip",            ::strip,                "string",   addParams( 1,   "string",               "false",            "true"          ) );
+    addUtilityFunction( "strreplacer",      ::strreplacer,          "string",   addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
 }
 
 addParams( paramCount, paramTypes, required, canBeUndefined ) {
@@ -128,12 +129,15 @@ addParams( paramCount, paramTypes, required, canBeUndefined ) {
     return params;
 }
 
-addUtilityFunction( funcName, func, params ) {
+addUtilityFunction( funcName, func, returnType, params ) {
     if ( isDefined( getFunction( funcName ) ) )
         return;
 
     if ( !isDefined( func ) )
         return;
+
+    if ( !isDefined( returnType ) )
+        returnType = "undefined";
 
     if ( !isDefined( params ) ) {
         params = spawnstruct();
@@ -147,6 +151,19 @@ addUtilityFunction( funcName, func, params ) {
     function.name = funcName;
     function.func = func;
     function.params = params;
+    function.defaultReturn = undefined;
+
+    switch ( returnType ) {
+        case "undefined":                                                   break;
+        case "string":              function.defaultReturn = "";            break;
+        case "boolean":
+        case "integer":             function.defaultReturn = 0;             break;
+        case "float":               function.defaultReturn = 0.0;           break;
+        case "object":              function.defaultReturn = spawnstruct(); break;
+        case "array":               function.defaultReturn = [];            break;
+        case "vector":              function.defaultReturn = ( 0, 0, 0 );   break;
+        case "localized-string":    function.defaultReturn = &"";           break;
+    }
 
     level.utilityFunctions[ level.utilityFunctions.size ] = function;
     [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::addUtilityFunction() -- added function " + funcName + " with " + params.count + " total parameters " );
@@ -170,7 +187,7 @@ utility_call( name, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) {
     function = getFunction( name );
     if ( !isDefined( function ) ) {
         [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_call() -- tried to call undefined function : " + name );
-        return;
+        return undefined;
     }
 
     // it's easier to split all the arguments above to an array here
@@ -185,13 +202,13 @@ utility_call( name, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9 ) {
 
 utility_runner( function, args ) {
     if ( !isDefined( function ) || !isDefined( args ) )
-        return;
-
+        return undefined;
+/*
     if ( args.size < function.params.count ) {
         [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_runner() -- probably should increase args count higher than : " + function.params.count ) ;
         return undefined;
     }
-
+*/
     totalargs = 0;
     for ( i = 0; i < function.params.count; i++ ) {
         type = function.params.types[ i ];
@@ -210,11 +227,12 @@ utility_runner( function, args ) {
 
             // if we're allowed to have this parameter undefined, that's cool
             if ( canBeUndefined ) {
+                [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_runner() -- function " + function.name + " arg " + i + " is undefined" );
                 totalargs++;
                 continue;
             } else {
                 [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_runner() -- function " + function.name + " arg " + i + " should not be undefined and is" );
-                return undefined;
+                return function.defaultReturn;
             }
         }
 
@@ -264,32 +282,42 @@ utility_runner( function, args ) {
 
             if ( !okay ) {
                 [[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_runner() -- function " + function.name + " arg " + i + " expects " + type + ", but received " + actualtype );
-                return undefined;
+                return function.defaultReturn;
             }
         }
 
         totalargs++;
     }
 
+    t = "";
+    for ( i = 0; i < function.params.types.size; i++ )
+        t += function.params.types[ i ] + " ";
+
+    //[[ level.logwrite ]]( "maps\\mp\\gametypes\\_utility.gsc::utility_runner() -- called " + function.name + " with " + totalargs + " args ( " + t + ")" );
+
     a = [];
     for ( i = 0; i < totalargs; i++ )
         a[ i ] = args[ i ];
 
+    ret = function.defaultReturn;
+
     // passed all our preliminary checks
     // let's call the function
     switch ( totalargs ) {
-        case 0:     return [[ function.func ]]();
-        case 1:     return [[ function.func ]]( a[ 0 ] );
-        case 2:     return [[ function.func ]]( a[ 0 ], a[ 1 ] );
-        case 3:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ] );
-        case 4:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ] );
-        case 5:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ] );
-        case 6:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ] );
-        case 7:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ] );
-        case 8:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ] );
-        case 9:     return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] );
-        case 10:    return [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ], a[ 9 ] );
+        case 0:     ret = self [[ function.func ]](); break;
+        case 1:     ret = self [[ function.func ]]( a[ 0 ] ); break;
+        case 2:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ] ); break;
+        case 3:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ] ); break;
+        case 4:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ] ); break;
+        case 5:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ] ); break;
+        case 6:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ] ); break;
+        case 7:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ] ); break;
+        case 8:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ] ); break;
+        case 9:     ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] ); break;
+        case 10:    ret = self [[ function.func ]]( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ], a[ 9 ] ); break;
     }
+
+    return ret;
 }
 
 // ------------------------------------------------------------------------- //
@@ -439,6 +467,14 @@ charToDigit( ch )
         case "/":   return 181; break;  case "+":   return 182; break;
         case "~":   return 182; break;  case "`":   return 183; break;
         default:    return 0;
+    }
+}
+
+cleanScreen()
+{
+    for( i = 0; i < 5; i++ )
+    {
+        iPrintlnBold( " " );
     }
 }
 

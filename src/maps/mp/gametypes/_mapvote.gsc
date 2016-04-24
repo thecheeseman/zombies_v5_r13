@@ -26,6 +26,7 @@ init()
 
 	level.mapvotetime = 10;
 	level.mapvotereplay	= 0;
+	level.nextmap = undefined;
 	
 	game["MapVote"]	= &"Press ^2FIRE^7 to vote                           Votes";
 	game["TimeLeft"] = &"Time Left: ";
@@ -166,14 +167,8 @@ RunMapVote()
 	currentmap = getcvar("mapname");
 	currentgt = level.gametype;
  
-	x = GetRandomMapRotation();
-	if(isdefined(x))
-	{
-		if(isdefined(level.maps_in_vote))
-			maps = level.maps_in_vote;
-	}
-
-	if(!isdefined(maps))
+	maps = GetRandomMapRotation();
+    if(!isdefined(maps) || !isdefined(maps[0]))
 	{
 		wait 0.05;
 		level notify("VotingComplete");
@@ -182,14 +177,14 @@ RunMapVote()
 
 	for(j=0;j<5;j++)
 	{
-		level.mapcandidate[j]["map"] = currentmap;
-		level.mapcandidate[j]["mapname"] = "Replay this map";
-		level.mapcandidate[j]["gametype"] = currentgt;
+		level.mapcandidate[j]["map"] = "random";
+		level.mapcandidate[j]["mapname"] = "Random map";
+		level.mapcandidate[j]["gametype"] = "zombies";
 		level.mapcandidate[j]["votes"] = 0;
 	}
 	
 	i = 0;
-	for(j=0;j<5;j++)
+	for(j=0;j<4;j++)
 	{
 		if(maps[i]["map"] == currentmap && maps[i]["gametype"] == level.gametype)
 			i++;
@@ -205,9 +200,6 @@ RunMapVote()
 		i++;
 
 		if(!isdefined(maps[i]))
-			break;
-
-		if(level.mapvotereplay && j>2)
 			break;
 	}
 	
@@ -380,9 +372,6 @@ SetMapWinner(winner)
 {
 	map	= level.mapcandidate[winner]["map"];
 	mapname	= level.mapcandidate[winner]["mapname"];
-	gametype = level.mapcandidate[winner]["gametype"];
-
-	setcvar("sv_maprotationcurrent", " gametype " + gametype + " map " + map);
 
 	wait 0.1;
 
@@ -390,11 +379,34 @@ SetMapWinner(winner)
 
 	wait 0.05;
 
-	iprintlnbold(" ");
-	iprintlnbold(" ");
-	iprintlnbold(" ");
-	iprintlnbold("The winner is");
-	iprintlnbold("^2" + mapname);
+	[[ level.utility ]]( "cleanScreen" );
+    iprintlnbold("The winner is");
+    iprintlnbold("^2" + mapname);
+
+    if ( map == "random" ) {
+        rot = GetRandomMapRotation();
+
+        // no maps?
+        if ( !isDefined( rot ) ) {
+            rot = GetRandomMapRotation( true ); // ignore small sizes
+            if ( !isDefined( rot ) ) {  // still no maps?
+                rot = level.mapcandidate;
+            }
+        }
+
+        rnd = 0;
+        if ( rot.size > 0 ) {
+            rnd = randomInt( rot.size );
+            while ( rot[ rnd ][ "map" ] == getCvar( "mapname" ) ) {
+                rnd = randomInt( rot.size );
+            }
+        }
+
+        map = rot[ rnd ][ "map" ];
+    }
+
+    level.nextmap = map;
+    setcvar("sv_maprotationcurrent", "gametype zombies map " + map);
 
 	level.vote_headerText fadeOverTime (1);
 	level.vote_hud_timeleft fadeOverTime (1);	
@@ -438,20 +450,19 @@ SetMapWinner(winner)
 	level notify( "VotingComplete" );
 }
 
-GetRandomMapRotation(random, current, number)
+GetRandomMapRotation( ignoresize )
 {
 	maprot = strip(getcvar("sv_maprotation"));
 
-	if(!isdefined(number))
-		number = 0;
+    if ( !isDefined( ignoresize ) )
+        ignoresize = false;
 
-	if(maprot == "") 
-	{
-		maprot = strip(getcvar("sv_maprotationcurrent"));
-		if (maprot == "")
+	if ( maprot == "" ) {
+		maprot = strip( getcvar( "sv_maprotationcurrent" ) );
+		if ( maprot == "" )
 			return undefined;
 
-		setcvar("sv_maprotation", maprot);
+		setcvar( "sv_maprotation", maprot );
 	}
 	
 	j=0;
@@ -475,7 +486,7 @@ GetRandomMapRotation(random, current, number)
 			temparr[temparr.size] = element;
 	}
 
-	level.maps_in_vote = [];
+	maps = [];
 	lastgt = level.gametype;
 	for(i=0;i<temparr.size;)
 	{
@@ -490,8 +501,8 @@ GetRandomMapRotation(random, current, number)
 			case "map":
 				if(isdefined(temparr[i+1]))
 				{
-					level.maps_in_vote[level.maps_in_vote.size]["gametype"]	= lastgt;
-					level.maps_in_vote[level.maps_in_vote.size-1]["map"] = temparr[i+1];
+					maps[maps.size]["gametype"]	= lastgt;
+					maps[maps.size-1]["map"] = temparr[i+1];
 				}
 
 				i += 2;
@@ -504,30 +515,65 @@ GetRandomMapRotation(random, current, number)
 					lastgt = temparr[i];
 				else
 				{
-					level.maps_in_vote[level.maps_in_vote.size]["gametype"]	= lastgt;
-					level.maps_in_vote[level.maps_in_vote.size-1]["map"] = temparr[i];
+					maps[maps.size]["gametype"]	= lastgt;
+					maps[maps.size-1]["map"] = temparr[i];
 				}
 					
 
 				i += 1;
 				break;
 		}
-		if(number && level.maps_in_vote.size >= number)
-			break;
 	}
 
 	for(k = 0; k < 20; k++)
 	{
-		for(i = 0; i < level.maps_in_vote.size; i++)
+		for(i = 0; i < maps.size; i++)
 		{
-			j = randomInt(level.maps_in_vote.size);
-			element = level.maps_in_vote[i];
-			level.maps_in_vote[i] = level.maps_in_vote[j];
-			level.maps_in_vote[j] = element;
+			j = randomInt(maps.size);
+			element = maps[i];
+			maps[i] = maps[j];
+			maps[j] = element;
 		}
 	}
 
-	return level.maps_in_vote;
+    players = getEntArray( "player", "classname" );
+
+    // display results depending on number of players
+    // some maps are too large for <5 people
+    goodmaps = [];
+    for ( i = 0 ; i < maps.size; i++ ) {
+        minsize = getMinSize( maps[ i ][ "map" ] );
+
+        if ( players.size >= minsize ) 
+            goodmaps[ goodmaps.size ] = maps[ i ];
+    }
+
+    if ( goodmaps.size >= 4 && !ignoresize )
+        return goodmaps;
+
+	return maps;
+}
+
+getMinSize( map ) {
+    switch ( map ) {
+        case "mp_brecourt":
+        case "mp_rocket":
+        case "mp_hurtgen":
+        case "mp_ship":
+            return 8;
+        case "mp_dawnville":
+        case "mp_powcamp":
+            return 6;
+        case "mp_depot":
+        case "mp_pavlov":
+            return 5;
+        case "mp_carentan":
+        case "mp_chateau":
+        case "mp_harbor":
+        case "mp_railyard":
+        default: 
+            return 0;
+    }
 }
 
 strip(s)

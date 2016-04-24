@@ -33,7 +33,7 @@ main()
 		setcvar("zom_timelimit", "30");
 	else if (getcvarfloat("zom_timelimit") > 1440)
 		setcvar("zom_timelimit", "1440");
-	level.timelimit = getcvarfloat("scr_zom_timelimit");
+	level.timelimit = getcvarfloat("zom_timelimit");
 
 	level.scorelimit = 0;
 

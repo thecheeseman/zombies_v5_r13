@@ -274,7 +274,7 @@ pickZombie()
 	
 	if ( isDefined( zom ) )
 	{
-		iPrintLnBold( [[ level.utility ]]( "cleanString", zom.name ) + "^7 was the last ^6Hunter^7, he's now the first ^1Zombie^7!" );
+		iPrintLnBold( zom.name + "^7 was the last ^6Hunter^7, he's now the first ^1Zombie^7!" );
 		zom.nonotice = true;
 		zom thread makeZombie();
 		wait 0.05;
@@ -286,13 +286,13 @@ pickZombie()
 	zom = guys[ int ];
 	while ( zom.guid == getCvar( "lastzom" ) )
 	{
-		iPrintLnBold( [[ level.utility ]]( "cleanString", zom.name ) + "^7 was the ^1Zombie^7 last time... picking someone else..." );
+		iPrintLnBold( zom.name + "^7 was the ^1Zombie^7 last time... picking someone else..." );
 		wait 2;
 		int = [[ level.utility ]]( "_randomInt", guys.size );
 		zom = guys[ int ];
 	}
 	
-	iPrintLnBold( [[ level.utility ]]( "cleanString", zom.name ) + "^7 was randomly selected to be the ^1Zombie^7!" );
+	iPrintLnBold( zom.name + "^7 was randomly selected to be the ^1Zombie^7!" );
 	zom.nonotice = true;
 	zom thread makeZombie();
 	wait 0.05;
@@ -391,7 +391,7 @@ endGame( winner )
 		// look, i know this doesn't need to be in its own scope
 		// but it makes me sleep better at night, okay?
 		{
-			cleanScreen();
+			[[ level.utility ]]( "cleanScreen" );
 			iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
 			
 			wait 3;
@@ -399,9 +399,9 @@ endGame( winner )
 			guy = getBest( "hunter" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^2Best Hunter: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " ^7- ^1" + guy.score );
+				iPrintlnBold( guy.name + " ^7- ^1" + guy.score );
 
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -411,9 +411,9 @@ endGame( winner )
 			guy = getBest( "zombie" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^1Best Zombie: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " ^7- ^1" + guy.deaths );
+				iPrintlnBold( guy.name + " ^7- ^1" + guy.deaths );
 
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -423,9 +423,9 @@ endGame( winner )
 			guy = getMost( "kills" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killicondied" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^3Most Kills: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " - ^1" + guy.stats[ "kills" ] );
+				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "kills" ] );
 				
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -435,9 +435,9 @@ endGame( winner )
 			guy = getMost( "assists" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^4Most Assists: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " - ^1" + guy.stats[ "assists" ] );
+				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "assists" ] );
 				
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -447,9 +447,9 @@ endGame( winner )
 			guy = getMost( "bashes" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killiconmelee" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^5Most Bashes: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " - ^1" + guy.stats[ "bashes" ] );
+				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "bashes" ] );
 
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -459,9 +459,9 @@ endGame( winner )
 			guy = getMost( "headshots" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killiconheadshot" );
-				cleanScreen();
+				[[ level.utility ]]( "cleanScreen" );
 				iPrintlnBold( "^6Most Headshots: " );
-				iPrintlnBold( [[ level.utility ]]( "cleanString", guy.name ) + " - " + guy.stats[ "headshots" ] );
+				iPrintlnBold( guy.name + " - " + guy.stats[ "headshots" ] );
 				
 				wait 2.5;
 				centerImage thread fadeOut( 0.5 );
@@ -469,7 +469,7 @@ endGame( winner )
 			}
 			
 			centerImage destroy();
-			cleanScreen();
+			[[ level.utility ]]( "cleanScreen" );
 		}
 		
 		thread maps\mp\gametypes\_mapvote::Initialize();
@@ -855,6 +855,8 @@ antispec() {
 		self.spechud.archived = false;
 	}
 
+	level endon( "intermission" );
+
 	while ( self.sessionstate == "spectator" ) {
 		if ( isDefined( self.specplayer ) )
 			self.spectatorclient = self.specplayer;
@@ -1147,11 +1149,11 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 		if ( !level.nuked )
 		{
 			if ( isPlayer( attacker ) && attacker != self )
-				iPrintLnBold( [[ level.utility ]]( "cleanString", self.name ) + "^7 had his brains eaten by " + [[ level.utility ]]( "cleanString", attacker.name ) + "^7!" );
+				iPrintLnBold( self.name + "^7 had his brains eaten by " + attacker.name + "^7!" );
 			else if ( isPlayer( attacker ) && attacker == self )
-				iPrintLnBold( [[ level.utility ]]( "cleanString", self.name ) + "^7 killed himself and is now a ^1Zombie^7!" );
+				iPrintLnBold( self.name + "^7 killed himself and is now a ^1Zombie^7!" );
 			else
-				iPrintLnBold( [[ level.utility ]]( "cleanString", self.name ) + "^7 died and is now a ^1Zombie^7!" );
+				iPrintLnBold( self.name + "^7 died and is now a ^1Zombie^7!" );
 		}
 
 		self makeZombie();
@@ -1175,7 +1177,7 @@ lastHunter()
 	level notify( "stop ammoboxes" );
 	
 	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::lastHunter() -- " + self.name + " (" + self getip() + ")", true );
-	iPrintLnBold( [[ level.utility ]]( "cleanString", self.name ) + "^7 is the last ^6Hunter^7!" );
+	iPrintLnBold( self.name + "^7 is the last ^6Hunter^7!" );
 
 	self.stats[ "timesAsLastHunter" ]++;
 	
@@ -1304,6 +1306,7 @@ lasthunter_weaponselect()
 {
 	self endon( "death" );
 	level endon( "lasthunter weapon select" );
+	level endon( "intermission" );
 	
 	thread lasthunter_death();
 	
@@ -1340,6 +1343,8 @@ lasthunter_weaponselect()
 
 lasthunter_death()
 {
+	level endon( "intermission" );
+
 	while ( isAlive( self ) && self.pers[ "team" ] != "allies" )
 		wait 0.05;
 
@@ -1454,6 +1459,7 @@ makeZombie()
 
 extraKeys()
 {
+	level endon( "intermission" );
 	keyBuf = [];
 	newKey = 0;
 	chkKey = 0;
@@ -1711,6 +1717,8 @@ isWeaponAuto( weapon )
 whatscooking()
 {
 	self endon( "death" );
+	self endon( "disconnect" );
+	self endon( "spawn_spectator" );
 	
 	while ( isAlive( self ) && self.pers[ "team" ] == "axis" )
 	{
@@ -2574,14 +2582,6 @@ scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
 		}
 			
 		inrange[ i ] thread maps\mp\gametypes\zombies::Callback_PlayerDamage( attacker, attacker, damage, 0, "MOD_GRENADE_SPLASH", "defaultweapon_mp", origin, vectornormalize( inrange[ i ].origin - origin ), hitloc );
-	}
-}
-
-cleanScreen()
-{
-	for( i = 0; i < 5; i++ )
-	{
-		iPrintlnBold( " " );
 	}
 }
 

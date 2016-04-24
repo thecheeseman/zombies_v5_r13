@@ -13,7 +13,7 @@ CodeCallback_PlayerCommand(cmd) {
         return;
     }
 
-    if ( !isDefined( self ) || !isDefined( level.chatcommand ) || level.mapended  )
+    if ( !isDefined( self ) || !isDefined( level.chatcommand ) || game[ "state" ] == "intermission" )
         return;
 
     // Check if player is muted

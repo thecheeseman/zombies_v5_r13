@@ -89,7 +89,7 @@ dofog( mapname )
 	
 	level.fogdist = max;
     currentfog = max;
-    fogpersec = (float)( max / ( level.timelimit * 60 * 0.6 ) );
+    fogpersec = (float)( max / (float)( (float)level.timelimit * 60.0 * 0.6 ) );
 
     level endon( "endgame" );
 
