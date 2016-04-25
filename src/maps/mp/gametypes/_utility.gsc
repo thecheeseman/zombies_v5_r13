@@ -20,31 +20,30 @@ init() {
     level.utility = ::utility_call;
     level.utilityFunctions = [];
 
-                        // function name    function ptr            returnType  paramslist #    types                   required            can be undefined?
+                        // function name    function ptr            returnType  paramslist #    types                       required            can be undefined?
 
-    addUtilityFunction( "showpos",          ::showPos                                                                                                       );
-
-    addUtilityFunction( "_randomInt",       ::_randomInt,           "integer",  addParams( 1,   "integer",              "true",             "false"         ) );
-    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      "integer",  addParams( 2,   "integer,integer",      "true,true",        "false,false"   ) );
-    addUtilityFunction( "arrayShuffle",     ::arrayShuffle,         "array",    addParams( 1,   "array",                "true",             "false"         ) );
-    addUtilityFunction( "atoi",             ::atoi,                 "integer",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "contains",         ::contains,             "boolean",  addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "cleanScreen",      ::cleanScreen                                                                                                   );
-    addUtilityFunction( "cleanString",      ::cleanString,          "string",   addParams( 2,   "string,boolean",       "false,false",      "true,true"     ) );
-    addUtilityFunction( "charToDigit",      ::charToDigit,          "integer",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "distance2D",       ::distance2D,           "float",    addParams( 2,   "vector,vector",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "endsWith",         ::endsWith,             "boolean",  addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
-    addUtilityFunction( "explode",          ::explode,              "array",    addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
-    addUtilityFunction( "getNumberedName",  ::getNumberedName,      "integer",  addParams( 2,   "string,boolean",       "false,false",      "false,false"   ) );
-    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        "object",   addParams( 1,   "integer",              "true",             "true"          ) );
-    addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     "integer",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "getStance",        ::getStance,            "string",   addParams( 1,   "boolean",              "false",            "true"          ) );
-    addUtilityFunction( "isChar",           ::isChar,               "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "isDigit",          ::isDigit,              "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "isSymbol",         ::isSymbol,             "boolean",  addParams( 1,   "string",               "true",             "false"         ) );
-    addUtilityFunction( "startsWith",       ::startsWith,           "boolean",  addParams( 2,   "string,string",        "false,false",      "true,true"     ) );
-    addUtilityFunction( "strip",            ::strip,                "string",   addParams( 1,   "string",               "false",            "true"          ) );
-    addUtilityFunction( "strreplacer",      ::strreplacer,          "string",   addParams( 2,   "string,string",        "true,true",        "false,false"   ) );
+    addUtilityFunction( "showpos",          ::showPos                                                                                                                 );
+    addUtilityFunction( "cleanScreen",      ::cleanScreen                                                                                                             );
+    addUtilityFunction( "_randomInt",       ::_randomInt,           "integer",  addParams( 1,   "integer",                  "true",             "false"             ) );
+    addUtilityFunction( "_randomIntRange",  ::_randomIntRange,      "integer",  addParams( 2,   "integer,integer",          "true,true",        "false,false"       ) );
+    addUtilityFunction( "arrayShuffle",     ::arrayShuffle,         "array",    addParams( 1,   "array",                    "true",             "false"             ) );
+    addUtilityFunction( "atoi",             ::atoi,                 "integer",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "contains",         ::contains,             "boolean",  addParams( 2,   "string,string",            "true,true",        "false,false"       ) );
+    addUtilityFunction( "cleanString",      ::cleanString,          "string",   addParams( 2,   "string,boolean",           "false,false",      "true,true"         ) );
+    addUtilityFunction( "charToDigit",      ::charToDigit,          "integer",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "distance2D",       ::distance2D,           "float",    addParams( 2,   "vector,vector",            "true,true",        "false,false"       ) );
+    addUtilityFunction( "endsWith",         ::endsWith,             "boolean",  addParams( 2,   "string,string",            "false,false",      "true,true"         ) );
+    addUtilityFunction( "explode",          ::explode,              "array",    addParams( 3,   "string,string,integer",    "true,true,false",  "false,false,true"  ) );
+    addUtilityFunction( "getNumberedName",  ::getNumberedName,      "integer",  addParams( 2,   "string,boolean",           "false,false",      "false,false"       ) );
+    addUtilityFunction( "getPlayerByID",    ::getPlayerByID,        "object",   addParams( 1,   "integer",                  "true",             "true"              ) );
+    addUtilityFunction( "getPlayersOnTeam", ::getPlayersOnTeam,     "integer",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "getStance",        ::getStance,            "string",   addParams( 1,   "boolean",                  "false",            "true"              ) );
+    addUtilityFunction( "isChar",           ::isChar,               "boolean",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "isDigit",          ::isDigit,              "boolean",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "isSymbol",         ::isSymbol,             "boolean",  addParams( 1,   "string",                   "true",             "false"             ) );
+    addUtilityFunction( "startsWith",       ::startsWith,           "boolean",  addParams( 2,   "string,string",            "false,false",      "true,true"         ) );
+    addUtilityFunction( "strip",            ::strip,                "string",   addParams( 1,   "string",                   "false",            "true"              ) );
+    addUtilityFunction( "strreplacer",      ::strreplacer,          "string",   addParams( 2,   "string,string",            "true,true",        "false,false"       ) );
 }
 
 addParams( paramCount, paramTypes, required, canBeUndefined ) {

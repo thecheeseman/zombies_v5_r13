@@ -612,6 +612,7 @@ colorMsg ( msg ) {
         
         randColor = "^" + [[ level.utility ]]( "_randomIntRange", 1, 7 );
         temp += randColor + msg[ i ]; 
+        wait .05;
     }
     return temp;
 }
