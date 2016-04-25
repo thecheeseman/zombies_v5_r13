@@ -456,16 +456,16 @@ airstrike()
 	
 	for ( i = 0; i < 9; i++ )
 	{
-		rndy = [[ level.utility ]]( "_randomInt", 1024 );
-		rndx = [[ level.utility ]]( "_randomInt", 1024 );
+		rndy = utilities::_randomInt( 1024 );
+		rndx = utilities::_randomInt( 1024 );
 		
-		if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
+		if ( utilities::_randomInt( 100 ) > 50 )
 			rndy *= -1;
-		if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
+		if ( utilities::_randomInt( 100 ) > 50 )
 			rndx *= -1;
 		
 		yaw = getBestPlaneDirection( targetpos + ( rndx, rndy, 0 ) );
-		thread callStrike( self, targetpos + ( rndx, rndy, 0 ) , yaw, ( [[ level.utility ]]( "_randomInt", 3 ) + 3 ), "stuka" );
+		thread callStrike( self, targetpos + ( rndx, rndy, 0 ) , yaw, ( utilities::_randomInt( 3 ) + 3 ), "stuka" );
 		wait randomFloat( 0.5 ) + 0.5;
 	}
 }
@@ -490,12 +490,12 @@ carpetbomb()
 	
 	for ( i = 0; i < 51; i++ )
 	{
-		rndy = [[ level.utility ]]( "_randomInt", 1568 );
-		rndx = [[ level.utility ]]( "_randomInt", 1568 );
+		rndy = utilities::_randomInt( 1568 );
+		rndx = utilities::_randomInt( 1568 );
 		
-		if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
+		if ( utilities::_randomInt( 100 ) > 50 )
 			rndy *= -1;
-		if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
+		if ( utilities::_randomInt( 100 ) > 50 )
 			rndx *= -1;
 		
 		yaw = getBestPlaneDirection( targetpos + ( rndx, rndy, 0 ) );

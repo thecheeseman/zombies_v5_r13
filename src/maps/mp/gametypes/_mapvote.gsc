@@ -379,7 +379,7 @@ SetMapWinner(winner)
 
 	wait 0.05;
 
-	[[ level.utility ]]( "cleanScreen" );
+	utilities::cleanScreen();
     iprintlnbold("The winner is");
     iprintlnbold("^2" + mapname);
 

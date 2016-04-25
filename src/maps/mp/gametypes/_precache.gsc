@@ -71,16 +71,16 @@ precache_runner( item, type, name ) {
         // try to guess type
         if ( type == "string" ) {
             // xmodel
-            if ( [[ level.utility ]]( "startsWith", item, "xmodel/" ) ) {
+            if ( utilities::startsWith( item, "xmodel/" ) ) {
                 type = "model";
             } // shaderish.. could be headicon or statusicon but we'll just assume it's a shader
-            else if ( [[ level.utility ]]( "startsWith", item, "gfx/" ) ) {
+            else if ( utilities::startsWith( item, "gfx/" ) ) {
                 type = "shader";
             } // weapon
-            else if ( [[ level.utility ]]( "endsWith", item, "_mp" ) || [[ level.utility ]]( "startsWith", item, "item_" ) ) {
+            else if ( utilities::endsWith( item, "_mp" ) || utilities::startsWith( item, "item_" ) ) {
                 type = "item";
             } // fx
-            else if ( [[ level.utility ]]( "startsWith", item, "fx/" ) || [[ level.utility ]]( "endsWith", item, ".efx" ) ) {
+            else if ( utilities::startsWith( item, "fx/" ) || utilities::endsWith( item, ".efx" ) ) {
                 type = "fx";
             }
         }
@@ -117,7 +117,7 @@ precache_runner( item, type, name ) {
                 }
 
                 end = tmp.size;
-                if ( [[ level.utility ]]( "endsWith", tmp, ".efx" ) )
+                if ( utilities::endsWith( tmp, ".efx" ) )
                     end = tmp.size - 4;
 
                 name = "";

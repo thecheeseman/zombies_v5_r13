@@ -122,8 +122,8 @@ atoi_mod( tok ) {
     if ( tok.size > 2 )
         return undefined;
     
-    tokString = [[ level.utility ]]( "strreplacer", tok, "lower" );
-    tokID = [[ level.utility ]]( "atoi", tok );
+    tokString = utilities::strreplacer( tok, "lower" );
+    tokID = utilities::atoi( tok );
     if ( !isDefined ( tokID ) )
         return undefined;
 
@@ -226,13 +226,14 @@ combineChatCommand ( str, delim, id ) {
 }
 
 clean_string ( str ) {
-    lower = [[ level.utility ]]( "strreplacer", str, "lower");
-    mono = maps\mp\gametypes\_zombie::monotone( lower );
-    return maps\mp\gametypes\_zombie::monotone( mono );
+    // use codextended's tolower instead of script
+    lower = toLower( str );
+    mono = utilities::monotone( lower );
+    return utilities::monotone( mono );
 }
 
 getPlayerById( id ) {
-    return [[ level.utility ]]( "getPlayerByID", id );
+    return utilities::getPlayerByID( id );
 }
 
 playerMsg( msg ) {
@@ -244,15 +245,15 @@ suffixMsg ( msg ) {
 }
 
 StTok( s, delimiter ) {
-    return [[ level.utility ]]( "explode", s, delimiter );
+    return utilities::explode( s, delimiter );
 }
 
 strip( s ) {
-    return [[ level.utility ]]( "strip", s );
+    return utilities::strip( s );
 }
 
 contains( sString, sOtherString ) {
-    return [[ level.utility ]]( "contains", sString, sOtherString );
+    return utilities::contains( sString, sOtherString );
 }
 
 // untested shit

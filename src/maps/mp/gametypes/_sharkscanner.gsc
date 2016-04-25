@@ -19,8 +19,7 @@
 main()
 {
     [[ level.logwrite ]]( "maps\\mp\\gametypes\\_sharkscanner.gsc::main()", true );
-	mapname = maps\mp\gametypes\_zombie::toLower( getCvar( "mapname" ) );
-	switch ( mapname )
+	switch ( toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_harbor":
 			thread scanner( -118 );

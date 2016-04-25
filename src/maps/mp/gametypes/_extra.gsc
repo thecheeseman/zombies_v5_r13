@@ -35,7 +35,7 @@ main() {
 	fx = [];
 	supported = true;
 	
-	switch ( maps\mp\gametypes\_zombie::toLower( getCvar( "mapname" ) ) )
+	switch ( toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_brecourt":
 			models = addModel( models, "xmodel/vehicle_tank_tiger_d", ( -1691, -4034, 112 ), ( 0, 65, 0 ) );

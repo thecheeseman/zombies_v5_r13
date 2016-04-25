@@ -361,7 +361,7 @@ saveMyStats() {
 }
 
 getMyStats() {
-	self.guid = [[ level.utility ]]( "getNumberedName", self.oldname );
+	self.guid = utilities::getNumberedName( self.oldname );
 
 	// quick check to prevent too much file io
 	//if ( !statLUTLookup( self.guid ) ) {
@@ -385,16 +385,16 @@ getMyStats() {
 		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- close file " + lutname, true );
 		fclose( handle );
 
-		fieldsnvalues = [[ level.utility ]]( "explode", data, "," );
+		fieldsnvalues = utilities::explode( data, "," );
 		for ( i = 0; i < fieldsnvalues.size; i++ ) {
 			fnv = fieldsnvalues[ i ];
 
 			if ( fnv == "" )
 				continue;
 
-			arr = [[ level.utility ]]( "explode", fnv, ":" );
-			field = [[ level.utility ]]( "strreplacer", [[ level.utility ]]( "strip", arr[ 0 ] ), "alphanumeric" );
-			value = [[ level.utility ]]( "strreplacer", [[ level.utility ]]( "strip", arr[ 1 ] ), "alphanumeric" );
+			arr = utilities::explode( fnv, ":" );
+			field = utilities::strreplacer( utilities::strip( arr[ 0 ] ), "alphanumeric" );
+			value = utilities::strreplacer( utilities::strip( arr[ 1 ] ), "alphanumeric" );
 
 			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );
@@ -421,7 +421,7 @@ getMyStats() {
 
 			// clean up any extraneous characters
 			if ( fieldstruct.type == "int" || fieldstruct.type == "float" ) {
-				value = [[ level.utility ]]( "strreplacer", value, "numeric" );
+				value = utilities::strreplacer( value, "numeric" );
 			}
 
 			switch ( field ) {

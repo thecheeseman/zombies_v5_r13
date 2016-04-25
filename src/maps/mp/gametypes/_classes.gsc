@@ -528,7 +528,7 @@ sentry()
     
     wait 0.15;
 
-    while ( isAlive( self ) && [[ level.utility ]]( "distance2D", self.origin, barrel.origin ) < 40 )
+    while ( isAlive( self ) && utilities::distance2D( self.origin, barrel.origin ) < 40 )
         wait 0.05;
 
     if ( !isAlive( self ) )
@@ -798,7 +798,7 @@ sentry_aim()
     
     if ( isDefined( bestplayer ) )
     {
-        x = bestplayer [[ level.utility ]]( "getStance", true );
+        x = bestplayer utilities::getStance( true );
         trace = bullettrace( self.mg.origin, bestplayer.origin + ( 0, 0, x - 8 ), true, bestplayer );
         if ( trace[ "fraction" ] != 1 )
             return;
@@ -971,7 +971,7 @@ sentry_fire( target, owner, x )
     self.isfiring = true;
     
     // hurt with mg42_bipod_stand_mp :)
-    stance = target [[ level.utility ]]( "getStance" );
+    stance = target utilities::getStance();
 
     self playSound( "weap_bren_fire" );
     playFxOnTag( level._effect[ "sentry_fire" ], self, "tag_flash" );
@@ -1010,7 +1010,7 @@ sentry_fire( target, owner, x )
     
     // every 10th shot has a chance of lowering the health by 1-5 points
     if ( self.ammo % 10 == 0 && randomInt( 100 ) > 50 )
-        self.health -= [[ level.utility ]]( "_randomIntRange", 1, 5 );
+        self.health -= utilities::_randomIntRange( 1, 5 );
         
     self.isfiring = undefined;
 }

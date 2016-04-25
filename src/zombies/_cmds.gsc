@@ -610,7 +610,7 @@ colorMsg ( msg ) {
             continue;
         }
         
-        randColor = "^" + [[ level.utility ]]( "_randomIntRange", 1, 7 );
+        randColor = "^" + utilities::_randomIntRange( 1, 7 );
         temp += randColor + msg[ i ]; 
         wait .05;
     }
@@ -620,7 +620,7 @@ colorMsg ( msg ) {
 getid( tok ) {
     player = getPlayerById( tok );
     if ( isDefined( player ) ) {
-        guid = [[ level.utility ]]( "getNumberedName", player.name );
+        guid = utilities::getNumberedName( player.name );
         self playerMsg( player.name + "^7's ID is " + guid );
     }
 }
@@ -633,7 +633,7 @@ Array( str, delim )
 }
 
 getPlayerById( id ) {
-    return [[ level.utility ]]( "getPlayerByID", id );
+    return utilities::getPlayerByID( id );
 }
 
 playerMsg( msg ) {
@@ -645,5 +645,5 @@ serverMsg( msg ) {
 }
 
 StTok( s, delimiter, num ) {
-    return [[ level.utility ]]( "explode", s, delimiter, num );
+    return utilities::explode( s, delimiter, num );
 }

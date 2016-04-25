@@ -57,7 +57,7 @@ init()
     insults[29] = "^1, I can't think of an insult stupid enough for you.";
 
     level.iC = 0;
-    level.insults = [[ level.utility ]]( "arrayShuffle", insults );
+    level.insults = utilities::arrayShuffle( insults );
 
     level.adminvars = [];
 
@@ -142,7 +142,7 @@ endGame( value )
 
 kill( value )
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     
     if ( isDefined( player ) )
     {
@@ -155,14 +155,14 @@ kill( value )
 
 giveXp( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
 
-    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
+    amount = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -178,14 +178,14 @@ giveXp( value )
 
 giveKills( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
 
-    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
+    amount = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -201,14 +201,14 @@ giveKills( value )
 
 givePoints( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     
-    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
+    amount = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Point Value^1!" );
@@ -221,18 +221,18 @@ givePoints( value )
 
 updateXP( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = [[ level.utility ]]( "atoi", array[ 0 ] );
+    id = utilities::atoi( array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
+    amount = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -240,7 +240,7 @@ updateXP( value )
     }
     for ( i = 0; i < level.stats[ "hunters" ].size; i++ )
     {
-        miniarray = [[ level.utility ]]( "explode", level.stats[ "hunters" ][ i ], "," );
+        miniarray = utilities::explode( level.stats[ "hunters" ][ i ], "," );
         if ( id == miniarray[ 0 ] )
         {
             miniarray[ 1 ] += amount;
@@ -254,18 +254,18 @@ updateXP( value )
 
 updateKills( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = [[ level.utility ]]( "atoi", array[ 0 ] );
+    id = utilities::atoi( array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = [[ level.utility ]]( "atoi", array[ 1 ] );
+    amount = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -273,7 +273,7 @@ updateKills( value )
     }
     for ( i = 0; i < level.stats[ "zombies" ].size; i++ )
     {
-        miniarray = [[ level.utility ]]( "explode", level.stats[ "zombies" ][ i ], "," );
+        miniarray = utilities::explode( level.stats[ "zombies" ][ i ], "," );
         if ( id == miniarray[ 0 ] )
         {
             miniarray[ 1 ] += amount;
@@ -287,12 +287,12 @@ updateKills( value )
 
 giveWeap( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     weapon = array[ 1 ];
     slot = "primaryb";
     
@@ -311,16 +311,16 @@ say( value )
 
 getid( value )
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     
     if ( isDefined( player ) )
-        self iprintlnbold( player.name + " = " + [[ level.utility ]]( "getNumberedName", player.name ) );
+        self iprintlnbold( player.name + " = " + utilities::getNumberedName( player.name ) );
         
 }
 
 drop( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     height = 512;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -328,7 +328,7 @@ drop( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        height = [[ level.utility ]]( "atoi", array[ 1 ] );
+        height = utilities::atoi( array[ 1 ] );
         if ( !isDefined ( height ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Height^1!" );
@@ -336,7 +336,7 @@ drop( value )
         }
     }
     
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     
     if ( isDefined( player ) )
     {
@@ -356,7 +356,7 @@ drop( value )
 
 spank( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     time = 30;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -364,7 +364,7 @@ spank( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        time = [[ level.utility ]]( "atoi", array[ 1 ] );
+        time = utilities::atoi( array[ 1 ] );
         if ( !isDefined ( time ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Time^1!" );
@@ -372,7 +372,7 @@ spank( value )
         }
     }
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
 
     if ( isDefined( player ) )
     {   
@@ -391,7 +391,7 @@ spank( value )
 
 slap( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     dmg = 10;
     
     if ( !isDefined( array[ 0 ] ) )
@@ -399,7 +399,7 @@ slap( value )
     
     if ( isDefined( array[ 1 ] ) )
     {
-        dmg = [[ level.utility ]]( "atoi", array[ 1 ] );
+        dmg = utilities::atoi( array[ 1 ] );
         if ( !isDefined ( dmg ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Damage Value^1!" );
@@ -407,7 +407,7 @@ slap( value )
         }
     }
     
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
 
     if ( isDefined( player ) )
     {
@@ -431,12 +431,12 @@ slap( value )
 
 giveks( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     ks = array[ 1 ];
     
     if ( isDefined( player ) )
@@ -448,12 +448,12 @@ giveks( value )
 
 rename( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
 
     if ( !isDefined( array[ 0 ] ) && !isDefined( array[ 1 ] ) )
         return;
         
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     
     if ( isDefined( player ) )
     {
@@ -473,19 +473,19 @@ rename( value )
 
 givearmor( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
 
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
     
-    armor = [[ level.utility ]]( "atoi", array[ 1 ] );
+    armor = utilities::atoi( array[ 1 ] );
     if ( !isDefined ( armor ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Value^1!" );
         return;
     }
     
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     
     if ( isDefined( player ) )
     {   
@@ -498,15 +498,15 @@ givearmor( value )
 
 blind( value )
 {
-    array = [[ level.utility ]]( "explode", value, " " );
+    array = utilities::explode( value, " " );
     
     if ( !isDefined( array[ 0 ] ) )
         return;
     
     time = 10;
-    player = [[ level.utility ]]( "getPlayerByID", array[ 0 ] );
+    player = utilities::getPlayerByID( array[ 0 ] );
     if ( isDefined( array[ 1 ] ) )
-        time = [[ level.utility ]]( "atoi", array[ 1 ] );
+        time = utilities::atoi( array[ 1 ] );
     
     if( isDefined( player ) )
     {
@@ -531,7 +531,7 @@ blind( value )
 
 forcespec( value )
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     if( isDefined( player ) )
     {
         player thread [[ level.specthread ]]();
@@ -541,7 +541,7 @@ forcespec( value )
 
 toilet( value )
 { 
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     if( isDefined( player ) )
     {
         player detachall();
@@ -565,7 +565,7 @@ toilet( value )
 
 insult(value)
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     if(!isDefined(player))
         return;
 
@@ -574,7 +574,7 @@ insult(value)
         // If it is, print the last insult
         iPrintLnBold(player.name + level.insults[level.insults.size - 1]);
         // Shuffle the array again so we don't got the same list of insults
-        level.insults = [[level.utility]]("arrayShuffle", level.insults);
+        level.insults = utilities::arrayShuffle(level.insults);
         // Reset the insult counter
         level.iC = 0;
     } else {
@@ -585,7 +585,7 @@ insult(value)
 
 runover( value )
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     if( isDefined( player ) )
     {
         lol = spawn( "script_origin", player getOrigin() );
@@ -612,7 +612,7 @@ runover( value )
 
 squash( value )
 {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     
     if( isDefined( player ) )
     {
@@ -632,7 +632,7 @@ squash( value )
 }
 
 rape( value ) {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     
     if ( isDefined( player ) ) {
         dumas = spawn( "script_model", ( 0, 0, 0 ) );
@@ -680,9 +680,9 @@ forceprone() {
 }
 
 move_guid( value ) {
-    player = [[ level.utility ]]( "getPlayerByID", value );
+    player = utilities::getPlayerByID( value );
     if ( isDefined( player ) ) {
-        newguid = [[ level.utility ]]( "getNumberedName", player.name );
+        newguid = utilities::getNumberedName( player.name );
         if ( newguid == player.guid ) {
             player iPrintLnBold( "Please change your name to the name you wish to have your stats saved to" );
             return;

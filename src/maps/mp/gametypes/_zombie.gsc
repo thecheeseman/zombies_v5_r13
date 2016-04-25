@@ -181,7 +181,7 @@ startGame()
 	thread rotateIfEmpty();
 	
 	while ( true ) {
-		ePlayers = [[ level.utility ]]( "getPlayersOnTeam", "axis" );
+		ePlayers = utilities::getPlayersOnTeam( "axis" );
 		if ( ePlayers.size > 1 )
 			break;
 			
@@ -258,7 +258,7 @@ rotateIfEmpty()
 pickZombie()
 {
 	zom = undefined;
-	guys = [[ level.utility ]]( "getPlayersOnTeam", "axis" );
+	guys = utilities::getPlayersOnTeam( "axis" );
 	lasthunter = getCvar( "lasthunter" );
 
 	// no hunters?
@@ -282,13 +282,13 @@ pickZombie()
 		return;
 	}
 	
-	int = [[ level.utility ]]( "_randomInt", guys.size );
+	int = utilities::_randomInt( guys.size );
 	zom = guys[ int ];
 	while ( zom.guid == getCvar( "lastzom" ) )
 	{
 		iPrintLnBold( zom.name + "^7 was the ^1Zombie^7 last time... picking someone else..." );
 		wait 2;
-		int = [[ level.utility ]]( "_randomInt", guys.size );
+		int = utilities::_randomInt( guys.size );
 		zom = guys[ int ];
 	}
 	
@@ -329,7 +329,7 @@ endGame( winner )
 	{
 		setCvar( "lasthunter", "" );
 		
-		hunters = [[ level.utility ]]( "getPlayersOnTeam", "axis" );
+		hunters = utilities::getPlayersOnTeam( "axis" );
 		iPrintLnBold( "Surviving Hunters get a ^6" + level.xpvalues[ "HUNTER_WIN" ] + "^7 XP bonus!" );
 		
 		for ( i = 0; i < hunters.size; i++ )
@@ -391,7 +391,7 @@ endGame( winner )
 		// look, i know this doesn't need to be in its own scope
 		// but it makes me sleep better at night, okay?
 		{
-			[[ level.utility ]]( "cleanScreen" );
+			utilities::cleanScreen();
 			iPrintLnBold( "Best ^2Hunters ^7& ^1Zombies" );
 			
 			wait 3;
@@ -399,7 +399,7 @@ endGame( winner )
 			guy = getBest( "hunter" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@axis.tga" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^2Best Hunter: " );
 				iPrintlnBold( guy.name + " ^7- ^1" + guy.score );
 
@@ -411,7 +411,7 @@ endGame( winner )
 			guy = getBest( "zombie" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/headicon@allies.tga" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^1Best Zombie: " );
 				iPrintlnBold( guy.name + " ^7- ^1" + guy.deaths );
 
@@ -423,7 +423,7 @@ endGame( winner )
 			guy = getMost( "kills" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killicondied" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^3Most Kills: " );
 				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "kills" ] );
 				
@@ -435,7 +435,7 @@ endGame( winner )
 			guy = getMost( "assists" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "gfx/hud/hud@health_cross.tga" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^4Most Assists: " );
 				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "assists" ] );
 				
@@ -447,7 +447,7 @@ endGame( winner )
 			guy = getMost( "bashes" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killiconmelee" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^5Most Bashes: " );
 				iPrintlnBold( guy.name + " - ^1" + guy.stats[ "bashes" ] );
 
@@ -459,7 +459,7 @@ endGame( winner )
 			guy = getMost( "headshots" );
 			if ( isDefined( guy ) ) {
 				centerImage thread fadeIn( 0.5, "killiconheadshot" );
-				[[ level.utility ]]( "cleanScreen" );
+				utilities::cleanScreen();
 				iPrintlnBold( "^6Most Headshots: " );
 				iPrintlnBold( guy.name + " - " + guy.stats[ "headshots" ] );
 				
@@ -469,7 +469,7 @@ endGame( winner )
 			}
 			
 			centerImage destroy();
-			[[ level.utility ]]( "cleanScreen" );
+			utilities::cleanScreen();
 		}
 		
 		thread maps\mp\gametypes\_mapvote::Initialize();
@@ -501,8 +501,8 @@ gameLogic()
 	{
 		resettimeout();
 
-		zombies = [[ level.utility ]]( "getPlayersOnTeam", "allies" );
-		hunters = [[ level.utility ]]( "getPlayersOnTeam", "axis" );
+		zombies = utilities::getPlayersOnTeam( "allies" );
+		hunters = utilities::getPlayersOnTeam( "axis" );
 		
 		if ( zombies.size == 0 && hunters.size > 0 )
 		{
@@ -539,8 +539,8 @@ gameLogic()
 	
 	if ( !level.mapended )
 	{
-		zombies = [[ level.utility ]]( "getPlayersOnTeam", "allies" );
-		hunters = [[ level.utility ]]( "getPlayersOnTeam", "axis" );
+		zombies = utilities::getPlayersOnTeam( "allies" );
+		hunters = utilities::getPlayersOnTeam( "axis" );
 		
 		if ( hunters.size == 0 )
 		{
@@ -804,7 +804,7 @@ spawnPlayer()
 	self thread maps\mp\gametypes\_hud::runHud();
 	
 	if ( level.debug )
-		self [[ level.utility ]]( "showpos" );
+		self utilities::showpos();
 }
 
 spawnSpectator()
@@ -1163,7 +1163,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
 	self.killstreak = 0;
 	self.changeweapon = false;
 	
-	if ( self.pers[ "team" ] == "allies" && [[ level.utility ]]( "_randomInt", 100 ) > 85 && !level.lasthunter )
+	if ( self.pers[ "team" ] == "allies" && utilities::_randomInt( 100 ) > 85 && !level.lasthunter )
 		self dropHealth();
 	
 	self thread cleanUpHud();
@@ -2230,7 +2230,7 @@ monitorSticky( owner )
 	explode = false;
 	while ( !explode && isAlive( owner ) )
 	{
-		zombies = [[ level.utility ]]( "getPlayersOnTeam", "allies" );
+		zombies = utilities::getPlayersOnTeam( "allies" );
 		for ( i = 0; i < zombies.size; i++ )
 		{
 			if ( distance( zombies[ i ].origin, self.origin ) < 128 )
@@ -2349,7 +2349,7 @@ painsound()
 		return;
 		
 	self.painsound = true;
-	num = [[ level.utility ]]( "_randomInt", level.voices[ self.nationality ] ) + 1;
+	num = utilities::_randomInt( level.voices[ self.nationality ] ) + 1;
 	scream = "generic_pain_" + self.nationality + "_" + num;
 	self playSound( scream );
 	wait 3;
@@ -2440,98 +2440,6 @@ FOVScale( value )
 	self setClientCvar( "cg_fov", value );
 }
 
-toLower( str )
-{
-	return ( mapChar( str, "U-L" ) );
-}
-
-toUpper( str )
-{
-	return ( mapChar( str, "L-U" ) );
-}
-
-mapChar( str, conv )
-{
-	if ( !isdefined( str ) || ( str == "" ) )
-		return ( "" );
-
-	from = "";
-	to = "";
-	switch ( conv )
-	{
-	  case "U-L":	case "U-l":	case "u-L":	case "u-l":
-		from = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		to   = "abcdefghijklmnopqrstuvwxyz";
-		break;
-	  case "L-U":	case "L-u":	case "l-U":	case "l-u":
-		from = "abcdefghijklmnopqrstuvwxyz";
-		to   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		break;
-	  default:
-	  	return ( str );
-	}
-
-	s = "";
-	for ( i = 0; i < str.size; i++ )
-	{
-		ch = str[ i ];
-
-		for ( j = 0; j < from.size; j++ ) {
-			resettimeout();
-			if ( ch == from[ j ] )
-			{
-				ch = to[ j ];
-				break;
-			}
-		}
-
-		s += ch;
-	}
-
-	return ( s );
-}
-
-monotone( str )
-{
-	if ( !isdefined( str ) || ( str == "" ) )
-		return ( "" );
-
-	_s = "";
-
-	_colorCheck = false;
-	for ( i = 0; i < str.size; i++ )
-	{
-		ch = str[ i ];
-		if ( _colorCheck )
-		{
-			_colorCheck = false;
-
-			switch ( ch )
-			{
-			  case "0":
-			  case "1":
-			  case "2":
-			  case "3":
-			  case "4":
-			  case "5":
-			  case "6":
-			  case "7":
-			  	break;
-			  default:
-			  	_s += ( "^" + ch );
-			  	break;
-			}
-		}
-		else
-		if ( ch == "^" )
-			_colorCheck = true;
-		else
-			_s += ch;
-	}
-
-	return ( _s );
-}
-
 scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
 {
 	players = getEntArray( "player", "classname" );
@@ -2575,7 +2483,7 @@ scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
 		if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace[ "fraction" ] == 1 )
 		{
 			s = "left";
-			if ( [[ level.utility ]]( "_randomInt", 100 ) > 50 )
+			if ( utilities::_randomInt( 100 ) > 50 )
 				s = "right";
 				
 			hitloc = s + "_leg_upper";
