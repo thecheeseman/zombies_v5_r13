@@ -25,7 +25,6 @@ Main()
 	maps\mp\gametypes\_debug::init();
 	[[ level.logwrite ]]( "VV---------- _zombie.gsc::Main() ----------VV" );
 	
-	maps\mp\gametypes\_utility::init();
 	maps\mp\gametypes\_precache::init();
 
 	precache();
