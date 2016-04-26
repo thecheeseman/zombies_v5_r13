@@ -421,8 +421,36 @@ privateMsg( msg, from, prefix ) {
     self sendservercommand( "i \"^1^7" + prefix + " ^7" + from.name + " " + from.suffix + "^7: ^3" + msg + "\"" );
 }
 
+glorifyVar( name ) {
+    return utilities::seperateVarName( name );
+}
+
 zom_stats ( tok ) {
-    // todo //
+    player = self;
+    
+    // looking for another player's stats?
+    if ( tok != "" ) {
+        // get player
+        id = self callback::getByAnyMeans( tok );
+        if ( !isDefined( id ) ) {
+            return;
+        }
+        player = getPlayerById( id );
+    }
+    
+    if ( !isDefined( player.stats ) || player.stats[ "playerName" ] == "" ) {
+        self playerMsg( "Could not retrieve stats for " + player.name );
+        return;
+    }
+
+    // show stats
+    player playerMsg( "^3Stats ^7for " + player.name + " ^7( ^3" + player.stats[ "guid" ] + " ^7) ^3:"  );
+    player playerMsg( "^6Hunter: ^7" + self.rank +  " ^6|^7 " + self.xp + " XP ^6|^7 " + self.points + " Points ^6|^7 " + self.stats[ "sentryKills" ] + " Sentry Kills" );
+    player playerMsg( "^1Zombie: ^7" + self.zomrank +  " ^1|^7 " + self.zomxp + " XP ^1|^7 " );
+    player playerMsg( "^5Totals: ^7" + self.stats[ "totalKills" ] + " Kills ^5|^7 " + self.stats[ "totalDeaths" ] + " Deaths ^5|^7 " + self.stats[ "totalDamage" ] + " Damage ^5|^7 " +
+                           self.stats[ "totalAssists" ] + " Assists " );
+    player playerMsg( "^5Totals: ^7" + self.stats[ "totalBashes" ] + " Bashes ^5|^7 " + self.stats[ "totalHeadshots" ] + " Headshots ^5|^7 " + self.stats[ "totalShotsFired" ] + " Shots Fired ^5|^7 " +
+                           self.stats[ "totalShotsHit" ] + " Shots Hit");
 }
 
 buymenu( tok ) {

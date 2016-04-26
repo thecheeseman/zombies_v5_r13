@@ -159,6 +159,8 @@ lightning()
 
 do_cloudflashes() 
 {
+    level endon( "intermission" );
+    
 	while ( 1 ) 
 	{
 		wait randomfloat( 15.0 );

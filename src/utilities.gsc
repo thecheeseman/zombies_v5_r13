@@ -539,6 +539,23 @@ showPos()
     }
 }
 
+// "myString" to "My String"
+seperateVarName( var, num ) {
+    temp = "";     
+    if ( !isDefined( num ) )
+        num = 1024;
+        
+    for ( i = 0; i < var.size; i++ ) {
+        if ( var[ i ] == toupper( var[ i ] ) && num > 0) {
+            num--;
+            temp += " " + var[ i ];
+        }
+        else
+            temp += var[ i ];
+    }
+    return ucfirst( temp );
+}
+
 startsWith( string, start ) {
     if ( !isDefined( string ) || !isDefined( start ) )
         return false;
