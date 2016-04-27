@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_ammoboxes.gsc::main()", true );
+	[[ level.logwrite ]]( "zombies\\ammoboxes.gsc::init()", true );
 	
 	[[ level.precache ]]( "xmodel/crate_misc1" );
 	[[ level.precache ]]( "xmodel/crate_champagne3" );
@@ -28,6 +28,8 @@ init()
 }
 
 main() {	
+	[[ level.logwrite ]]( "zombies\\ammoboxes.gsc::main()", true );
+
 	locs = [];
 	angs = [];
 	supported = true;
@@ -442,15 +444,15 @@ getammo( box )
 					self.points -= 50;
 				}
 				
-				primarymax = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
-				pistolmax = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( "luger_mp" );
-				primaryclip = maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( self.pers[ "weapon" ] );
-				pistolclip = maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( "luger_mp" );
+				primarymax = zombies\mod::getWeaponMaxWeaponAmmo( self.pers[ "weapon" ] );
+				pistolmax = zombies\mod::getWeaponMaxWeaponAmmo( "luger_mp" );
+				primaryclip = zombies\mod::getWeaponMaxClipAmmo( self.pers[ "weapon" ] );
+				pistolclip = zombies\mod::getWeaponMaxClipAmmo( "luger_mp" );
 				
-				bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
+				bonus = self zombies\mod::getAmmoBonusForRank();
 				
-				addprimary = self maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
-				addpistol = self maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
+				addprimary = self zombies\mod::getWeaponMaxClipAmmo( self.pers[ "weapon" ] ) * bonus;
+				addpistol = self zombies\mod::getWeaponMaxClipAmmo( "luger_mp" ) * bonus;
 				
 				self setWeaponSlotAmmo( "primary", primarymax + addprimary );
 				self setWeaponSlotAmmo( "pistol", pistolmax + addpistol );

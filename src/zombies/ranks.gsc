@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_ranks.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\ranks.gsc::init()", true );
 	
 	level.hunterRanks = [];
 	level.zombieRanks = [];
@@ -556,4 +556,73 @@ setHeadIcon()
 		
 	self.headicon = icon;
 	self.statusicon = icon;
+}
+
+checkRank()
+{
+    currentrank = undefined;
+    newrank = undefined;
+
+    if ( self.pers[ "team" ] == "axis" )
+    {
+        currentrank = self.rank;
+        rank = getRankByXP( "hunter", self.xp );
+        newrank = rank.id;
+    }
+
+    if ( self.pers[ "team" ] == "allies" )
+    {
+        currentrank = self.zomrank;
+        rank = getRankByXP( "zombie", self.zomxp );
+        newrank = rank.id;
+    }
+    
+
+    if ( ( isDefined( currentrank ) && isDefined( newrank ) ) && newrank != currentrank )
+        self rankUp( newrank );
+}
+
+rankUp( newrank )
+{
+    if ( self.pers[ "team" ] == "axis" )
+    {
+        self.rank = newrank;
+        rank = getRankByID( "hunter", newrank );
+        
+        ranktext = rank.rankString;
+        hudtext = rank.rankName;
+
+        if ( isDefined( self.hud[ "rank" ] ) ) {
+            self.hud[ "rank" ] setText( ranktext );
+        }
+    }
+    else if ( self.pers[ "team" ] == "allies" )
+    {
+        self.zomrank = newrank;
+        rank = getRankByID( "zombie", newrank );
+        
+        ranktext = rank.rankString;
+        hudtext = rank.rankName;
+
+        if ( isDefined( self.hud[ "zombierank" ] ) ) {
+            self.hud[ "zombierank" ] setText( ranktext );
+        }
+    }
+    
+    self iPrintLnBold( "You have been promoted to ^2" + hudtext + "^7!" );
+    self playLocalSound( "explo_plant_no_tick" );
+    
+    if ( self.pers[ "team" ] == "axis" )
+    {
+        self.changeweapon = true;
+        
+        //self iPrintLn( "^2You can change your weapon." );
+        
+        self thread giveHunterRankPerks();
+        
+        self.points += level.pointvalues[ "RANKUP" ];
+    }
+    
+    if ( self.pers[ "team" ] == "allies" )
+        self thread giveZomRankPerks();
 }

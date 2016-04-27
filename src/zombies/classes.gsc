@@ -17,8 +17,9 @@
 */
 
 init() {
+    [[ level.logwrite ]]( "zombies\\classes.gsc::init()", true );
+
     [[ level.precache ]]( "xmodel/USAirborneHelmet_Medic" );
-    [[ level.precache ]]( "xmodel/barrel_black1" );
     [[ level.precache ]]( "xmodel/mg42_bipod" );
 
     [[ level.precache ]]( "Sentry status: " );
@@ -138,6 +139,7 @@ setup() {
             case "sten_mp":
                 self.zombietype = "fast";
                 self setMoveSpeedScale( 1.75 );
+                self utilities::FOVScale( 110 );
                 self thread fastZombie();
                 break;
             case "bren_mp":
@@ -223,7 +225,7 @@ healthbag()
         mypack show();
         traceDir = anglesToForward( self.angles );
         traceEnd = self.origin + ( 0, 0, 36 );
-        traceEnd += maps\mp\_utility::vectorscale( traceDir, 16 );
+        traceEnd += utilities::vectorscale( traceDir, 16 );
         trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mypack );
 
         pos = trace[ "position" ];
@@ -292,7 +294,7 @@ dohealing( mypack )
                         self.xp += level.xpvalues[ "medic_heal" ];
                         self.score += level.xpvalues[ "medic_heal" ];
                         self iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
-                        self thread maps\mp\gametypes\_zombie::checkRank();
+                        self thread zombies\ranks::checkRank();
                     }
                     //self.stats[ "healPoints" ]++;
                 }
@@ -341,7 +343,7 @@ ammobox()
         mybox show();
         traceDir = anglesToForward( self.angles );
         traceEnd = self.origin + ( 0, 0, 36 );
-        traceEnd += maps\mp\_utility::vectorscale( traceDir, 48 );
+        traceEnd += utilities::vectorscale( traceDir, 48 );
         trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mybox );
 
         pos = trace[ "position" ];
@@ -389,19 +391,19 @@ ammobox_think( box )
                 oldamountpistol = players[ i ] getWeaponSlotAmmo( "pistol" );
                 oldamountgrenade = players[ i ] getWeaponSlotAmmo( "grenade" );
                 
-                maxpri = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) );
-                maxprib = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) );
-                maxpistol = maps\mp\gametypes\_zombie::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) );
-                maxgrenade = players[ i ] maps\mp\gametypes\_zombie::getHunterNadeAmmo();
+                maxpri = zombies\mod::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) );
+                maxprib = zombies\mod::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) );
+                maxpistol = zombies\mod::getWeaponMaxWeaponAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) );
+                maxgrenade = players[ i ] zombies\mod::getHunterNadeAmmo();
 
                 if ( players[ i ].class == "engineer" || players[ i ].class == "medic" || players[ i ].class == "support" || !level.gamestarted )
                     maxgrenade = oldamountgrenade;
 
-                bonus = self maps\mp\gametypes\_zombie::getAmmoBonusForRank();
+                bonus = self zombies\mod::getAmmoBonusForRank();
 
-                maxpri += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) ) * bonus;
-                maxprib += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) ) * bonus;
-                maxpistol += maps\mp\gametypes\_zombie::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) ) * bonus;
+                maxpri += zombies\mod::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primary" ) ) * bonus;
+                maxprib += zombies\mod::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "primaryb" ) ) * bonus;
+                maxpistol += zombies\mod::getWeaponMaxClipAmmo( players[ i ] getWeaponSlotWeapon( "pistol" ) ) * bonus;
                
                 // do we even need ammo?
                 if ( oldamountpri >= maxpri && oldamountprib >= maxprib && oldamountpistol >= maxpistol && oldamountgrenade >= maxgrenade )
@@ -444,7 +446,7 @@ ammobox_think( box )
                         self.xp += level.xpvalues[ "support_heal" ];
                         self.score += level.xpvalues[ "support_heal" ];
                         self iPrintLn( "^3+" + level.xpvalues[ "support_heal" ] + " XP!" );
-                        self thread maps\mp\gametypes\_zombie::checkRank();
+                        self thread zombies\ranks::checkRank();
                     }
                     //self.stats[ "ammoPoints" ] += (int)( ammogiven / 5 );
                     //self.stats[ "ammoGivenOut" ] += ammogiven;
@@ -481,7 +483,7 @@ sentry()
         barrel show();
         traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
-        traceEnd += maps\mp\_utility::vectorScale( traceDir, 80 );
+        traceEnd += utilities::vectorScale( traceDir, 80 );
         trace = bulletTrace( self.origin, traceEnd, false, self );
 
         pos = trace[ "position" ];
@@ -859,7 +861,7 @@ sentry_damage_detect()
             return;
 
         self.mg playSound( "melee_hit" );
-        attacker thread maps\mp\gametypes\_zombie::showhit();
+        attacker thread zombies\mod::showhit();
         
         self.mg.health -= damage * attacker.damagemult;
 
@@ -1209,7 +1211,7 @@ sniper() {
 
     self.hiddenhud.alpha = 0;
     self detachall();
-    self maps\mp\gametypes\_skins::setAllModels();
+    self zombies\skins::setAllModels();
 
     self.invisible = false;
 
@@ -1438,7 +1440,7 @@ sniper_goinvisible( time, trackmoving ) {
 
     self.hiddenhud.alpha = 0;
     self detachall();
-    self maps\mp\gametypes\_skins::setAllModels();
+    self zombies\skins::setAllModels();
 
     return timeup;
 }
@@ -1555,10 +1557,10 @@ poisonbomb()
     
     self suicide();
     
-    maps\mp\gametypes\_zombie::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
+    utilities::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
     earthquake( 0.5, 3, self.origin + ( 0, 0, 12 ), 386 );
     playFx( level._effect[ "aftermath" ], self.origin );
-    thread maps\mp\gametypes\_zombie::playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 );
+    thread utilities::playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 );
 
     players = getEntArray( "player", "classname" );
     for ( i = 0; i < players.size; i++ )
@@ -1642,7 +1644,7 @@ fireZombie()
     if ( self.firebombed )
         return;
     
-    maps\mp\gametypes\_zombie::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 192, 75, 20, self );
+    utilities::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 192, 75, 20, self );
     earthquake( 0.25, 3, self.origin + ( 0, 0, 12 ), 192 );
     playFx( level._effect[ "zombieExplo" ], self.origin );
 }
@@ -1662,7 +1664,7 @@ firebomb()
     
     self suicide();
     
-    maps\mp\gametypes\_zombie::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
+    utilities::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 386, level.cvars[ "BOMB_DAMAGE_MAX" ], level.cvars[ "BOMB_DAMAGE_MIN" ], self );
     earthquake( 0.5, 3, self.origin + ( 0, 0, 12 ), 386 );
     playFx( level._effect[ "zombieExplo" ], self.origin );
     

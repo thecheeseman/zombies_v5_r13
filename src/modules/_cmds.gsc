@@ -15,72 +15,72 @@ init() {
     // Arguments: <cmd> , <call> , <permissions> , <info> , <id-requirement>, <ignore-self>
     
     // Guest Commands //
-    thread [[ level.chatCallback ]] ( "!login"         ,   ::chatcmd_login                         , 0 ,  "Access admin commands: !login [password]"          , 0      );
-    thread [[ level.chatCallback ]] ( "!ebot"          ,   ::chatcmd_ebot                          , 0 ,  "Trigger e^2BOT ^7commands: !eBOT [command]"        , 0      );
-    thread [[ level.chatCallback ]] ( "!help"          ,   ::chatcmd_help                          , 0 ,  "List of commands: !help <cmd>"                     , 0      );
-    thread [[ level.chatCallback ]] ( "!alias"         ,   ::chatcmd_alias                         , 0 ,  "List of aliases: !alias <cmd>"                     , 0      );
-    thread [[ level.chatCallback ]] ( "!tell"          ,   ::chatcmd_tell                          , 0 ,  "Private message a player: !tell [player] [msg]"    , -1 , 1 );
-    thread [[ level.chatCallback ]] ( "!reply"         ,   ::chatcmd_reply                         , 0 ,  "Message last messaged player: !reply [msg]"        , 0      );
-    thread [[ level.chatCallback ]] ( "!stats"         ,   ::zom_stats                             , 0 ,  "Get your current stats: !stats"                    , 0      );
+    thread [[ level.chatCallback ]] ( "!login"         ,   ::chatcmd_login                          , 0 ,  "Access admin commands: !login [password]"          , 0      );
+    thread [[ level.chatCallback ]] ( "!ebot"          ,   ::chatcmd_ebot                           , 0 ,  "Trigger e^2BOT ^7commands: !eBOT [command]"        , 0      );
+    thread [[ level.chatCallback ]] ( "!help"          ,   ::chatcmd_help                           , 0 ,  "List of commands: !help <cmd>"                     , 0      );
+    thread [[ level.chatCallback ]] ( "!alias"         ,   ::chatcmd_alias                          , 0 ,  "List of aliases: !alias <cmd>"                     , 0      );
+    thread [[ level.chatCallback ]] ( "!tell"          ,   ::chatcmd_tell                           , 0 ,  "Private message a player: !tell [player] [msg]"    , -1 , 1 );
+    thread [[ level.chatCallback ]] ( "!reply"         ,   ::chatcmd_reply                          , 0 ,  "Message last messaged player: !reply [msg]"        , 0      );
+    thread [[ level.chatCallback ]] ( "!stats"         ,   ::zom_stats                              , 0 ,  "Get your current stats: !stats"                    , 0      );
     
-    thread [[ level.chatCallback ]] ( "!name"          ,   ::chatcmd_name                          , 0 ,  "Rename yourself: !name [name]"                     , 0      );
-    thread [[ level.chatCallback ]] ( "!buy"           ,   ::buymenu                               , 0 ,  "Buy an item: !buy [item]"                          , 0      );
-    thread [[ level.chatCallback ]] ( "!random"        ,   ::buymenu_rnd                           , 0 ,  "Buy a random item: !random"                        , 0      );
-    thread [[ level.chatCallback ]] ( "!healthpack"    ,   ::buymenu_hp                            , 0 ,  "Buy a health pack: !healthpack"                    , 0      );
+    thread [[ level.chatCallback ]] ( "!name"          ,   ::chatcmd_name                           , 0 ,  "Rename yourself: !name [name]"                     , 0      );
+    thread [[ level.chatCallback ]] ( "!buy"           ,   ::buymenu                                , 0 ,  "Buy an item: !buy [item]"                          , 0      );
+    thread [[ level.chatCallback ]] ( "!random"        ,   ::buymenu_rnd                            , 0 ,  "Buy a random item: !random"                        , 0      );
+    thread [[ level.chatCallback ]] ( "!healthpack"    ,   ::buymenu_hp                             , 0 ,  "Buy a health pack: !healthpack"                    , 0      );
     
     // VIP Commands //
-    thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                              , 1 ,  "Appreciate another player: !fuck [player]"         , -1     );
-    thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                             , 1 ,  "Slap another player: !trout [player]"              , -1     );
-    thread [[ level.chatCallback ]] ( "!poke"          ,   ::vip_poke                              , 1 ,  "Poke another player: !poke [player]"               , -1     );
-    thread [[ level.chatCallback ]] ( "!rainbow"       ,   ::vip_rainbow                           , 1 ,  "Color messages, the fancy way: !rainbow [msg]"     ,  0     );
+    thread [[ level.chatCallback ]] ( "!fuck"          ,   ::vip_fuck                               , 1 ,  "Appreciate another player: !fuck [player]"         , -1     );
+    thread [[ level.chatCallback ]] ( "!trout"         ,   ::vip_trout                              , 1 ,  "Slap another player: !trout [player]"              , -1     );
+    thread [[ level.chatCallback ]] ( "!poke"          ,   ::vip_poke                               , 1 ,  "Poke another player: !poke [player]"               , -1     );
+    thread [[ level.chatCallback ]] ( "!rainbow"       ,   ::vip_rainbow                            , 1 ,  "Color messages, the fancy way: !rainbow [msg]"     ,  0     );
     
     // Mod Commands //
-    thread [[ level.chatCallback ]] ( "!status"        ,   ::chatcmd_status                        , 2 ,  "Print players info: !status"                       , 0      );
-    thread [[ level.chatCallback ]] ( "!mute"          ,   ::chatcmd_mute                          , 2 ,  "Mute a player: !mute [player]"                     , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!unmute"        ,   ::chatcmd_unmute                        , 2 ,  "Unmute a muted player: !unmute [player]"           , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!warn"          ,   ::chatcmd_warn                          , 2 ,  "Warn a player: !warn [player] <msg>"               , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!spectate"      ,   ::spectate_player                       , 2 ,  "Spectate player: !spectate [player]"               , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!status"        ,   ::chatcmd_status                         , 2 ,  "Print players info: !status"                       , 0      );
+    thread [[ level.chatCallback ]] ( "!mute"          ,   ::chatcmd_mute                           , 2 ,  "Mute a player: !mute [player]"                     , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!unmute"        ,   ::chatcmd_unmute                         , 2 ,  "Unmute a muted player: !unmute [player]"           , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!warn"          ,   ::chatcmd_warn                           , 2 ,  "Warn a player: !warn [player] <msg>"               , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!spectate"      ,   ::spectate_player                        , 2 ,  "Spectate player: !spectate [player]"               , 1 , 1  );
     
     // Admin Commands //
-    thread [[ level.chatCallback ]] ( "!say"           ,   ::chatcmd_rconsay                       , 3 ,  "Talk as console: !say [msg]"                       , 0      );
-    thread [[ level.chatCallback ]] ( "!kick"          ,   ::chatcmd_kick                          , 3 ,  "Kick a player: !kick [player] <msg>"               , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!shout"         ,   maps\mp\gametypes\_admin::say           , 3 ,  "Shout a message: !shout [msg]"                     , 0      );
-    thread [[ level.chatCallback ]] ( "!endgame"       ,   maps\mp\gametypes\_admin::endGame       , 3 ,  "End the map: !endgame"                             , 0      );
+    thread [[ level.chatCallback ]] ( "!say"           ,   ::chatcmd_rconsay                        , 3 ,  "Talk as console: !say [msg]"                       , 0      );
+    thread [[ level.chatCallback ]] ( "!kick"          ,   ::chatcmd_kick                           , 3 ,  "Kick a player: !kick [player] <msg>"               , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!shout"         ,   zombies\admin::say                       , 3 ,  "Shout a message: !shout [msg]"                     , 0      );
+    thread [[ level.chatCallback ]] ( "!endgame"       ,   zombies\admin::endGame                   , 3 ,  "End the map: !endgame"                             , 0      );
     
-    thread [[ level.chatCallback ]] ( "!rename"        ,   maps\mp\gametypes\_admin::rename        , 3 ,  "Rename player: !rename [player] [name]"            , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!id"            ,   ::getid                                 , 3 ,  "Get GUID: !id [player]"                            , 1      );
-    thread [[ level.chatCallback ]] ( "!moveguid"      ,   maps\mp\gametypes\_admin::move_guid     , 3 ,  "Change player's guid: !moveguid [player]"          , 1      );  
-    thread [[ level.chatCallback ]] ( "!kill"          ,   maps\mp\gametypes\_admin::kill          , 3 ,  "Kill a player: !kill [player]"                     , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!rename"        ,   zombies\admin::rename                    , 3 ,  "Rename player: !rename [player] [name]"            , 1 , 1  );
+    thread [[ level.chatCallback ]] ( "!id"            ,   ::getid                                  , 3 ,  "Get GUID: !id [player]"                            , 1      );
+    thread [[ level.chatCallback ]] ( "!moveguid"      ,   zombies\admin::move_guid                 , 3 ,  "Change player's guid: !moveguid [player]"          , 1      );  
+    thread [[ level.chatCallback ]] ( "!kill"          ,   zombies\admin::kill                      , 3 ,  "Kill a player: !kill [player]"                     , 1 , 1  );
     
-    thread [[ level.chatCallback ]] ( "!giveweap"      ,   maps\mp\gametypes\_admin::giveWeap      , 3 ,  "Give a weapon: !giveweap [player] [weapon]"        , 1      );
-    thread [[ level.chatCallback ]] ( "!drop"          ,   maps\mp\gametypes\_admin::drop          , 3 ,  "Drop a player: !drop [player] <height>"            , 1      );
-    thread [[ level.chatCallback ]] ( "!giveks"        ,   maps\mp\gametypes\_admin::giveks        , 3 ,  "Give a killstreak: !giveks [player] [killstreak]"  , 1      );
-    thread [[ level.chatCallback ]] ( "!givearmor" ,       maps\mp\gametypes\_admin::givearmor     , 3 ,  "Give armor: !givearmor [player] [amount]"          , 1      );
-   
-    thread [[ level.chatCallback ]] ( "!givexp"        ,   maps\mp\gametypes\_admin::giveXp        , 3 ,  "Give XP: !givexp [player] [amount]"                , 1      );
-    thread [[ level.chatCallback ]] ( "!givekills"     ,   maps\mp\gametypes\_admin::giveKills     , 3 ,  "Give Kills: !givekills [player] [amount]"          , 1      );
-    thread [[ level.chatCallback ]] ( "!givepoints"    ,   maps\mp\gametypes\_admin::givePoints    , 3 ,  "Give Points: !givepoints [player] [amount]"        , 1      );
-    thread [[ level.chatCallback ]] ( "!updatexp"      ,   maps\mp\gametypes\_admin::updatexp      , 3 ,  "Update XP stats: !updatexp [player]"               , 1      );
-    thread [[ level.chatCallback ]] ( "!updatekills"   ,   maps\mp\gametypes\_admin::updatekills   , 3 ,  "Update Kills stats: !updatekills [player]"         , 1      );
-    
-    thread [[ level.chatCallback ]] ( "!spank"         ,   maps\mp\gametypes\_admin::spank         , 3 ,  "Spank a player: !spank [player] [time]"            , 1      );
-    thread [[ level.chatCallback ]] ( "!slap"          ,   maps\mp\gametypes\_admin::slap          , 3 ,  "Slap a player: !slap [player] [time]"              , 1      );
-    thread [[ level.chatCallback ]] ( "!givexp"        ,   maps\mp\gametypes\_admin::giveXp        , 3 ,  "Give XP: !givexp [player] [amount]"                , 1      );
-    thread [[ level.chatCallback ]] ( "!blind"         ,   maps\mp\gametypes\_admin::blind         , 3 ,  "Blind a player: !blind [player] [time]"            , 1      );
-    thread [[ level.chatCallback ]] ( "!forcespec"     ,   maps\mp\gametypes\_admin::forcespec     , 3 ,  "Move player to spec: !forcespec [player]"          , 1      );
+    thread [[ level.chatCallback ]] ( "!giveweap"      ,   zombies\admin::giveWeap                  , 3 ,  "Give a weapon: !giveweap [player] [weapon]"        , 1      );
+    thread [[ level.chatCallback ]] ( "!drop"          ,   zombies\admin::drop                      , 3 ,  "Drop a player: !drop [player] <height>"            , 1      );
+    thread [[ level.chatCallback ]] ( "!giveks"        ,   zombies\admin::giveks                    , 3 ,  "Give a killstreak: !giveks [player] [killstreak]"  , 1      );
+    thread [[ level.chatCallback ]] ( "!givearmor" ,       zombies\admin::givearmor                 , 3 ,  "Give armor: !givearmor [player] [amount]"          , 1      );
 
-    thread [[ level.chatCallback ]] ( "!runover"       ,   maps\mp\gametypes\_admin::runover       , 3 ,  "Runover a player with tank: !runover [player]"     , 1      );
-    thread [[ level.chatCallback ]] ( "!squash"        ,   maps\mp\gametypes\_admin::squash        , 3 ,  "Squash a player with tank: !squash [player]"       , 1      );
-    thread [[ level.chatCallback ]] ( "!insult"        ,   maps\mp\gametypes\_admin::insult        , 3 ,  "Throw some insults: !insults [player]"             , 1      );
-    thread [[ level.chatCallback ]] ( "!rape"          ,   maps\mp\gametypes\_admin::rape          , 3 ,  "Use with caution: !rape [player]"                  , 1      );
+    thread [[ level.chatCallback ]] ( "!givexp"        ,   zombies\admin::giveXp                    , 3 ,  "Give XP: !givexp [player] [amount]"                , 1      );
+    thread [[ level.chatCallback ]] ( "!givekills"     ,   zombies\admin::giveKills                 , 3 ,  "Give Kills: !givekills [player] [amount]"          , 1      );
+    thread [[ level.chatCallback ]] ( "!givepoints"    ,   zombies\admin::givePoints                , 3 ,  "Give Points: !givepoints [player] [amount]"        , 1      );
+    thread [[ level.chatCallback ]] ( "!updatexp"      ,   zombies\admin::updatexp                  , 3 ,  "Update XP stats: !updatexp [player]"               , 1      );
+    thread [[ level.chatCallback ]] ( "!updatekills"   ,   zombies\admin::updatekills               , 3 ,  "Update Kills stats: !updatekills [player]"         , 1      );
+    
+    thread [[ level.chatCallback ]] ( "!spank"         ,   zombies\admin::spank                     , 3 ,  "Spank a player: !spank [player] [time]"            , 1      );
+    thread [[ level.chatCallback ]] ( "!slap"          ,   zombies\admin::slap                      , 3 ,  "Slap a player: !slap [player] [time]"              , 1      );
+    thread [[ level.chatCallback ]] ( "!givexp"        ,   zombies\admin::giveXp                    , 3 ,  "Give XP: !givexp [player] [amount]"                , 1      );
+    thread [[ level.chatCallback ]] ( "!blind"         ,   zombies\admin::blind                     , 3 ,  "Blind a player: !blind [player] [time]"            , 1      );
+    thread [[ level.chatCallback ]] ( "!forcespec"     ,   zombies\admin::forcespec                 , 3 ,  "Move player to spec: !forcespec [player]"          , 1      );
 
-    thread [[ level.chatCallback ]] ( "!restart"       ,   ::map_restart                           , 3 ,  "Restart map: !restart"                             , 0      );
-    thread [[ level.chatCallback ]] ( "!map"           ,   ::switch_map                            , 3 ,  "Change map: !map [mapname]"                        , 0      );
+    thread [[ level.chatCallback ]] ( "!runover"       ,   zombies\admin::runover                   , 3 ,  "Runover a player with tank: !runover [player]"     , 1      );
+    thread [[ level.chatCallback ]] ( "!squash"        ,   zombies\admin::squash                    , 3 ,  "Squash a player with tank: !squash [player]"       , 1      );
+    thread [[ level.chatCallback ]] ( "!insult"        ,   zombies\admin::insult                    , 3 ,  "Throw some insults: !insults [player]"             , 1      );
+    thread [[ level.chatCallback ]] ( "!rape"          ,   zombies\admin::rape                      , 3 ,  "Use with caution: !rape [player]"                  , 1      );
+
+    thread [[ level.chatCallback ]] ( "!restart"       ,   ::map_restart                            , 3 ,  "Restart map: !restart"                             , 0      );
+    thread [[ level.chatCallback ]] ( "!map"           ,   ::switch_map                             , 3 ,  "Change map: !map [mapname]"                        , 0      );
 
     // God Commands //
-    thread [[ level.chatCallback ]] ( "!resetlogins"   ,   ::chatcmd_resetlogins                  , 4 ,   "Resets ALL current logins and cvars: !resetlogins"  , 0  );
-    thread [[ level.chatCallback ]] ( "!resetplayer"   ,   ::chatcmd_resetplayer                  , 4 ,   "Resets player's permisions: !resetplayer [player]"  , 1  );
-    thread [[ level.chatCallback ]] ( "!resetgroup"    ,   ::chatcmd_resetgroup                   , 4 ,   "Resets group's logins: !resetgroup [group]"         , 0  );
+    thread [[ level.chatCallback ]] ( "!resetlogins"   ,   ::chatcmd_resetlogins                    , 4 ,   "Resets ALL current logins and cvars: !resetlogins"  , 0  );
+    thread [[ level.chatCallback ]] ( "!resetplayer"   ,   ::chatcmd_resetplayer                    , 4 ,   "Resets player's permisions: !resetplayer [player]"  , 1  );
+    thread [[ level.chatCallback ]] ( "!resetgroup"    ,   ::chatcmd_resetgroup                     , 4 ,   "Resets group's logins: !resetgroup [group]"         , 0  );
     
     // Aliases // 
     addAlias( "!login"        , "!log"     );
@@ -502,15 +502,15 @@ buymenu( tok ) {
         default:                    self playerMsg( "Buy Menu -- unknown item: " + item ); return; break;
     }
 
-    self maps\mp\gametypes\_buymenu::buymenu( item );
+    self zombies\buymenu::buymenu( item );
 }
 
 buymenu_rnd( tok ) {
-    self maps\mp\gametypes\_buymenu::buymenu( "random" );
+    self zombies\buymenu::buymenu( "random" );
 }
 
 buymenu_hp( tok ) {
-    self maps\mp\gametypes\_buymenu::buymenu( "buy_healthpack" );
+    self zombies\buymenu::buymenu( "buy_healthpack" );
 }
 
 map_restart( tok ) {

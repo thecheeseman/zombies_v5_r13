@@ -24,8 +24,14 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.1.3 (wip)
-#### 14/04/16 - 19/04/16
+#### 14/04/16 - 27/04/16
     
+    - Removed and cleaned up a ton of code, now there are a lot less unused functions laying around
+    + Added some more hit location messages for randomness
+    * Quite a few updates to Indy's Chat Commands
+    + Added permissions system
+    * Moved a ton of code around, now no longer using maps\mp\gametypes\ as a home base (instaed just zombies\)
+    * Moved all utility code into utilities.gsc for ease of access
     + Added !spectate command for quick spectating of players
     + Jumper Zombies now take 75% less fall damage than other Zombies
     - Hitmarker no longer shows when your sentry shoots a Zombie

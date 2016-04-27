@@ -18,7 +18,7 @@
 
 init()
 {	
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_mapvote.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\mapvote.gsc::init()", true );
 	
 	min = 0;
 	max = 0;

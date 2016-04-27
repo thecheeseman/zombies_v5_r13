@@ -18,30 +18,31 @@
 
 main()
 {
-    level.callbackStartGameType = ::Callback_StartGameType;
-    level.callbackPlayerConnect = ::Callback_PlayerConnect;
-    level.callbackPlayerDisconnect = ::Callback_PlayerDisconnect;
-    level.callbackPlayerDamage = ::Callback_PlayerDamage;
-    level.callbackPlayerKilled = ::Callback_PlayerKilled;
+    level.callbackStartGameType =       ::Callback_StartGameType;
+    level.callbackPlayerConnect =       ::Callback_PlayerConnect;
+    level.callbackPlayerDisconnect =    ::Callback_PlayerDisconnect;
+    level.callbackPlayerDamage =        ::Callback_PlayerDamage;
+    level.callbackPlayerKilled =        ::Callback_PlayerKilled;
 
-    level.callbackSpawnSpectator = ::spawnSpectator;
-    level.callbackSpawnIntermission = ::spawnIntermission;
+    level.callbackSpawnPlayer =         ::spawnPlayer;
+    level.callbackSpawnSpectator =      ::spawnSpectator;
+    level.callbackSpawnIntermission =   ::spawnIntermission;
 
     maps\mp\gametypes\_callbacksetup::SetupCallbacks();
 
-    maps\mp\gametypes\_zombie::Main();
+    zombies\mod::main();
 }
 
 Callback_StartGameType()
 {
-    maps\mp\gametypes\_teams::precache();
-    maps\mp\gametypes\_teams::scoreboard();
-    maps\mp\gametypes\_teams::initGlobalCvars();
-    maps\mp\gametypes\_teams::restrictPlacedWeapons();
+    zombies\_teams::precache();
+    zombies\_teams::scoreboard();
+    zombies\_teams::initGlobalCvars();
+    zombies\_teams::restrictPlacedWeapons();
 
     setClientNameMode( "auto_change" );
     
-    thread startGame();
+    thread zombies\mod::startGame();
     
     if ( level.debug ) thread addBotClients();
 }
@@ -54,12 +55,7 @@ Callback_PlayerConnect()
 
     iprintln( self.name + "^7 joined the game." );
     
-    //while ( level.loadingstats )
-    //  wait 0.05;
-        
-    //wait 0.45;
-
-    self thread maps\mp\gametypes\_zombie::onConnect();
+    self thread zombies\mod::onConnect();
 
     if ( game[ "state" ] == "intermission" ) {
         self spawnIntermission();
@@ -74,245 +70,25 @@ Callback_PlayerConnect()
         self setClientCvar( "g_scriptMainMenu", "main" );
         return;
     }
-    
-    level endon("intermission");
 
-    if(isdefined(self.pers["team"]) && self.pers["team"] != "spectator")
-    {
-        self setClientCvar("scr_showweapontab", "1");
+    self setClientCvar( "g_scriptMainMenu", game[ "menu_team" ] );
+    self setClientCvar( "scr_showweapontab", "0" );
 
-        if(self.pers["team"] == "allies")
-        {
-            self.sessionteam = "allies";
-            self setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
-        }
-        else
-        {
-            self.sessionteam = "axis";
-            self setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
-        }
-            
-        if(isdefined(self.pers["weapon"]))
-            spawnPlayer();
-        else
-        {
-            spawnSpectator();
+    self openMenu( game[ "menu_team" ] );
 
-            if(self.pers["team"] == "allies")
-                self openMenu(game["menu_weapon_allies"]);
-            else
-                self openMenu(game["menu_weapon_axis"]);
-        }
-    }
-    else
-    {
-        self setClientCvar("g_scriptMainMenu", game["menu_team"]);
-        self setClientCvar("scr_showweapontab", "0");
-        
-        if(!isdefined(self.pers["team"]))
-            self openMenu(game["menu_team"]);
+    self.pers[ "team" ] = "spectator";
+    self.sessionteam = "spectator";
 
-        self.pers["team"] = "spectator";
-        self.sessionteam = "spectator";
+    spawnSpectator();
 
-        spawnSpectator();
-    }
-    
-    for(;;)
-    {
-        self waittill("menuresponse", menu, response);
-        
-        if(response == "open" || response == "close")
-            continue;
-
-        if(menu == game["menu_team"])
-        {
-            switch(response)
-            {
-            case "allies":
-            case "axis":
-            case "autoassign":
-                if ( !level.gamestarted )
-                    response = "axis";
-                else
-                    response = "allies";
-                
-                if(response == self.pers["team"] && self.sessionstate == "playing")
-                    break;
-
-                if(response != self.pers["team"] && self.sessionstate == "playing")
-                    self suicide();
-
-                self notify("end_respawn");
-
-                self.pers["team"] = response;
-                self.pers["weapon"] = undefined;
-                self.pers["savedmodel"] = undefined;
-
-                self setClientCvar("scr_showweapontab", "1");
-
-                if(self.pers["team"] == "allies")
-                {
-                    self setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
-                    self openMenu(game["menu_weapon_allies"]);
-                }
-                else
-                {
-                    self setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
-                    self openMenu(game["menu_weapon_axis"]);
-                }
-                break;
-
-            case "spectator":
-                if(self.pers["team"] != "spectator")
-                {
-                    if ( level.firstzombie && self.pers[ "team" ] == "allies" ) {
-                        self iPrintLnBold( "Please kill someone before going spectate." );
-                        continue;
-                    }
-                    
-                    self.pers["team"] = "spectator";
-                    self.pers["weapon"] = undefined;
-                    self.pers["savedmodel"] = undefined;
-                    
-                    self.sessionteam = "spectator";
-                    self setClientCvar("g_scriptMainMenu", game["menu_team"]);
-                    self setClientCvar("scr_showweapontab", "0");
-                    spawnSpectator();
-                }
-                break;
-
-            case "weapon":
-                if(self.pers["team"] == "allies")
-                    self openMenu(game["menu_weapon_allies"]);
-                else if(self.pers["team"] == "axis")
-                    self openMenu(game["menu_weapon_axis"]);
-                break;
-                
-            case "viewmap":
-                self openMenu(game["menu_viewmap"]);
-                break;
-
-            case "callvote":
-                self openMenu(game["menu_callvote"]);
-                break;
-            }
-        }       
-        else if(menu == game["menu_weapon_allies"] || menu == game["menu_weapon_axis"])
-        {
-            if(response == "team")
-            {
-                self openMenu(game["menu_team"]);
-                continue;
-            }
-            else if(response == "viewmap")
-            {
-                self openMenu(game["menu_viewmap"]);
-                continue;
-            }
-            else if(response == "callvote")
-            {
-                self openMenu(game["menu_callvote"]);
-                continue;
-            }
-            
-            if(!isdefined(self.pers["team"]) || (self.pers["team"] != "allies" && self.pers["team"] != "axis"))
-                continue;
-
-            weapon = self maps\mp\gametypes\_teams::restrict_anyteam(response);
-
-            if(weapon == "restricted")
-            {
-                self openMenu(menu);
-                continue;
-            }
-            
-            if(isdefined(self.pers["weapon"]) && self.pers["weapon"] == weapon)
-                continue;
-            
-            if(!isdefined(self.pers["weapon"]))
-            {
-                self.pers["weapon"] = weapon;
-                spawnPlayer();
-            }
-            else
-            {
-                if ( self.pers[ "team" ] == "allies" && isAlive( self ) )
-                    self suicide();
-
-                if ( self.pers[ "team" ] == "axis" ) {
-                    if ( !level.gamestarted ) {
-                        if ( isAlive( self ) )
-                            self suicide();
-                    } else {
-                        self iPrintLn( "^1You cannot change your weapon at this time." );
-                        continue;
-                    }
-                }
-                
-                oldweap = self.pers[ "weapon" ];
-                self.pers["weapon"] = weapon;
-
-                weaponname = maps\mp\gametypes\_teams::getWeaponName(self.pers["weapon"]);
-            }
-        }
-        else if(menu == game["menu_viewmap"])
-        {
-            switch(response)
-            {
-            case "team":
-                self openMenu(game["menu_team"]);
-                break;
-                
-            case "weapon":
-                if(self.pers["team"] == "allies")
-                    self openMenu(game["menu_weapon_allies"]);
-                else if(self.pers["team"] == "axis")
-                    self openMenu(game["menu_weapon_axis"]);
-                break;
-
-            case "callvote":
-                self openMenu(game["menu_callvote"]);
-                break;
-            }
-        }
-        else if(menu == game["menu_callvote"])
-        {
-            if ( response == "team" )
-            {
-                self openMenu(game["menu_team"]);
-                continue;
-            }   
-            else if ( response == "weapon" )
-            {
-                if(self.pers["team"] == "allies")
-                    self openMenu(game["menu_weapon_allies"]);
-                else if(self.pers["team"] == "axis")
-                    self openMenu(game["menu_weapon_axis"]);
-                continue;
-            }
-            else if ( response == "viewmap" )
-            {
-                self openMenu(game["menu_viewmap"]);
-                continue;
-            }
-            
-            self maps\mp\gametypes\_buymenu::buymenu( response );
-        }
-        else if(menu == game["menu_quickcommands"])
-            maps\mp\gametypes\_teams::quickcommands(response);
-        else if(menu == game["menu_quickstatements"])
-            maps\mp\gametypes\_teams::quickstatements(response);
-        else if(menu == game["menu_quickresponses"])
-            maps\mp\gametypes\_teams::quickresponses(response);
-    }
-}
+    self thread zombies\menu::playerHandler();
+ }
 
 Callback_PlayerDisconnect()
 {
     iprintln( self.name + "^7 left the game." );
     
-    self thread maps\mp\gametypes\_zombie::onDisconnect();
+    self thread zombies\mod::onDisconnect();
 }
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
@@ -320,9 +96,8 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
     if(self.sessionteam == "spectator")
         return;
         
-    if ( isPlayer( eAttacker ) && sWeapon == "fraggrenade_mp" )
-    {
-        self thread maps\mp\gametypes\_zombie::beFlashed( iDamage );
+    if ( isPlayer( eAttacker ) && sWeapon == "fraggrenade_mp" ) {
+        self thread zombies\mod::beFlashed( iDamage );
         return;
     }
         
@@ -338,7 +113,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
                 eAttacker.xp += level.xpvalues[ "medic_heal" ];
                 eAttacker.score += level.xpvalues[ "medic_heal" ];
                 eAttacker iPrintLn( "^3+" + level.xpvalues[ "medic_heal" ] + " XP!" );
-                eAttacker thread maps\mp\gametypes\_zombie::checkRank();
+                eAttacker thread zombies\ranks::checkRank();
             }
         }
         return;
@@ -375,8 +150,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
     if(iDamage < 1)
         iDamage = 1;
         
-    if ( sHitLoc == "head" && sMeansOfDeath != "MOD_MELEE" )
-    {
+    if ( sHitLoc == "head" && sMeansOfDeath != "MOD_MELEE" ) {
         switch ( sWeapon ) {
             case "m1carbine_mp":
                 iDamage *= 3;
@@ -395,8 +169,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
         }
     }
 
-    if ( isPlayer( eAttacker ) && eAttacker != self )
-    {
+    if ( isPlayer( eAttacker ) && eAttacker != self ) {
         if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
             ( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
             iDamage = 115;
@@ -440,35 +213,26 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
         iDamage /= 0.50;
     
     orgdamage = iDamage;
-    if ( isPlayer( eAttacker ) && self.pers[ "team" ] == "axis" )
-    {
-        if ( self.bodyarmor > 0 && ( sMeansOfDeath != "MOD_GRENADE" && sMeansOfDeath != "MOD_GRENADE_SPLASH" && sMeansOfDeath != "MOD_EXPLOSION" && sMeansOfDeath != "MOD_EXPLOSION_SPLASH" ) )
-        {
-            if ( iDamage > self.bodyarmor )
-            {
+    if ( isPlayer( eAttacker ) && self.pers[ "team" ] == "axis" ) {
+        if ( self.bodyarmor > 0 && ( sMeansOfDeath != "MOD_GRENADE" && sMeansOfDeath != "MOD_GRENADE_SPLASH" && sMeansOfDeath != "MOD_EXPLOSION" && sMeansOfDeath != "MOD_EXPLOSION_SPLASH" ) ) {
+            if ( iDamage > self.bodyarmor ) {
                 passthru = iDamage - self.bodyarmor;
                 self.bodyarmor = 0;
                 
                 iDamage = passthru;
-            }
-            else
-            {
+            } else {
                 self.bodyarmor -= iDamage;
                 iDamage = 0;
             }
         }
         
-        if ( self.exploarmor > 0 && ( sMeansOfDeath == "MOD_GRENADE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" || sMeansOfDeath == "MOD_EXPLOSION" || sMeansOfDeath == "MOD_EXPLOSION_SPLASH" ) )
-        {
-            if ( iDamage > self.exploarmor )
-            {
+        if ( self.exploarmor > 0 && ( sMeansOfDeath == "MOD_GRENADE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" || sMeansOfDeath == "MOD_EXPLOSION" || sMeansOfDeath == "MOD_EXPLOSION_SPLASH" ) ) {
+            if ( iDamage > self.exploarmor ) {
                 passthru = iDamage - self.exploarmor;
                 self.exploarmor = 0;
                 
                 iDamage = passthru;
-            }
-            else
-            {
+            } else {
                 self.exploarmor -= iDamage;
                 iDamage = 0;
             }
@@ -480,7 +244,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
     self finishPlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc);
     
-    self thread maps\mp\gametypes\_zombie::onDamage( eInflictor, eAttacker, orgdamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+    self thread zombies\mod::onDamage( eInflictor, eAttacker, orgdamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
 }
 
 Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc)
@@ -543,7 +307,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
         playfxontag( level._effect[ "fleshhit2" ], self, "Bip01 Neck" );
     }
         
-    self thread maps\mp\gametypes\_zombie::onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc );
+    self thread zombies\mod::onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc );
     
     body = self cloneplayer();
 
@@ -578,12 +342,12 @@ spawnPlayer()
         if ( getCvar( "mapname" ) == "toybox_bloodbath" )
             spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
             
-        spawnpoint = maps\mp\gametypes\_zombie_spawnlogic::getSpawnpoint_NearTeam(spawnpoints);
+        spawnpoint = zombies\spawnlogic::getSpawnpoint_NearTeam(spawnpoints);
     }
     else if ( self.pers[ "team" ] == "axis" )
     {
         spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
-        spawnpoint = maps\mp\gametypes\_zombie_spawnlogic::getSpawnpoint_Random(spawnpoints);
+        spawnpoint = zombies\spawnlogic::getSpawnpoint_Random(spawnpoints);
     }
     
     if(isdefined(spawnpoint))
@@ -595,7 +359,7 @@ spawnPlayer()
     self.maxhealth = 100;
     self.health = self.maxhealth;
     
-    maps\mp\gametypes\_teams::loadout();
+    zombies\_teams::loadout();
     
     self giveWeapon(self.pers["weapon"]);
     self giveMaxAmmo(self.pers["weapon"]);
@@ -606,7 +370,7 @@ spawnPlayer()
     else if(self.pers["team"] == "axis")
         self setClientCvar("cg_objectiveText", &"");
 
-    self thread maps\mp\gametypes\_zombie::spawnPlayer();
+    self thread zombies\mod::spawnPlayer();
 }
 
 spawnSpectator(origin, angles)
@@ -642,7 +406,7 @@ spawnSpectator(origin, angles)
             maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
     }
     
-    self thread maps\mp\gametypes\_zombie::spawnSpectator();
+    self thread zombies\mod::spawnSpectator();
 }
 
 spawnIntermission()
@@ -670,7 +434,7 @@ spawnIntermission()
     else
         maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
         
-    self thread maps\mp\gametypes\_zombie::spawnIntermission();
+    self thread zombies\mod::spawnIntermission();
 }
 
 respawn()
@@ -883,79 +647,6 @@ spawnedKillcamCleanup()
 
     self waittill("spawned");
     self removeKillcamElements();
-}
-
-startGame()
-{
-    maps\mp\gametypes\_zombie::startGame();
-    
-    for(;;)
-    {
-        checkTimeLimit();
-        wait 1;
-    }
-}
-
-endMap( winner )
-{
-    maps\mp\gametypes\_zombie::endGame( winner );
-}
-
-checkTimeLimit()
-{
-    if(level.timelimit <= 0)
-        return;
-    
-    timepassed = (getTime() - level.starttime) / 1000;
-    timepassed = timepassed / 60.0;
-    
-    if(timepassed < level.timelimit)
-        return;
-    
-    if(level.mapended)
-        return;
-    level.mapended = true;
-
-    iprintln(&"MPSCRIPT_TIME_LIMIT_REACHED");
-    endMap( "hunters" );
-}
-
-checkScoreLimit()
-{
-    if(level.scorelimit <= 0)
-        return;
-    
-    if(getTeamScore("allies") < level.scorelimit && getTeamScore("axis") < level.scorelimit)
-        return;
-
-    if(level.mapended)
-        return;
-    level.mapended = true;
-
-    iprintln(&"MPSCRIPT_SCORE_LIMIT_REACHED");
-    endMap();
-}
-
-printJoinedTeam(team)
-{
-    if(team == "allies")
-        iprintln(&"MPSCRIPT_JOINED_ALLIES", self);
-    else if(team == "axis")
-        iprintln(&"MPSCRIPT_JOINED_AXIS", self);
-}
-
-dropHealth()
-{
-    if(isdefined(level.healthqueue[level.healthqueuecurrent]))
-        level.healthqueue[level.healthqueuecurrent] delete();
-    
-    level.healthqueue[level.healthqueuecurrent] = spawn("item_health", self.origin + (0, 0, 1));
-    level.healthqueue[level.healthqueuecurrent].angles = (0, randomint(360), 0);
-
-    level.healthqueuecurrent++;
-    
-    if(level.healthqueuecurrent >= 16)
-        level.healthqueuecurrent = 0;
 }
 
 addBotClients()

@@ -17,6 +17,8 @@
 */
 
 init() {
+    [[ level.logwrite ]]( "zombies\\permissions.gsc::init()", true );
+
     level.permissions = [];
     
     // cvar names increasing in permission levels

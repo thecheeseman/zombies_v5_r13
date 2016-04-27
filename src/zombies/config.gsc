@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_config.gsc::main()", true );
+	[[ level.logwrite ]]( "zombies\\config.gsc::init()", true );
 
 	[[ level.precache ]]( "^1zom^7bies ^2rev^713.^11^7.2" );
 	[[ level.precache ]]( "mod by ^3cheese" );
@@ -34,6 +34,8 @@ init()
 }
 
 main() {
+	[[ level.logwrite ]]( "zombies\\config.gsc::main()", true );
+
 	thread logo();
 	thread runServerMessages();
 }

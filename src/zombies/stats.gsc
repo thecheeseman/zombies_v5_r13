@@ -16,114 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-	If you do not have CoDExtended or don't want to run it, 
-	just rename this file as something else and replace it with
-	_stats_legacy.gsc
-*/
-
-/*
-	stats/index.dat
-
-	Just a basic list of GUIDs of all the players who have
-	stats saved in their own files - to be used as a LUT for
-	when players connect
-
-	This is the only file actually "loaded" by the server on
-	game start
-
-	Comma-separated guid list
-
-	Example:
-	3457,
-	123,
-	6583,
-	etc.
-*/
-
-/*
-	stats/players/guid.dat
-
-	These are each individual player's stats, stored in their
-	own file and only read when that player has connected
-
-	Colon-separated, comma-delimited - whitespace ignored
-
-	File contents are as follows:
-	guid: 123,
-	playername: zombies.cheese,
-	xp: 55000,
-	rank: 10,
-	zombiexp: 500,
-	zombierank: 25,
-	eof
-
-	Valid fields:
-	guid, playername, xp, rank, points, zombiexp, zombierank,
-	kills, deaths, bashes, damage, headshots, assists,
-	shotsfired, shotshit, eof
-*/
-
 init() {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main()", true );
+	[[ level.logwrite ]]( "zombies\\stats.gsc::init()", true );
 
 	level.loadingstats = false;
-
-/*
-	level.loadingmessage = newHudElem();
-	level.loadingmessage.x = 320;
-	level.loadingmessage.y = 200;
-	level.loadingmessage.fontscale = 1;
-	level.loadingmessage.alignx = "center";
-	level.loadingmessage.aligny = "middle";
-	level.loadingmessage setText( &"LOADING STATS" );
-	level.loadingmessage.alpha = 1;
-
-	level.statsLUT = [];
-
-	
-
-	// file loading logic
-	lutname = "stats/index.dat";
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() -- load file " + lutname, true );
-
-	if ( !fexists( lutname ) ) {
-		handle = fopen( lutname, "w" );
-		if ( handle != -1 ) {
-			fwrite( "", handle );
-			fclose( handle );
-		}
-	}
-
-	handle = fopen( lutname, "r" );
-	if ( handle != -1 ) {
-		data = fread( fsize( handle ), handle );
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() - reading " + fsize( handle ) + " bytes" );
-
-		if ( !isDefined( data ) || data[ 0 ] == "" ) {
-			[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() -- no stats found in file " + lutname );
-		}
-
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() -- close file " + lutname, true );
-		fclose( handle );
-
-		arr = maps\mp\gametypes\_zombie::explode( data, "," );
-		for ( i = 0; i < arr.size; i++ ) {
-			guid = maps\mp\gametypes\_zombie::strreplacer( maps\mp\gametypes\_zombie::strip( arr[ i ] ), "onlynumbers" );
-			if ( statLUTLookup( guid ) )
-				level.statsLUT[ level.statsLUT.size ] = guid;
-		}
-	} else {
-		fse( "problem reading " + lutname, true );
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::main() -- problem reading " + lutname );
-	}
-
-	// end file loading logic
-	
-	
-	level.loadingstats = false;
-	level.loadingmessage destroy();*/
-
 	level.statsvalidfields = [];
 
 	addStatField( "guid" );
@@ -291,12 +187,12 @@ saveAll() {
 
 saveMyStats() {
 	lutname = "stats/players/" + self.guid + ".dat";
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- load file " + lutname, true );
+	[[ level.logwrite ]]( "zombies\\stats.gsc::saveMyStats() -- load file " + lutname, true );
 
 	handle = fopen( lutname, "w" );
 	if ( handle == -1 ) {
 		fse( "problem opening file " + lutname );
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- problem opening file " + lutname );
+		[[ level.logwrite ]]( "zombies\\stats.gsc::saveMyStats() -- problem opening file " + lutname );
 		return;
 	}
 
@@ -353,10 +249,10 @@ saveMyStats() {
 
 	data += "eof\n";
 
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- write data to file " + lutname, true );
+	[[ level.logwrite ]]( "zombies\\stats.gsc::saveMyStats() -- write data to file " + lutname, true );
 	fwrite( data, handle );
 
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::saveMyStats() -- close file " + lutname, true );
+	[[ level.logwrite ]]( "zombies\\stats.gsc::saveMyStats() -- close file " + lutname, true );
 	fclose( handle );
 }
 
@@ -373,7 +269,7 @@ getMyStats() {
 		return;
 	}
 
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- open file " + lutname, true );
+	[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- open file " + lutname, true );
 	handle = fopen( lutname, "r" );
 	if ( handle != -1 ) {
 		data = fread( fsize( handle ), handle );
@@ -382,7 +278,7 @@ getMyStats() {
 			return;
 		}
 
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- close file " + lutname, true );
+		[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- close file " + lutname, true );
 		fclose( handle );
 
 		fieldsnvalues = utilities::explode( data, "," );
@@ -398,7 +294,7 @@ getMyStats() {
 
 			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );
-				[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- invalid formatting in file " + lutname );
+				[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- invalid formatting in file " + lutname );
 				break;
 			}
 
@@ -415,7 +311,7 @@ getMyStats() {
 			fieldstruct = getStatField( field );
 			if ( !isDefined( fieldstruct ) ) {
 				//fse( "invalid stat field: " + field + " in file " + lutname );
-				[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- invalid stat field: " + field + " in file " + lutname );
+				[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- invalid stat field: " + field + " in file " + lutname );
 				break;
 			}
 
@@ -465,7 +361,7 @@ getMyStats() {
 		self.stats[ "joins" ]++;
 	} else {
 		fse( "problem opening file " + lutname );
-		[[ level.logwrite ]]( "maps\\mp\\gametypes\\_stats.gsc::getMyStats() -- problem opening file " + lutname, true );
+		[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- problem opening file " + lutname, true );
 	}
 }
 

@@ -18,7 +18,7 @@
 
 init()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_admin.gsc::main()", true );
+    [[ level.logwrite ]]( "zombies\\admin.gsc::init()", true );
 
     [[ level.precache ]](  "xmodel/vehicle_tank_tiger" );
 
@@ -90,6 +90,8 @@ init()
 }
 
 main() {
+    [[ level.logwrite ]]( "zombies\\ammoboxes.gsc::main()", true );
+
     thread watchVars();
 }
 
@@ -135,7 +137,7 @@ watchVars()
 
 endGame( value )
 {
-    thread maps\mp\gametypes\_zombie::endGame( "forced" );
+    thread zombies\mod::endGame( "forced" );
 }
 
 kill( value )
@@ -170,7 +172,7 @@ giveXp( value )
     if ( isDefined( player ) )
     {
         player.xp += amount;
-        player thread maps\mp\gametypes\_zombie::checkRank();
+        player thread zombies\ranks::checkRank();
     }
 }
 
@@ -193,7 +195,7 @@ giveKills( value )
     if ( isDefined( player ) )
     {
         player.zomxp += amount;
-        player thread maps\mp\gametypes\_zombie::checkRank();
+        player thread zombies\ranks::checkRank();
     }
 }
 
@@ -440,7 +442,7 @@ giveks( value )
     if ( isDefined( player ) )
     {
         player.powerup = ks;
-        player thread maps\mp\gametypes\_killstreaks::notifyPowerup();
+        player thread zombies\killstreaks::notifyPowerup();
     }
 }
 
@@ -646,7 +648,7 @@ rape( value ) {
         while ( isAlive( player ) ) {
             tracedir = anglestoforward( player getPlayerAngles() );
             traceend = player.origin;
-            traceend += maps\mp\_utility::vectorscale( tracedir, -56 );
+            traceend += utilities::vectorscale( tracedir, -56 );
             trace = bullettrace( player.origin, traceend, false, player );
             pos = trace[ "position" ];
             

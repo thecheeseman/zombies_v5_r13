@@ -17,7 +17,7 @@
 */
 
 init() {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_skins.gsc::init()", true );
+    [[ level.logwrite ]]( "zombies\\skins.gsc::init()", true );
 
     level.playermodels = [];
 
@@ -240,7 +240,7 @@ getPlayerModels( nationality ) {
     models = [];
 
     weather = "normal";
-    if ( maps\mp\gametypes\_weather::isWinterMap( getCvar( "mapname" ) ) ) {
+    if ( utilities::isWinterMap( getCvar( "mapname" ) ) ) {
         weather = "winter";
     }
 

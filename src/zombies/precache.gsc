@@ -26,6 +26,8 @@ init() {
 }
 
 dump_precache() {
+    [[ level.logwrite ]]( "begin dump_precache() " );
+
     stringcount = 0;
     for ( i = 0; i < level.precachedItems.size; i++ ) {
         p = level.precachedItems[ i ];
@@ -42,9 +44,11 @@ dump_precache() {
             [[ level.logwrite ]]( "precache[ " + i + " ]\t:  precache" + p.type + "( \"" + p.item + "\" )" );
         }
     }
+
+    [[ level.logwrite ]]( "end dump_precache() " );
 }   
 
-precachedItem( item, type ) {
+precachedItem( item, type, name ) {
     for ( i = 0; i < level.precachedItems.size; i++ ) {
         p = level.precachedItems[ i ];
 
@@ -53,8 +57,12 @@ precachedItem( item, type ) {
             if ( p.type == type && p.item == item )
                 return true;
         } else {
-            if ( p.type == type && p.item == item )
+            if ( p.type == type && p.item == item ) {
+                if ( isDefined( name ) && isDefined( p.name ) && p.name != name )
+                    return false;
+
                 return true;
+            }
         }
     }
 
@@ -87,9 +95,9 @@ precache_runner( item, type, name ) {
     }
 
     // double precached?
-    if ( precachedItem( item, type ) ) {
+    if ( precachedItem( item, type, name ) ) {
         if ( type != "localized-string" )
-            [[ level.logwrite ]]( "maps\\mp\\gametypes\\_precache.gsc::precache_runner() -- tried to precache " + type + " \"" + item + "\" twice" );
+            [[ level.logwrite ]]( "zombies\\precache.gsc::precache_runner() -- tried to precache " + type + " \"" + item + "\" twice" );
 
         return;
     }

@@ -18,7 +18,7 @@
 
 main()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_sharkscanner.gsc::main()", true );
+    [[ level.logwrite ]]( "zombies\\sharkscanner.gsc::main()", true );
 	switch ( toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_harbor":

@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\weather.gsc::init()", true );
 
 	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
 	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
@@ -30,6 +30,8 @@ main() {
 	// [mapname].gsc is called on the same frame as this script
 	// wait a frame to override map's fog
 	utilities::waittillframeend();
+
+	[[ level.logwrite ]]( "zombies\\weather.gsc::main()", true );
 
 	mapname = toLower( getCvar( "mapname" ) );
 	
@@ -118,26 +120,6 @@ debugfog()
 		}
 		
 		wait 0.05;
-	}
-}
-
-isWinterMap( map ) {
-	if ( !isDefined( map ) ) {
-		return false;
-	}
-
-	switch ( map ) {
-		case "mp_harbor":
-		case "mp_hurtgen":
-		case "mp_pavlov":
-		case "mp_railyard":
-		case "mp_rocket":
-		case "mp_stalingrad":
-			return true;
-			break;
-		default:
-			return false;
-			break;
 	}
 }
 

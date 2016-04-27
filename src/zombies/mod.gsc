@@ -23,57 +23,53 @@
 main()
 {
     zombies\debug::init();
-    [[ level.logwrite ]]( "VV---------- _zombie.gsc::Main() ----------VV" );
+    [[ level.logwrite ]]( "VV---------- mod.gsc::Main() ----------VV" );
     
     zombies\precache::init();
 
     precache();
 
     zombies\objects::init();
-    maps\mp\gametypes\_config::init();
-    maps\mp\gametypes\_killstreaks::init();
-    maps\mp\gametypes\_buymenu::init();
-    maps\mp\gametypes\_mapvote::init();
-    maps\mp\gametypes\_ammoboxes::init();
-    maps\mp\gametypes\_admin::init();
-    maps\mp\gametypes\_extra::init();
-    maps\mp\gametypes\_weather::init();
-    maps\mp\gametypes\_hud::init();
-    maps\mp\gametypes\_permissions::init();
-    maps\mp\gametypes\_stats::init();
-    maps\mp\gametypes\_ranks::init();
-    maps\mp\gametypes\_classes::init();
-    maps\mp\gametypes\_skins::init();
+    zombies\config::init();
+    zombies\killstreaks::init();
+    zombies\buymenu::init();
+    zombies\mapvote::init();
+    zombies\ammoboxes::init();
+    zombies\admin::init();
+    zombies\extra::init();
+    zombies\weather::init();
+    zombies\hud::init();
+    zombies\permissions::init();
+    zombies\stats::init();
+    zombies\ranks::init();
+    zombies\classes::init();
+    zombies\skins::init();
     modules\modules::init();
 
-    maps\mp\gametypes\_config::main();
-    maps\mp\gametypes\_ammoboxes::main();
-    maps\mp\gametypes\_admin::main();   
-    maps\mp\gametypes\_extra::main();
-    maps\mp\gametypes\_weather::main();
-    maps\mp\gametypes\_sharkscanner::main();
+    zombies\config::main();
+    zombies\ammoboxes::main();
+    zombies\admin::main();   
+    zombies\extra::main();
+    zombies\weather::main();
+    zombies\sharkscanner::main();
 
-    [[ level.logwrite ]]( "^^---------- _zombie.gsc::Main() ----------^^" );
+    [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
 
-    maps\mp\gametypes\_precache::dump_precache();
+    zombies\precache::dump_precache();
 }
 
 precache()
 {
     [[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga",     "headicon" );
-    [[ level.precache ]]( "gfx/hud/headicon@axis.tga",              "headicon" );
-    [[ level.precache ]]( "gfx/hud/headicon@allies.tga",            "headicon" );
     [[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga",     "statusicon" );
     [[ level.precache ]]( "gfx/hud/headicon@axis.tga",              "statusicon" );
     [[ level.precache ]]( "gfx/hud/headicon@allies.tga",            "statusicon" );
-    [[ level.precache ]]( "gfx/hud/hud@health_cross.tga",           "statusicon" );
     [[ level.precache ]]( "gfx/hud/hud@death_m1carbine.tga",        "statusicon" );
     [[ level.precache ]]( "gfx/hud/hud@objective_bel.tga" );
     [[ level.precache ]]( "gfx/hud/hud@objectivegoal.tga" );
     [[ level.precache ]]( "gfx/hud/hud@fire_ready.tga" );
     [[ level.precache ]]( "gfx/hud/headicon@axis.tga" );
     [[ level.precache ]]( "gfx/hud/headicon@allies.tga" );
-    [[ level.precache ]]( "gfx/hud/hud@health_cross.tga" );
     [[ level.precache ]]( "killiconmelee", "shader" );
     [[ level.precache ]]( "killicondied", "shader" );
     [[ level.precache ]]( "killiconheadshot", "shader" );
@@ -205,7 +201,7 @@ precache()
 
 startGame()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::startGame()", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::startGame()", true );
 
     setCvar( "g_teamname_axis", "^6Hunters" );
     setCvar( "g_teamname_allies", "^1Zombies" );
@@ -268,6 +264,7 @@ startGame()
     level.timelimit *= timeshift;
     
     level.starttime = getTime();
+
     level.clock = newHudElem();
     level.clock.x = 320;
     level.clock.y = 20;
@@ -291,7 +288,7 @@ rotateIfEmpty()
         wait 1;
     }
     
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::rotateIfEmpty() -- exiting because empty" );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::rotateIfEmpty() -- exiting because empty" );
     exitLevel( false );
 }
 
@@ -341,7 +338,7 @@ pickZombie()
 
 endGame( winner )
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::endGame( " + winner + " )", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::endGame( " + winner + " )", true );
     game[ "state" ] = "endgame";
     level notify( "endgame" );
     level notify( "intermission" );
@@ -377,7 +374,7 @@ endGame( winner )
             hunters[ i ].xp += level.xpvalues[ "HUNTER_WIN" ];
             hunters[ i ].score += level.xpvalues[ "HUNTER_WIN" ];
             hunters[ i ].points += level.pointvalues[ "HUNTER_WIN" ];
-            hunters[ i ] thread checkRank();
+            hunters[ i ] thread zombies\ranks::checkRank();
         }
         
         wait 1;
@@ -400,7 +397,7 @@ endGame( winner )
             
             wait 4.5;
             
-            slowMo( 3.5 );
+            utilities::slowMo( 3.5 );
         }
 
         for ( i = 0; i < players.size; i++ )
@@ -417,8 +414,8 @@ endGame( winner )
         if ( !level.nuked )
             setCullFog( 0, 7500, 0, 0, 0, 3 );
         
-        thread maps\mp\gametypes\_stats::saveAll();
-        thread maps\mp\gametypes\_hud::endgamehud();
+        thread zombies\stats::saveAll();
+        thread zombies\hud::endgamehud();
 
         centerImage = newHudElem();
         centerImage.x = 320;
@@ -512,10 +509,10 @@ endGame( winner )
             utilities::cleanScreen();
         }
         
-        thread maps\mp\gametypes\_mapvote::Initialize();
+        thread zombies\mapvote::Initialize();
         level waittill( "VotingComplete" );
             
-        thread maps\mp\gametypes\_hud::endgamehud_cleanup();
+        thread zombies\hud::endgamehud_cleanup();
         
         game[ "state" ] = "intermission";
         
@@ -528,7 +525,7 @@ endGame( winner )
         wait 10;
     }
 
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::endGame( " + winner + " ) -- exiting level", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::endGame( " + winner + " ) -- exiting level", true );
     exitLevel( false );
 }
 
@@ -537,6 +534,7 @@ gameLogic()
     level endon( "endgame" );
     level endon( "intermission" );
     
+    time = 0;
     while ( 1 )
     {
         resettimeout();
@@ -573,6 +571,17 @@ gameLogic()
         }
         
         wait 0.05;
+        time += 0.05;
+
+        // check timelimit
+        if ( time % 20 == 0 ) {
+            timepassed = ( ( getTime() - level.starttime ) / 1000 ) / 60.0;
+            if ( timepassed >= level.timelimit ) {
+                level.mapended = true;
+                thread endGame( "hunters" );
+                break;
+            }
+        }
     }
     
     wait 3;
@@ -591,7 +600,7 @@ gameLogic()
         if ( level.nuked )
             return;
         
-        [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::gameLogic() -- server hung up??" );
+        [[ level.logwrite ]]( "zombies\\mod.gsc::gameLogic() -- server hung up??" );
         iPrintLnBold( "Server hung up... switching maps..." );
         wait 5;
         exitLevel( false );
@@ -649,7 +658,7 @@ gameCamRemove()
 
 onConnect()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc:onConnect() -- " + self.name + " connected (" + self getip() + ")" );
+    [[ level.logwrite ]]( "zombies\\mod.gsc:onConnect() -- " + self.name + " connected (" + self getip() + ")" );
 
     if ( self.name == "Unknown Soldier" )
         self setClientCvar( "name", "I^1<3^7ZOMBAIS^1" + gettime() );
@@ -719,8 +728,8 @@ onConnect()
     self.barricades = [];
 
     // moved above so server doesnt crash when player types during stats load
-    self maps\mp\gametypes\_permissions::main();
-    self maps\mp\gametypes\_stats::setupPlayer();
+    self zombies\permissions::main();
+    self zombies\stats::setupPlayer();
     
     if ( toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || toLower( getCvar( "mapname" ) ) == "cp_banana" )
         self setClientCvar( "r_fastsky", 0 );
@@ -732,12 +741,12 @@ onConnect()
 
 onDisconnect()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::onDisconnect() -- " + self.name + " disconnected (" + self getip() + ")", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::onDisconnect() -- " + self.name + " disconnected (" + self getip() + ")", true );
 }
 
 spawnPlayer()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::spawnPlayer() -- spawned player " + self.name + " (" + self getip() + ")", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::spawnPlayer() -- spawned player " + self.name + " (" + self getip() + ")", true );
 
     self.killstreak = 0;
     self.ispoisoned = false;
@@ -795,7 +804,7 @@ spawnPlayer()
         self thread whatscooking();
         self thread shotsfired();
 
-        self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
+        self zombies\ranks::giveHunterRankPerks();
         
         self.headiconteam = "axis";
     }
@@ -809,7 +818,7 @@ spawnPlayer()
         self setWeaponSlotClipAmmo( "primary", 0 );
         self setWeaponSlotClipAmmo( "pistol", 0 );
 
-        self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
+        self zombies\ranks::giveZomRankPerks();
 
         if ( self.headicon != "" )
         {
@@ -818,11 +827,11 @@ spawnPlayer()
         }
     }
 
-    self maps\mp\gametypes\_skins::main();
-    self maps\mp\gametypes\_classes::setup();
+    self zombies\skins::main();
+    self zombies\classes::setup();
 
     if ( self.pers[ "team" ] == "axis" ) {
-        self thread ammoLimiting();
+        self ammoLimiting();
 
         if ( self.class == "sniper" || self.class == "recon" || 
            ( self.class == "support" && self.subclass == "combat" ) ||
@@ -838,10 +847,10 @@ spawnPlayer()
     if ( self.isnew )
     {
         self.isnew = false;
-        self thread maps\mp\gametypes\_config::welcomeMessage();
+        self thread zombies\config::welcomeMessage();
     }
 
-    self thread maps\mp\gametypes\_hud::runHud();
+    self thread zombies\hud::runHud();
     
     if ( level.debug )
         self utilities::showpos();
@@ -849,7 +858,7 @@ spawnPlayer()
 
 spawnSpectator()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::spawnSpectator() -- spawned spectator " + self.name + " (" + self getip() + ")", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::spawnSpectator() -- spawned spectator " + self.name + " (" + self getip() + ")", true );
     self notify( "spawn_spectator" );
     
     self.ispoisoned = false;
@@ -861,10 +870,10 @@ spawnSpectator()
     
     self.pers[ "savedmodel" ] = undefined;
     
-    self thread cleanUpHud();
-    self thread maps\mp\gametypes\_buymenu::cleanUp();
+    self thread zombies\hud::cleanUpHud();
+    self thread zombies\buymenu::cleanUp();
     
-    if ( getCvar( "zom_antispec" ) == "1" && !level.mapended && !self maps\mp\gametypes\_permissions::hasPermission( "defeat_antispec" ) )
+    if ( getCvar( "zom_antispec" ) == "1" && !level.mapended && !self zombies\permissions::hasPermission( "defeat_antispec" ) )
         self thread antispec();
 }
 
@@ -914,7 +923,7 @@ antispec() {
 
 spawnIntermission()
 {
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::spawnIntermission() -- spawned intermission " + self.name + " (" + self getip() + ")", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::spawnIntermission() -- spawned intermission " + self.name + " (" + self getip() + ")", true );
 
     self notify( "spawn_intermission" );
     
@@ -925,8 +934,8 @@ spawnIntermission()
     self.givenammo = false;
     self.zombietype = "none";
     
-    self thread cleanUpHud();
-    self thread maps\mp\gametypes\_buymenu::cleanUp();
+    self thread zombies\hud::cleanUpHud();
+    self thread zombies\buymenu::cleanUp();
 }
 
 onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc )
@@ -960,9 +969,9 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 
                     if ( poisonfire ) {
                         if ( eAttacker.zombietype == "poison" && !self.ispoisoned && y > 75 ) {
-                            self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
+                            self thread zombies\classes::bePoisoned( eAttacker );
                         } else if ( eAttacker.zombietype == "fire" && !self.onfire && y > 75 ) {
-                            self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
+                            self thread zombies\classes::firemonitor( eAttacker );
                         }
                     }
                     
@@ -993,7 +1002,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
                     }
                     
                     if ( doit )
-                        self thread maps\mp\gametypes\_classes::bePoisoned( eAttacker );
+                        self thread zombies\classes::bePoisoned( eAttacker );
                 }
                 
                 if ( eAttacker.zombietype == "fire" && !self.onfire )
@@ -1014,7 +1023,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
                     }
                     
                     if ( doit )
-                        self thread maps\mp\gametypes\_classes::firemonitor( eAttacker );
+                        self thread zombies\classes::firemonitor( eAttacker );
                 }
             }
             
@@ -1143,7 +1152,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
         {
             attacker.zomxp++;
             attacker.zomscore++;
-            attacker thread checkRank();
+            attacker thread zombies\ranks::checkRank();
 
             switch ( attacker.zombietype ) {
                 case "jumper":  attacker.stats[ "killsAsJumperZombie" ]++;  break;
@@ -1206,8 +1215,8 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
     if ( self.pers[ "team" ] == "allies" && utilities::_randomInt( 100 ) > 85 && !level.lasthunter )
         self dropHealth();
     
-    self thread cleanUpHud();
-    self thread maps\mp\gametypes\_buymenu::cleanUp();
+    self thread zombies\hud::cleanUpHud();
+    self thread zombies\buymenu::cleanUp();
 }
 
 lastHunter()
@@ -1216,7 +1225,7 @@ lastHunter()
     
     level notify( "stop ammoboxes" );
     
-    [[ level.logwrite ]]( "maps\\mp\\gametypes\\_zombie.gsc::lastHunter() -- " + self.name + " (" + self getip() + ")", true );
+    [[ level.logwrite ]]( "zombies\\mod.gsc::lastHunter() -- " + self.name + " (" + self getip() + ")", true );
     iPrintLnBold( self.name + "^7 is the last ^6Hunter^7!" );
 
     self.stats[ "timesAsLastHunter" ]++;
@@ -1269,16 +1278,16 @@ lastHunter()
     self.xp += level.xpvalues[ "LASTHUNTER" ];
     self.score += level.xpvalues[ "LASTHUNTER" ];
     self.points += level.pointvalues[ "LASTHUNTER" ];
-    self thread checkRank();
+    self thread zombies\ranks::checkRank();
     self iPrintLn( "^3+" + level.xpvalues[ "LASTHUNTER" ] + " XP!" );
     
     wait 0.05;
 
     orgarmor = self.armor;
     
-    scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 2048, 2500, 20, self, self );
+    utilities::scriptedRadiusDamage( self.origin + ( 0, 0, 12 ), 2048, 2500, 20, self, self );
     playFx( level._effect[ "explosion1" ], self.origin );
-    thread playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 );
+    thread utilities::playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 );
     earthquake( 9999, 3, self.origin + ( 0, 0, 1 ), 512 );
     
     self openMenu( "weapon_russian" );
@@ -1338,7 +1347,7 @@ lasthunter_deathexplosion()
     self waittill( "death" );
 
     playFx( level._effect[ "v2" ], self.origin );
-    thread playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 ); 
+    thread utilities::playSoundInSpace( "explo_rock", self.origin + ( 0, 0, 12 ), 4 ); 
     earthquake( 9999, 10, self.origin + ( 0, 0, 1 ), 4 );
 }
 
@@ -1608,7 +1617,7 @@ extraKeys()
                     if ( self.pers[ "team" ] == "axis" )
                     {
                         if ( isDefined( self.powerup ) )
-                            self thread maps\mp\gametypes\_killstreaks::doPowerup();
+                            self thread zombies\killstreaks::doPowerup();
                         else
                             self iPrintLn( "^2You don't have any powerups." );
                     }
@@ -1617,9 +1626,9 @@ extraKeys()
                     if ( self.pers[ "team" ] == "allies" )
                     {
                         if ( self.zombietype == "fire" )
-                            self thread maps\mp\gametypes\_classes::firebomb();
+                            self thread zombies\classes::firebomb();
                         else if ( self.zombietype == "poison" )
-                            self thread maps\mp\gametypes\_classes::poisonbomb();
+                            self thread zombies\classes::poisonbomb();
                     }
                     break;
                 default:
@@ -1646,7 +1655,7 @@ timeAlive()
         if ( timecheck == 10 ) {
             self.xp += level.xpvalues[ "TIMEALIVE" ];
             self.score += level.xpvalues[ "TIMEALIVE" ];
-            self thread checkRank();
+            self thread zombies\ranks::checkRank();
             timecheck = 0;
         }
         
@@ -1918,7 +1927,7 @@ giveXP( sMeansOfDeath, player, assisters )
 
     self iPrintLn( "^3+" + xp + " XP!" );
     
-    self thread checkRank();
+    self thread zombies\ranks::checkRank();
     
     for ( i = 0; i < assisters.size; i++ )
     {
@@ -1931,80 +1940,11 @@ giveXP( sMeansOfDeath, player, assisters )
                 assisters[ i ].ent.points += level.pointvalues[ "ASSISTS" ];
                 assisters[ i ].ent.pointscore += level.pointvalues[ "ASSISTS" ];
                 assisters[ i ].ent iPrintLn( "^3" + level.xpvalues[ "ASSISTS" ] + " XP!" );
-                assisters[ i ].ent thread checkRank();
+                assisters[ i ].ent thread zombies\ranks::checkRank();
                 assisters[ i ].ent.stats[ "assists" ]++;
             }
         }
     }
-}
-
-checkRank()
-{
-    currentrank = undefined;
-    newrank = undefined;
-
-    if ( self.pers[ "team" ] == "axis" )
-    {
-        currentrank = self.rank;
-        rank = maps\mp\gametypes\_ranks::getRankByXP( "hunter", self.xp );
-        newrank = rank.id;
-    }
-
-    if ( self.pers[ "team" ] == "allies" )
-    {
-        currentrank = self.zomrank;
-        rank = maps\mp\gametypes\_ranks::getRankByXP( "zombie", self.zomxp );
-        newrank = rank.id;
-    }
-    
-
-    if ( ( isDefined( currentrank ) && isDefined( newrank ) ) && newrank != currentrank )
-        self rankUp( newrank );
-}
-
-rankUp( newrank )
-{
-    if ( self.pers[ "team" ] == "axis" )
-    {
-        self.rank = newrank;
-        rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", newrank );
-        
-        ranktext = rank.rankString;
-        hudtext = rank.rankName;
-
-        if ( isDefined( self.hud[ "rank" ] ) ) {
-            self.hud[ "rank" ] setText( ranktext );
-        }
-    }
-    else if ( self.pers[ "team" ] == "allies" )
-    {
-        self.zomrank = newrank;
-        rank = maps\mp\gametypes\_ranks::getRankByID( "zombie", newrank );
-        
-        ranktext = rank.rankString;
-        hudtext = rank.rankName;
-
-        if ( isDefined( self.hud[ "zombierank" ] ) ) {
-            self.hud[ "zombierank" ] setText( ranktext );
-        }
-    }
-    
-    self iPrintLnBold( "You have been promoted to ^2" + hudtext + "^7!" );
-    self playLocalSound( "explo_plant_no_tick" );
-    
-    if ( self.pers[ "team" ] == "axis" )
-    {
-        self.changeweapon = true;
-        
-        //self iPrintLn( "^2You can change your weapon." );
-        
-        self thread maps\mp\gametypes\_ranks::giveHunterRankPerks();
-        
-        self.points += level.pointvalues[ "RANKUP" ];
-    }
-    
-    if ( self.pers[ "team" ] == "allies" )
-        self thread maps\mp\gametypes\_ranks::giveZomRankPerks();
 }
 
 killstreakShiz()
@@ -2038,18 +1978,13 @@ killstreakShiz()
     
     gavepowerup = false;
     
-    self maps\mp\gametypes\_killstreaks::checkPowerup();
-}
-
-cleanUpHud()
-{
-    self maps\mp\gametypes\_hud::cleanUpHud();
+    self zombies\killstreaks::checkPowerup();
 }
 
 getLastHunterNadeAmmo()
 {
     amount = 5;
-    rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
+    rank = zombies\ranks::getRankByID( "hunter", self.rank );
     if ( isDefined( rank ) && isDefined( rank.rankPerks ) )
         amount = rank.rankPerks.stickynades * 2;
         
@@ -2059,7 +1994,7 @@ getLastHunterNadeAmmo()
 getHunterNadeAmmo()
 {
     amount = 1;
-    rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
+    rank = zombies\ranks::getRankByID( "hunter", self.rank );
     if ( isDefined( rank ) && isDefined( rank.rankPerks ) )
         amount = rank.rankPerks.stickynades;
         
@@ -2155,7 +2090,7 @@ getAmmoBonusForRank()
     if ( self.ammobonus > 0 ) {
         bonus = self.ammobonus;
     } else {
-        rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
+        rank = zombies\ranks::getRankByID( "hunter", self.rank );
         if ( isDefined( rank ) && isDefined( rank.rankPerks ) )
             bonus = rank.rankPerks.ammobonus;
     }
@@ -2303,7 +2238,7 @@ monitorSticky( owner )
         {
             self playsound( "grenade_explode_default" );
             playfx( level._effect[ "bombexplosion" ], self.origin + ( 0, 0, 8 ) );
-            scriptedRadiusDamage( self.origin + ( 0, 0, 8 ), 192, 800, 20, owner, undefined );
+            utilities::scriptedRadiusDamage( self.origin + ( 0, 0, 8 ), 192, 800, 20, owner, undefined );
             earthquake( 0.5, 3, self.origin + ( 0, 0, 8 ), 192 );
             wait 3;
             owner.stickynades++;
@@ -2312,23 +2247,6 @@ monitorSticky( owner )
     
     level.stickynades--;
     self delete();
-}
-
-nameChange()
-{
-    self endon( "disconnect" );
-    
-    oldname = self.name;
-    for ( ;; )
-    {
-        if ( self.name != oldname )
-        {
-            logprint( "N;" + oldname + " changed their name to " + self.name + ".\n" );
-            oldname = self.name;
-        }
-        
-        wait 1;
-    }
 }
 
 bloodsplatter()
@@ -2396,71 +2314,6 @@ painsound()
     self.painsound = undefined;
 }
 
-setAllClientCvars( cvar, value )
-{
-    players = getEntArray( "player", "classname" );
-    for ( i = 0; i < players.size; i++ )
-        players[ i ] setClientCvar( cvar, value );
-}
-
-fastMo( length )
-{
-    if ( length <= 1 )
-        return;
-    newlength = length - 1;
-    
-    for ( i = 1.0; i < 1.5; i += 0.05 )
-    {
-        setCvar( "timescale", i );
-        setAllClientCvars( "timescale", i );
-        wait 0.05;
-    }
-    
-    setCvar( "timescale", 1.5 );
-    setAllClientCvars( "timescale", 1.5 );
-    
-    wait ( newlength );
-    
-    for ( i = 0; i > 1.0; i -= 0.05 )
-    {
-        setCvar( "timescale", i );
-        setAllClientCvars( "timescale", i );
-        wait 0.05;
-    }
-    
-    setCvar( "timescale", 1.0 );
-    setAllClientCvars( "timescale", 1.0 );
-}
-
-slowMo( length )
-{
-    if ( length <= 1 )
-        return;
-    newlength = length - 1;
-    
-    for ( i = 1.0; i > 0.5; i -= 0.05 )
-    {
-        setCvar( "timescale", i );
-        setAllClientCvars( "timescale", i );
-        wait 0.05;
-    }
-    
-    setCvar( "timescale", 0.5 );
-    setAllClientCvars( "timescale", 0.5 );
-    
-    wait ( newlength );
-    
-    for ( i = 0.5; i < 1.0; i += 0.05 )
-    {
-        setCvar( "timescale", i );
-        setAllClientCvars( "timescale", i );
-        wait 0.05;
-    }
-    
-    setCvar( "timescale", 1.0 );
-    setAllClientCvars( "timescale", 1.0 );
-}
-
 thirdPerson( setting )
 {
     if ( setting == "on" )
@@ -2472,64 +2325,6 @@ thirdPerson( setting )
     {
         self.thirdperson = false;
         self setClientCvar( "cg_thirdperson", 0 );
-    }
-}
-
-FOVScale( value )
-{
-    self setClientCvar( "cg_fov", value );
-}
-
-scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
-{
-    players = getEntArray( "player", "classname" );
-    inrange = [];
-    
-    for ( i = 0; i < players.size; i++ )
-    {
-        if ( distance( origin, players[ i ].origin ) < range )
-        {
-            if ( isDefined( ignore ) && players[ i ] == ignore )
-                continue;
-                
-            if ( players[ i ].sessionstate != "playing" )
-                continue;
-                
-            inrange[ inrange.size ] = players[ i ];
-        }
-    }
-
-    for ( i = 0; i < inrange.size; i++ )
-    {
-        damage = 0;
-        
-        dist = distance( origin, inrange[ i ].origin );
-        
-        dmult = ( range - dist ) / range;
-        if ( dmult >= 1 ) dmult = 0.99;
-        if ( dmult <= 0 ) dmult = 0.01;
-            
-        damage = maxdamage * dmult;
-
-        trace = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 16 ), false, undefined );
-        trace2 = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 40 ), false, undefined );
-        trace3 = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 60 ), false, undefined );
-        if ( trace[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace3[ "fraction" ] != 1 )
-            continue;
-            
-        hitloc = "torso_upper";
-        if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] == 1 )
-            hitloc = "torso_lower";
-        if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace[ "fraction" ] == 1 )
-        {
-            s = "left";
-            if ( utilities::_randomInt( 100 ) > 50 )
-                s = "right";
-                
-            hitloc = s + "_leg_upper";
-        }
-            
-        inrange[ i ] thread [[ level.callbackPlayerDamage ]]( attacker, attacker, damage, 0, "MOD_GRENADE_SPLASH", "defaultweapon_mp", origin, vectornormalize( inrange[ i ].origin - origin ), hitloc );
     }
 }
 
@@ -2577,35 +2372,6 @@ dropHealth()
         level.healthqueuecurrent = 0;
 }
 
-playSoundInSpace( sAlias, vOrigin, iTime )
-{
-    oOrg = spawn( "script_model", vOrigin );
-    wait 0.05;
-    oOrg playSound( sAlias );
-    
-    wait ( iTime );
-    
-    oOrg delete();
-}
-
-getMapWeather()
-{
-    sMapName = toLower( getCvar( "mapname" ) );
-    
-    switch ( sMapName )
-    {
-        case "mp_harbor":
-        case "mp_pavlov":
-        case "mp_hurtgen":
-        case "mp_rocket":
-        case "mp_railyard":
-        case "mp_stalingrad":
-            return "winter"; break;
-    }
-    
-    return "normal";
-}
-
 fadeIn( time, image )
 {
     self setShader( image, 32, 32 );
@@ -2621,29 +2387,76 @@ fadeOut( time )
 
 getHitLoc( sHitloc )
 {
+    // hitloc strings for randomness :)
+    hitlocs = [];
+    
+    hitlocs[ "none" ] = [];
+    hitlocs[ "none" ][ 0 ] = "^3places that don't exist";
+    hitlocs[ "none" ][ 1 ] = "^3the void";
+    hitlocs[ "none" ][ 2 ] = "^3the empty space between atoms";
+    hitlocs[ "none" ][ 3 ] = "^3locations unknown to man";
+
+    hitlocs[ "head" ] = [];
+    hitlocs[ "head" ][ 0 ] = "^7the ^3head";
+    hitlocs[ "head" ][ 1 ] = "^7the ^3noggin";
+    hitlocs[ "head" ][ 2 ] = "^7the ^3prefrontal cortex";
+    hitlocs[ "head" ][ 3 ] = "^7the ^3dome-piece";
+    hitlocs[ "head" ][ 4 ] = "^7the ^3melon";
+    hitlocs[ "head" ][ 5 ] = "^7the ^3skull";
+    hitlocs[ "head" ][ 6 ] = "^7the ^3face";
+    hitlocs[ "head" ][ 7 ] = "^7the ^3mandible";
+    hitlocs[ "head" ][ 8 ] = "^7the ^3cranium";
+
+    hitlocs[ "helmet" ] = [];
+    hitlocs[ "helmet" ][ 0 ] = "^7the ^3helmet";
+
+    hitlocs[ "neck" ] = [];
+    hitlocs[ "neck" ][ 0 ] = "^7the ^3neck";
+    hitlocs[ "neck" ][ 1 ] = "^7the ^3jugular";
+    hitlocs[ "neck" ][ 2 ] = "^7the ^3Adam's apple";
+    hitlocs[ "neck" ][ 3 ] = "^7the ^3esophagus";
+    hitlocs[ "neck" ][ 3 ] = "^7the ^3trachea";
+
+    hitlocs[ "torso_upper" ] = [];
+    hitlocs[ "torso_upper" ][ 0 ] = "^7the ^3chest";
+    hitlocs[ "torso_upper" ][ 1 ] = "^7the ^3titties";
+    hitlocs[ "torso_upper" ][ 2 ] = "^7the ^3thorax";
+    hitlocs[ "torso_upper" ][ 3 ] = "^7the ^3heart";
+    hitlocs[ "torso_upper" ][ 4 ] = "^7the ^3lungs";
+    hitlocs[ "torso_upper" ][ 5 ] = "^7the ^3left nipple";
+    hitlocs[ "torso_upper" ][ 6 ] = "^7the ^3right nipple";
+    hitlocs[ "torso_upper" ][ 7 ] = "^7the ^3baby feeders";
+
+    hitlocs[ "torso_lower" ] = [];
+    hitlocs[ "torso_lower" ][ 0 ] = "^7the ^3stomach";
+    hitlocs[ "torso_lower" ][ 1 ] = "^7the ^3gut";
+    hitlocs[ "torso_lower" ][ 2 ] = "^7the ^3spleen";
+    hitlocs[ "torso_lower" ][ 3 ] = "^7the ^3large intestines";
+    hitlocs[ "torso_lower" ][ 4 ] = "^7the ^3small intestines";
+    hitlocs[ "torso_lower" ][ 5 ] = "^7the ^3kidney";
+    hitlocs[ "torso_lower" ][ 6 ] = "^7the ^3pancreas";
+    hitlocs[ "torso_lower" ][ 7 ] = "^7the ^3dick";
+
     switch ( sHitloc )
     {
-        case "none": return "^3places that don't exist"; break;
-        case "head": return "^7the ^3head"; break;
-        case "helmet": return "^7the ^3helmet"; break;
-        case "neck": return "^7the ^3neck"; break;
-        case "torso_upper": return "^7the ^3chest"; break;
-        case "torso_lower": return "^7the ^3stomach"; break;
+        case "none":
+        case "head":
+        case "helmet":
+        case "neck":
+        case "torso_upper":
+        case "torso_lower":         return hitlocs[ sHitloc ][ randomInt( hitlocs[ sHitloc ].size ) ]; break;
         case "right_arm_lower":
-        case "right_arm_upper": 
-            return "^7the ^3right arm"; break;
+        case "right_arm_upper":     return "^7the ^3right arm"; break;
         case "left_arm_lower":
-        case "left_arm_upper":
-            return "^7the ^3left arm"; break;
-        case "right_hand": return "^7the ^3right hand"; break;
-        case "left_hand": return "^7the ^3left hand"; break;
-        case "right_leg_upper": return "^7the ^3right thigh"; break;
-        case "right_leg_lower": return "^7the ^3right shin"; break;
-        case "left_leg_upper": return "^7the ^3left thigh"; break;
-        case "left_leg_lower": return "^7the ^3left shin"; break;
-        case "right_foot": return "^7the ^3right foot"; break;
-        case "left_foot": return "^7the ^3left foot"; break;
-        default:
-            return sHitloc; break;
+        case "left_arm_upper":      return "^7the ^3left arm"; break;
+        case "right_hand":          return "^7the ^3right hand"; break;
+        case "left_hand":           return "^7the ^3left hand"; break;
+        case "right_leg_upper":     return "^7the ^3right thigh"; break;
+        case "right_leg_lower":     return "^7the ^3right shin"; break;
+        case "left_leg_upper":      return "^7the ^3left thigh"; break;
+        case "left_leg_lower":      return "^7the ^3left shin"; break;
+        case "right_foot":          return "^7the ^3right foot"; break;
+        case "left_foot":           return "^7the ^3left foot"; break;
+        default:                    return sHitloc; break;
     }
 }

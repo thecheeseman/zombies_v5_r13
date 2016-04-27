@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_hud.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\hud.gsc::init()", true );
 
 	[[ level.precache ]]( "^2Game Cam" );
 	[[ level.precache ]]( "^1Zombi^7cam" );
@@ -179,7 +179,7 @@ cleanUpHud()
 	if ( isDefined( self.mtprogressbackground ) )	self.mtprogressbackground destroy();
 	if ( isDefined( self.mtprogressbar ) )			self.mtprogressbar destroy();
 	
-	self thread maps\mp\gametypes\_zombie::FOVScale( 80 );
+	self utilities::FOVScale( 80 );
 }
 
 runHud()
@@ -335,9 +335,6 @@ runHud()
 			self.zombiehud.alpha = 0.1;
 			self.zombiehud.archive = true;
 		}
-		
-		if ( self.pers[ "weapon" ] == "sten_mp" )
-			self maps\mp\gametypes\_zombie::FOVScale( 110 );
 			
 		self addTextHud( "zombierank", 630, 370, "right", "middle", 1, 1, 10, &"^1Zombie Rank^7: " );
 		self addTextHud( "zombietype", 630, 390, "right", "middle", 1, 1, 10, &"^2Zombie Class^7: " );
@@ -371,7 +368,7 @@ doHud()
 {
 	if ( self.pers[ "team" ] == "axis" )
 	{
-		rank = maps\mp\gametypes\_ranks::getRankByID( "hunter", self.rank );
+		rank = zombies\ranks::getRankByID( "hunter", self.rank );
 		self.hud[ "rank" ] setText( rank.rankString );
 
 		classstring = &"None";
@@ -402,7 +399,7 @@ doHud()
 			case "springfield_mp": 	rank = &"Fire"; break;
 		}
 		
-		lolrank = maps\mp\gametypes\_ranks::getRankByID( "zombie", self.zomrank );
+		lolrank = zombies\ranks::getRankByID( "zombie", self.zomrank );
 		self.hud[ "zombietype" ] setText( rank );
 		self.hud[ "zombierank" ] setText( lolrank.rankString );
 	}

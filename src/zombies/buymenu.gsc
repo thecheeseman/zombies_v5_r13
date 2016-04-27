@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_buymenu.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\buymenu.gsc::init()", true );
 	
 	level.points = [];
 	level.points[ "buy_armor_10" ] = 100;
@@ -260,7 +260,7 @@ doItem( response )
 		case "carpetbomb":
 		case "nuke":
 			self.powerup = response;
-			self thread maps\mp\gametypes\_killstreaks::notifyPowerup();
+			self thread zombies\killstreaks::notifyPowerup();
 			break;
 		case "buy_panzer":
 			self setWeaponSlotWeapon( "primaryb", "panzerfaust_mp" );
@@ -373,7 +373,7 @@ spawn_barricade( model, clip, trigdistance )
 	*/
 	level.barricades++;;
 	
-	self.barricades[ num ].model thread maps\mp\gametypes\_physics::doPhysics();
+	self.barricades[ num ].model thread zombies\physics::doPhysics();
 
 	self.insidebarricade = true;
 
@@ -437,7 +437,7 @@ beDestroyed( owner, type, hitboxsize ) {
 	            if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
 	        	//if ( players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
 	                attacker = players[ i ];
-	                attacker thread maps\mp\gametypes\_classes::meleedowntrack();
+	                attacker thread zombies\classes::meleedowntrack();
 	                attackerweapon = players[ i ] getCurrentWeapon();
 	                doHit = true;
 	                break;
@@ -461,7 +461,7 @@ beDestroyed( owner, type, hitboxsize ) {
 	        	continue;
 
             self playSound( "melee_hit" );
-            attacker thread maps\mp\gametypes\_zombie::showhit();
+            attacker thread zombies\mod::showhit();
             
 	        self.health -= damage * attacker.damagemult;
 

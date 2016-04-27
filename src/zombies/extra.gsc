@@ -22,7 +22,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_extra.gsc::main()", true );
+	[[ level.logwrite ]]( "zombies\\extra.gsc::init()", true );
 	
 	[[ level.precache ]]( "xmodel/vehicle_russian_barge" );
 	[[ level.precache ]]( "xmodel/vehicle_tank_tiger_d" );
@@ -31,6 +31,8 @@ init()
 }
 
 main() {	
+	[[ level.logwrite ]]( "zombies\\extra.gsc::main()", true );
+
 	models = [];
 	fx = [];
 	supported = true;

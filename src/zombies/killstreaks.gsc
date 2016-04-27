@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_killstreaks.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\killstreaks.gsc::init()", true );
 	
 	level.killstreaks = [];
 	
@@ -168,7 +168,7 @@ giveScoreForStreak( iXP, iPoints )
 	self.points += iPoints;
 	self.pointscore += iPoints;
 	
-	self thread maps\mp\gametypes\_zombie::checkRank();
+	self thread zombies\ranks::checkRank();
 }
 
 armor()
@@ -391,7 +391,7 @@ doMortar( owner, pos, fx )
 		
 	thread artilleryline( newpos + ( 0, 0, 8 ), 2 );
 
-	maps\mp\gametypes\_zombie::scriptedRadiusDamage( newpos + ( 0, 0, 8 ), range, 1500, 50, owner, undefined );
+	utilities::scriptedRadiusDamage( newpos + ( 0, 0, 8 ), range, 1500, 50, owner, undefined );
 	wait 2;
 	mod delete();
 }
@@ -512,10 +512,10 @@ callStrike( owner, coord, yaw, num, plane )
 	planeFlyHeight = 850;
 	planeFlySpeed = 7000;
 
-	startPoint = coord + maps\mp\_utility::vectorscale( anglestoforward( direction ), -1 * planeHalfDistance );
+	startPoint = coord + utilities::vectorScale( anglestoforward( direction ), -1 * planeHalfDistance );
 	startPoint += ( 0, 0, planeFlyHeight );
 
-	endPoint = coord + maps\mp\_utility::vectorscale( anglestoforward( direction ), planeHalfDistance );
+	endPoint = coord + utilities::vectorScale( anglestoforward( direction ), planeHalfDistance );
 	endPoint += ( 0, 0, planeFlyHeight );
 	
 	d = length( startPoint - endPoint );
@@ -575,8 +575,8 @@ callStrike_bombEffect( plane, launchTime, owner, yaw )
 	bomb = spawn( "script_model", plane.origin );
 	bomb.angles = plane.angles;
 	bomb setModel( "xmodel/105" );
-	bomb moveGravity( maps\mp\_utility::vectorscale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
-	bomb rotateVelocity( maps\mp\_utility::vectorscale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
+	bomb moveGravity( utilities::vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
+	bomb rotateVelocity( utilities::vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
 	
 	bomb thread removelater( 6 );
 	snd thread removelater( 6 );
@@ -594,7 +594,7 @@ callStrike_bombEffect( plane, launchTime, owner, yaw )
 
 	wait 0.05;
 	
-	maps\mp\gametypes\_zombie::scriptedRadiusDamage( traceHit + ( 0, 0, 8 ), 900, 1500, 50, owner, undefined );
+	utilities::scriptedRadiusDamage( traceHit + ( 0, 0, 8 ), 900, 1500, 50, owner, undefined );
 }
 
 removelater( time )
@@ -627,7 +627,7 @@ getBestPlaneDirection( hitpos )
 		dir = anglesToForward( angle );
 		
 		//endpos = startpos + dir * 1500;
-		endpos = maps\mp\_utility::vectorScale( ( startpos + dir ), 1500 );
+		endpos = utilities::vectorScale( ( startpos + dir ), 1500 );
 		
 		trace = bullettrace( startpos, endpos, false, undefined );
 		
@@ -676,7 +676,7 @@ nuke()
 	v2 movez( -7300, 2 );
 	
 	setCullFog( 0, 2500, 1, 1, 1, 2 );
-	thread maps\mp\gametypes\_zombie::slowMo( 3 );
+	thread utilities::slowMo( 3 );
 	wait 1.8;
 	setCullFog( 0, 20, 1, 1, 1, 0.2 );
 	wait 0.2;
@@ -700,7 +700,7 @@ nuke()
 	}
 
 	if ( !level.mapended )
-		thread maps\mp\gametypes\_zombie::endGame( "nuke" );
+		thread zombies\mod::endGame( "nuke" );
 	
 	wait 2;
 	
@@ -729,7 +729,7 @@ getUserLocation()
 	{
 		traceDir = anglesToForward( self getPlayerAngles() );
 		traceEnd = self.origin + ( 0, 0, 64 );
-		traceEnd += maps\mp\_utility::vectorScale( traceDir, 10000 );
+		traceEnd += utilities::vectorScale( traceDir, 10000 );
 		trace = bulletTrace( self.origin + ( 0, 0, 64 ), traceEnd, false, undefined );
 		
 		pos = trace[ "position" ];

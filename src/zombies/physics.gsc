@@ -18,7 +18,7 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_physics.gsc::init()", true );
+	[[ level.logwrite ]]( "zombies\\physics.gsc::init()", true );
 	level.gravity = getCvar( "g_gravity" );
 }
 

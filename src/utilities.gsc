@@ -264,6 +264,39 @@ explode( s, delimiter, num )
     return temparr;
 }
 
+fastMo( length )
+{
+    if ( length <= 1 )
+        return;
+    newlength = length - 1;
+    
+    for ( i = 1.0; i < 1.5; i += 0.05 )
+    {
+        setCvar( "timescale", i );
+        setAllClientCvars( "timescale", i );
+        wait 0.05;
+    }
+    
+    setCvar( "timescale", 1.5 );
+    setAllClientCvars( "timescale", 1.5 );
+    
+    wait ( newlength );
+    
+    for ( i = 0; i > 1.0; i -= 0.05 )
+    {
+        setCvar( "timescale", i );
+        setAllClientCvars( "timescale", i );
+        wait 0.05;
+    }
+    
+    setCvar( "timescale", 1.0 );
+    setAllClientCvars( "timescale", 1.0 );
+}
+
+FOVScale( value ) {
+    self setClientCvar( "cg_fov", value );
+}
+
 getNumberedName( str, ignorespaces )
 {
     if ( !isDefined( str ) || str == "" )
@@ -443,6 +476,26 @@ isSymbol( cChar )
     return bIsSymbol;
 }
 
+isWinterMap( map ) {
+    if ( !isDefined( map ) ) {
+        return false;
+    }
+
+    switch ( map ) {
+        case "mp_harbor":
+        case "mp_hurtgen":
+        case "mp_pavlov":
+        case "mp_railyard":
+        case "mp_rocket":
+        case "mp_stalingrad":
+            return true;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
 mapChar( str, conv )
 {
     if ( !isdefined( str ) || ( str == "" ) )
@@ -525,17 +578,67 @@ monotone( str )
     return ( _s );
 }
 
-showPos()
+playSoundInSpace( sAlias, vOrigin, iTime )
 {
-    while ( isAlive( self ) )
+    oOrg = spawn( "script_model", vOrigin );
+    wait 0.05;
+    oOrg playSound( sAlias );
+    
+    wait ( iTime );
+    
+    oOrg delete();
+}
+
+scriptedRadiusDamage( origin, range, maxdamage, mindamage, attacker, ignore )
+{
+    players = getEntArray( "player", "classname" );
+    inrange = [];
+    
+    for ( i = 0; i < players.size; i++ )
     {
-        if ( self meleebuttonpressed() )
+        if ( distance( origin, players[ i ].origin ) < range )
         {
-            self iprintln( "^5(^7" + self.origin[ 0 ] + ", " + self.origin[ 1 ] + ", " + self.origin[ 2 ] + "^5)^7 " + self.angles[ 1 ] );
-            wait 1;
+            if ( isDefined( ignore ) && players[ i ] == ignore )
+                continue;
+                
+            if ( players[ i ].sessionstate != "playing" )
+                continue;
+                
+            inrange[ inrange.size ] = players[ i ];
         }
+    }
+
+    for ( i = 0; i < inrange.size; i++ )
+    {
+        damage = 0;
         
-        wait 0.05;
+        dist = distance( origin, inrange[ i ].origin );
+        
+        dmult = ( range - dist ) / range;
+        if ( dmult >= 1 ) dmult = 0.99;
+        if ( dmult <= 0 ) dmult = 0.01;
+            
+        damage = maxdamage * dmult;
+
+        trace = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 16 ), false, undefined );
+        trace2 = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 40 ), false, undefined );
+        trace3 = bullettrace( origin, inrange[ i ].origin + ( 0, 0, 60 ), false, undefined );
+        if ( trace[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace3[ "fraction" ] != 1 )
+            continue;
+            
+        hitloc = "torso_upper";
+        if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] == 1 )
+            hitloc = "torso_lower";
+        if ( trace3[ "fraction" ] != 1 && trace2[ "fraction" ] != 1 && trace[ "fraction" ] == 1 )
+        {
+            s = "left";
+            if ( _randomInt( 100 ) > 50 )
+                s = "right";
+                
+            hitloc = s + "_leg_upper";
+        }
+            
+        inrange[ i ] thread [[ level.callbackPlayerDamage ]]( attacker, attacker, damage, 0, "MOD_GRENADE_SPLASH", "defaultweapon_mp", origin, vectornormalize( inrange[ i ].origin - origin ), hitloc );
     }
 }
 
@@ -555,6 +658,57 @@ seperateVarName( var, num ) {
     }
     return ucfirst( temp );
 }
+
+setAllClientCvars( cvar, value )
+{
+    players = getEntArray( "player", "classname" );
+    for ( i = 0; i < players.size; i++ )
+        players[ i ] setClientCvar( cvar, value );
+}
+
+showPos()
+{
+    while ( isAlive( self ) )
+    {
+        if ( self meleebuttonpressed() )
+        {
+            self iprintln( "^5(^7" + self.origin[ 0 ] + ", " + self.origin[ 1 ] + ", " + self.origin[ 2 ] + "^5)^7 " + self.angles[ 1 ] );
+            wait 1;
+        }
+        
+        wait 0.05;
+    }
+}
+
+slowMo( length )
+{
+    if ( length <= 1 )
+        return;
+    newlength = length - 1;
+    
+    for ( i = 1.0; i > 0.5; i -= 0.05 )
+    {
+        setCvar( "timescale", i );
+        setAllClientCvars( "timescale", i );
+        wait 0.05;
+    }
+    
+    setCvar( "timescale", 0.5 );
+    setAllClientCvars( "timescale", 0.5 );
+    
+    wait ( newlength );
+    
+    for ( i = 0.5; i < 1.0; i += 0.05 )
+    {
+        setCvar( "timescale", i );
+        setAllClientCvars( "timescale", i );
+        wait 0.05;
+    }
+    
+    setCvar( "timescale", 1.0 );
+    setAllClientCvars( "timescale", 1.0 );
+}
+
 
 startsWith( string, start ) {
     if ( !isDefined( string ) || !isDefined( start ) )
@@ -661,6 +815,11 @@ strreplacer( sString, sType ) {
     }
     
     return sOut;
+}
+
+vectorScale( vec, scale ) {
+    vec = ( vec[ 0 ] * scale, vec[ 1 ] * scale, vec[ 2 ] * scale );
+    return vec;
 }
 
 waittillframeend() {
