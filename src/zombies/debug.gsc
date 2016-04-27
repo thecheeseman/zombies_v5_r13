@@ -56,15 +56,17 @@ logwrite( data, pendantic ) {
 
     fwrite( fulldata, handle );
     fclose( handle );
+
+    //printconsole( "debug: " + data + "\n" );
 }
 
 // file system error
 fse( error, serious ) {
     if ( isDefined( serious ) && serious ) {
         iPrintLnBold( "^1fse: ^7" + error );
-        logprint( "!!!!! fse: " + error + "\n" );
+        printconsole( "!!!!! fse: " + error + "\n" );
     } else {
         iPrintLn( "^1fse: ^7" + error );
-        logprint( "fse: " + error + "\n" );
+        printconsole( "fse: " + error + "\n" );
     }
 }

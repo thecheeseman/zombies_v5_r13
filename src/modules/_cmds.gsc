@@ -576,7 +576,7 @@ spectate_player( tok ) {
     if ( isDefined ( player ) && player.sessionstate == "playing" && player != self ) {
         self.specplayer = player getEntityNumber();
         wait 0.05;
-        self maps\mp\gametypes\zombies::spawnSpectator();
+        self [[ level.callbackSpawnSpectator ]]();
     }
 }
 

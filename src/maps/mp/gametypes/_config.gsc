@@ -102,6 +102,16 @@ setupValues()
 
 	level.antispec =							(int)cvardef( "zom_antispec", 1, 0, 1, "int", true );
 
+	level.timelimit =							(float)cvardef( "zom_timelimit", 30, 0, 1140, "float", true );
+	level.scorelimit = 0;
+
+    setcvar("scr_forcerespawn", "0");
+    
+    setcvar("scr_friendlyfire", "0");
+    level.drawfriend = 							(int)cvardef( "scr_drawfriend", 0, 0, 1, "int", true );
+
+    level.allowvote = 							(int)cvardef( "scr_allow_vote", 0, 0, 1, "int", true );
+
 	level.xpvalues = [];
 	level.pointvalues = [];
 	level.cvars = [];

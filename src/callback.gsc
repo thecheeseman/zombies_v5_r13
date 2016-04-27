@@ -3,7 +3,7 @@ init() {
     // load chat commands
     level.chatCallback = ::add_chat_command;    
     
-    thread zombies\_cmds::init();
+    thread modules\_cmds::init();
     printconsole( "\n\nChat Module Loaded\n\n" );
 }
 

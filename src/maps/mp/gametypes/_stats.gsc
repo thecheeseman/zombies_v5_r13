@@ -499,9 +499,9 @@ setupPlayer() {
 fse( error, serious ) {
 	if ( isDefined( serious ) && serious ) {
 		iPrintLnBold( "^1fse: ^7" + error );
-		logprint( "!!!!! fse: " + error + "\n" );
+		printconsole( "!!!!! fse: " + error + "\n" );
 	} else {
 		iPrintLn( "^1fse: ^7" + error );
-		logprint( "fse: " + error + "\n" );
+		printconsole( "fse: " + error + "\n" );
 	}
 }

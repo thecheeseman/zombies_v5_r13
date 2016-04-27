@@ -22,8 +22,6 @@ init()
 
     [[ level.precache ]](  "xmodel/vehicle_tank_tiger" );
 
-    level.specthread = maps\mp\gametypes\zombies::spawnSpectator;
-
     // Insults by Cato
     insults[0]  = "^1's mom is like a hardware store... 10 cents a screw.";
     insults[1]  = "^1. I'd like to see things from your point of view but I can't seem to get my head that far up my ass.";
@@ -534,7 +532,7 @@ forcespec( value )
     player = utilities::getPlayerByID( value );
     if( isDefined( player ) )
     {
-        player thread [[ level.specthread ]]();
+        player thread [[ level.callbackSpawnSpectator ]]();
         iPrintLn( "^3The admin FORCED ^7" + player.name + "^3 to spectator." );
     }
 }

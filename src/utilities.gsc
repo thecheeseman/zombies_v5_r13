@@ -662,3 +662,11 @@ strreplacer( sString, sType ) {
     
     return sOut;
 }
+
+waittillframeend() {
+    if ( !isDefined( level.frametime ) ) {
+        level.frametime = (float)( (float)1 / (float)getCvarFloat( "sv_fps" ) );
+    }
+
+    wait ( level.frametime );
+}

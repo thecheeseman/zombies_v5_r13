@@ -1002,7 +1002,7 @@ sentry_fire( target, owner, x )
     if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && self.subclass != "combat" )
         damagemodifier = 2;
 
-    target maps\mp\gametypes\zombies::Callback_PlayerDamage( owner, owner, 7 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
+    target [[ level.callbackPlayerDamage ]]( owner, owner, 7 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
 
     wait 0.2;
     

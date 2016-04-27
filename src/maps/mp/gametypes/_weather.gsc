@@ -18,14 +18,19 @@
 
 init()
 {
-	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::main()", true );
+	[[ level.logwrite ]]( "maps\\mp\\gametypes\\_weather.gsc::init()", true );
+
 	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
 	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
 
 	level.fogdist = 1500;
 }
 
-main() {	
+main() {
+	// [mapname].gsc is called on the same frame as this script
+	// wait a frame to override map's fog
+	utilities::waittillframeend();
+
 	mapname = toLower( getCvar( "mapname" ) );
 	
 	override = true;
@@ -37,7 +42,7 @@ main() {
 			override = false;
 			break;
 	}
-	
+
 	if ( override )
 		thread dofog( mapname );
 }
