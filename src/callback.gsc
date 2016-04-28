@@ -3,8 +3,8 @@ init() {
     // load chat commands
     level.chatCallback = ::add_chat_command;    
     
-    thread modules\_cmds::init();
-    printconsole( "\n\nChat Module Loaded\n\n" );
+    thread modules\commands::init();
+    printconsole( "\n\n    -Chat Module Loaded-    \n\n" );
 }
 
 CodeCallback_PlayerCommand(cmd) {

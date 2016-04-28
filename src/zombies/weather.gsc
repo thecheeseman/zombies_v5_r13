@@ -33,7 +33,7 @@ main() {
 
 	[[ level.logwrite ]]( "zombies\\weather.gsc::main()", true );
 
-	mapname = toLower( getCvar( "mapname" ) );
+	mapname = utilities::toLower( getCvar( "mapname" ) );
 	
 	override = true;
 	switch ( mapname )

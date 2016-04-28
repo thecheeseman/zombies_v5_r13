@@ -37,7 +37,7 @@ main() {
 	fx = [];
 	supported = true;
 	
-	switch ( toLower( getCvar( "mapname" ) ) )
+	switch ( utilities::toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_brecourt":
 			models = addModel( models, "xmodel/vehicle_tank_tiger_d", ( -1691, -4034, 112 ), ( 0, 65, 0 ) );

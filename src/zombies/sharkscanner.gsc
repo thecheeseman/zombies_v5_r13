@@ -19,7 +19,7 @@
 main()
 {
     [[ level.logwrite ]]( "zombies\\sharkscanner.gsc::main()", true );
-	switch ( toLower( getCvar( "mapname" ) ) )
+	switch ( utilities::toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_harbor":
 			thread scanner( -118 );

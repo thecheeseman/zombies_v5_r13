@@ -38,7 +38,7 @@ main() {
 	level.planttime = 5;
 	level.plantdist = 32;
 	
-	switch ( toLower( getCvar( "mapname" ) ) )
+	switch ( utilities::toLower( getCvar( "mapname" ) ) )
 	{
 		case "mp_brecourt":
 			locs[ 0 ] = ( -2711, 1965, 34 );

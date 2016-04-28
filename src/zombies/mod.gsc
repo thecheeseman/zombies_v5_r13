@@ -111,7 +111,7 @@ precache()
     game[ "axis" ] = "german";
 
     if ( !isDefined( game[ "layoutimage" ] ) ) {
-        level.mapname = toLower( getCvar( "mapname" ) );
+        level.mapname = utilities::toLower( getCvar( "mapname" ) );
         switch ( level.mapname ) {
             case "mp_brecourt":
             case "mp_carentan":
@@ -731,7 +731,7 @@ onConnect()
     self zombies\permissions::main();
     self zombies\stats::setupPlayer();
     
-    if ( toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || toLower( getCvar( "mapname" ) ) == "cp_banana" )
+    if ( utilities::toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || utilities::toLower( getCvar( "mapname" ) ) == "cp_banana" )
         self setClientCvar( "r_fastsky", 0 );
     else
         self setClientCvar( "r_fastsky", 1 );
