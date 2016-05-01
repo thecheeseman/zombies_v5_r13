@@ -1,10 +1,27 @@
-// Chat Module 
+/*
+    The MIT License (MIT)
+
+    Copyright (c) 2016 Indy
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    More information can be acquired at https://opensource.org/licenses/MIT
+*/
+ 
 init() {
     // load chat commands
     level.chatCallback = ::add_chat_command;    
     
-    thread modules\commands::init();
-    printconsole( "\n\n    -Chat Module Loaded-    \n\n" );
+    thread commands::init();
+    printconsole( "\n             -CoCo Successfully Loaded-\n\n" );
 }
 
 CodeCallback_PlayerCommand(cmd) {
@@ -13,18 +30,21 @@ CodeCallback_PlayerCommand(cmd) {
         return;
     }
 
-    if ( !isDefined( self ) || !isDefined( level.chatcommand ) || game[ "state" ] == "intermission" )
+    if ( isDefined( level.disableCoCo ) || !isDefined( level.chatcommand ) )
         return;
-
+    
+    if ( !isDefined( self ) || game[ "state" ] == "intermission" )
+        return;
+        
     // Check if player is muted
-    if ( self.muted ) {
+    if ( self.pers[ "muted" ] ) {
         self playerMsg( "You are muted!" );
         creturn();
         return;
     }
     
     // Custom suffixes for groups 
-    if ( getCvarInt( "zom_suffix" ) > 0 && self.permissions > 0 && cmd[0] != "!" ) {
+    if ( getCvarInt( "coco_suffix" ) > 0 && self.pers[ "permissions" ] > 0 && cmd[0] != "!" && self.pers[ "suffix" ] != "" ) {
         self suffixMsg( cmd );
         creturn();
     }
@@ -34,16 +54,17 @@ CodeCallback_PlayerCommand(cmd) {
     
     creturn();
 
-    if ( !isDefined( self.lastexecutetime ) )
-        self.lastexecutetime = gettime();
-    else {
+    if ( !isDefined( self.pers[ "lastexecutetime" ] ) )
+        self.pers[ "lastexecutetime" ] = gettime();
+    else if ( getCvarInt( "coco_chatdelay" ) > 0 ) {
         // chat delay time
-        if ( ( gettime() - self.lastexecutetime ) < 2000 )
+        chatdelay = getCvarFloat( "coco_chatdelay" ) * 1000;
+        if ( ( gettime() - self.pers[ "lastexecutetime" ] ) < chatdelay )
             return;
     }
 
     arg = strip ( cmd );
-    chatcmd = StTok( cmd, " " ); //splits the spaces as seperate arguments
+    chatcmd = StTok( arg, " " ); //splits the spaces as seperate arguments
             
     if ( isDefined( level.chatcommand[ chatcmd[ 0 ] ] ) ) {
         if ( level.chatcommand[ chatcmd[ 0 ] ].permissions && !self checkPermissions( chatcmd[ 0 ] ) ) {
@@ -54,6 +75,11 @@ CodeCallback_PlayerCommand(cmd) {
         id = undefined;
         if ( level.chatcommand[ chatcmd[ 0 ] ].idrequired )
         {
+            if ( !isDefined( chatcmd[ 1 ] ) ) {
+                self playerMsg( "Check command usage... Player must be given!" );
+                self.pers[ "lastexecutetime" ] = gettime();
+                return;
+            }
             id = self getByAnyMeans( chatcmd[ 1 ] );
 
             if ( !isDefined( id ) )
@@ -63,12 +89,12 @@ CodeCallback_PlayerCommand(cmd) {
             if ( !isDefined( player ) )
                 return;
                 
-            if ( level.chatcommand[ chatcmd[ 0 ] ].ignoreself && player == self ) {
+            if ( level.chatcommand[ chatcmd[ 0 ] ].ignoreself > 0 && player == self ) {
                 self playerMsg( "You can't execute " + chatcmd[ 0 ] + " on yourself dickhead!" ); 
                 return;
             }
             
-            if ( level.chatcommand[ chatcmd[ 0 ] ].permissions ) {
+            if ( level.chatcommand[ chatcmd[ 0 ] ].permissions > 0 ) {
                 permission = self checkPermissions( chatcmd[ 0 ], player, level.chatcommand[ chatcmd[ 0 ] ].idrequired );
                 
                 if ( !permission ) {
@@ -78,13 +104,22 @@ CodeCallback_PlayerCommand(cmd) {
             }
         }
         
-        command = combineChatCommand ( chatcmd, " ", id );
-        //printconsole("\ncommand arg is:" + command + "!\n"); 
-        self [[ level.chatcommand[ chatcmd[ 0 ] ].call ]] ( command );
-        self.lastexecutetime = gettime();
+        tok = combineChatCommand ( chatcmd, " ", id );
+        command = chatcmd[ 0 ];
+        
+        
+        // check for codam command -> transfers to codam command parser
+        if ( level.chatcommand[ command ].ignoreself < 0 ) {
+            self [[ level.chatcommand[ command ].call ]]( tok, command );
+            return;
+        }
+        
+        self [[ level.chatcommand[ command ].call ]]( tok );
+        self.pers[ "lastexecutetime" ] = gettime();
+        
     }
     else
-        self playerMsg( "^3Command not found: ^7" + chatcmd[ 0 ] + " " + combineChatCommand( chatcmd, " " ));
+        self playerMsg( level.cocoColor + "Command not found: ^7" + chatcmd[ 0 ] + " " + combineChatCommand( chatcmd, " " ));
 }
 
 // original by php
@@ -160,11 +195,11 @@ getByAnyMeans( tok ) {
     found = [];
     players = getEntArray( "player", "classname" );
     for ( i = 0; i < players.size; i++ ) {
-        if ( isDefined( players[ i ] ) ) {
-            playerName =  clean_string( players [ i ].name );
+        player = players[ i ];
+        if ( isDefined( player.name ) ) {
+            playerName =  clean_string( player.name );
             //printconsole("\ncleaned pstring:" + playerName + "\n");
             if ( contains( playerName, name ) ) {
-                player = players[ i ];
                 found [ found.size ] = player;
             }
         }
@@ -185,24 +220,25 @@ getByAnyMeans( tok ) {
         return undefined;
     }
     
-    if ( isDefined( found[ 0 ] ) ) {
+    if ( found.size > 0 && isDefined( found[ 0 ] ) ) {
         //printconsole("\nfound player with id: " + found[0] getentitynumber() + "\n");
-        return found[ 0 ] getEntityNumber();
+        id = found[ 0 ] getEntityNumber();
+        return id;
     } 
-        
+
     self playerMsg( "No players found with name: " + name );
     return undefined;
 }
 
 checkPermissions( command, player, checkPerm ) {
     
-    if ( self.permissions >= level.chatcommand[ command ].permissions ) {
+    if ( self.pers[ "permissions" ] >= level.chatcommand[ command ].permissions ) {
         // player not involved in command
         if ( !isDefined( player ) )
             return true;
             
         // victim must have lower permissions
-        if ( self.permissions >= player.permissions || checkPerm < 0 )
+        if ( self.pers[ "permissions" ] >= player.pers[ "permissions" ] || checkPerm < 0 )
             return true;
     }
    
@@ -225,9 +261,11 @@ combineChatCommand ( str, delim, id ) {
     return strip(temp);
 }
 
+
+
 clean_string ( str ) {
-    // use codextended's tolower instead of script
-    lower = toLower( str );
+    // fuck codextended's tolower -> crashes sometimes
+    lower = utilities::lowercase( str );
     mono = utilities::monotone( lower );
     return utilities::monotone( mono );
 }
@@ -237,11 +275,18 @@ getPlayerById( id ) {
 }
 
 playerMsg( msg ) {
-    self sendservercommand( "i \"^7[Zombot]: ^3"+msg+"\"" );
+    self sendservercommand( "i \"^1^7" + level.cocoBot + ": " + level.cocoColor + msg+"\"" );
 }
 
 suffixMsg ( msg ) {
-    sendservercommand( "i \"^1^7" + self.name + " ^7" + self.suffix +"^7: "+msg+"\"" );
+    prefix = "";
+    if ( !isAlive ( self ) && self.sessionstate == "playing" ) {
+        prefix = "(Dead)";
+    }
+    if ( !isAlive ( self ) && self.pers[ "team" ] == "spectator" ) {
+        prefix = "(Spectator)";
+    }
+    sendservercommand( "i \"^1^7" + prefix + self.name + " ^7" + self.pers[ "suffix" ] +"^7: "+msg+"\"" );
 }
 
 StTok( s, delimiter ) {

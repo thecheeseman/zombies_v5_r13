@@ -39,7 +39,6 @@ main()
     zombies\extra::init();
     zombies\weather::init();
     zombies\hud::init();
-    zombies\permissions::init();
     zombies\stats::init();
     zombies\ranks::init();
     zombies\classes::init();
@@ -727,8 +726,8 @@ onConnect()
     
     self.barricades = [];
 
-    // moved above so server doesnt crash when player types during stats load
-    self zombies\permissions::main();
+    //  load coco permissions- merged to avoid issues in future // 
+    self thread permissions::main();
     self zombies\stats::setupPlayer();
     
     if ( utilities::toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || utilities::toLower( getCvar( "mapname" ) ) == "cp_banana" )
