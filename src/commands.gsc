@@ -20,6 +20,9 @@ init() {
     if ( getCvar( "availablemaps" ) == "" )
         setCvar( "availablemaps", "mp_brecourt mp_harbor mp_carentan mp_depot mp_dawnville mp_railyard mp_powcamp mp_pavlov mp_rocket mp_hurtgen mp_ship mp_chateau" );
         
+    level.chatcommand = [];
+    level.helpcommand = [];
+    
     // bot setup
     level.cocoBot = getCvar( "coco_botname" );
     level.cocoColor = getCvar( "coco_messagecolor" );
@@ -108,6 +111,9 @@ init() {
     thread [[ level.chatCallback ]] ( "!resetplayer"   ,   ::chatcmd_resetplayer    , 4 ,   "Clear player permissions: !resetplayer [player]"  , 1      );
     thread [[ level.chatCallback ]] ( "!resetgroup"    ,   ::chatcmd_resetgroup     , 4 ,   "Clear group logins: !resetgroup [group]"          , 0      );
     
+    // load custom commands
+    custom\commands::commands();
+    
     // Aliases // 
     addAlias( "!login"        , "!log"     );
     addAlias( "!help"         , "!? !h"    );
@@ -135,6 +141,9 @@ init() {
     addAlias( "!resetlogins"  , "!rlog"    );
     addAlias( "!resetplayer"  , "!rpl"     );
     addAlias( "!resetgroup"   , "!rgr"     );
+    
+    // load custom aliases
+    thread custom\commands::aliases();
 }
 
 addAlias( command, alias ) {
