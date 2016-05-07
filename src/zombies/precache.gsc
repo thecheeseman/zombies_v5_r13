@@ -107,7 +107,7 @@ precache_runner( item, type, name ) {
         case "shellshock":          precacheShellshock( item ); break;
         case "string":
             name = item;
-            item = convert_string( name );
+            item = toLocalizedString( name );
             type = "localized-string";
         case "localized-string":    precacheString( item ); break;
         case "shader":              precacheShader( item ); break;

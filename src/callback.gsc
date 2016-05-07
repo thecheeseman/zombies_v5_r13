@@ -265,7 +265,7 @@ combineChatCommand ( str, delim, id ) {
 
 clean_string ( str ) {
     // fuck codextended's tolower -> crashes sometimes
-    lower = utilities::lowercase( str );
+    lower = toLower( str );
     mono = utilities::monotone( lower );
     return utilities::monotone( mono );
 }

@@ -1,3 +1,162 @@
 TODO
 
-- fix bug with 'shots hit' counting melee
+13.2
+- Gameplay changes
+    - Zombie bots
+        - add waypoint system
+            - basic wps across all stock maps
+            - each map needs at least two entry points for bots
+            - ladder, jump, crouch/prone wp types
+            - ignore wp for tricky collision spots
+        - bots
+            - custom ai
+            - basically like all the dumb zombies you see in movies
+            - mental states:
+                - idle
+                - roaming
+                - following
+                - attacking
+                - dead
+            - default to roaming if no players are round
+            - 110° FOV (or there abouts)
+        - bots now replace "first zombie" selection method
+        - bot count is variable, depending on number of players and map
+        - at least 1.5x, up to 3x if map is large enough
+        - goal is to have a maximum of 48 zombies (29 players + 19 bots)
+    - Rank overhaul
+        - lua code used to generate ranks
+            total = 0
+            for i=1,levels do
+                print( i .. ": " .. math.floor(total) .. "    " .. math.floor(tnl) )
+                total = total + tnl
+                tnl = tnl * ( 1 + math.pow( factor, i ) )
+            end
+        - Hunters
+            - tnl = 100
+            - factor = 0.93481944
+            - levels = 30
+                - #     Title                   XP              XP to next rank
+                - 1     Enlisted                0               100
+                - 2     Private                 100             193
+                - 3     Private II              293             362
+                - 4     Private First Class     656             658
+                - 5     Corporal                1,314           1,161
+                - 6     Sergeant                2,476           1,991
+                - 7     Master Sergeant         4,467           3,320
+                - 8     Sergeant Major          7,788           5,391
+                - 9     2nd Lieutenant          13,179          8,535
+                - 10    1st Lieutenant          21,715          13,189
+                - 11    Captain                 34,904          19,911
+                - 12    Major                   54,816          29,398
+                - 13    Lieutenant Colonel      84,214          42,491
+                - 14    Colonel                 126,706         60,183
+                - 15    Brigadier General       186,890         83,607
+                - 16    Major General           270,497         114,027
+                - 17    Lieutenant General      384,525         152,811
+                - 18    General                 537,337         201,399
+                - 19    General of the Army     738,737         261,262
+                - 20    Demi-god                1,000,000       333,857
+                - 21    God                     1,333,858       420,577
+                - 22    NOT CHUCK NORRIS        1,754,435       522,701
+                - 23    FUUUUU!!1               2,277,136       641,349
+                - 24    No-life                 2,918,486       777,442
+                - 25    Just stop playing       3,695,928       931,659
+                - 26    Srsly, wtf mang         4,627,587       1,104,422
+                - 27    Holy fuck tits          5,732,010       1,295,872
+                - 28    You're kidding me       7,027,883       1,505,869
+                - 29    Fuck me in my asshole   8,853,852       1,733,989
+                - 30    I AM THE SUPERVISOR     10,267,741      N/A
+        - Zombies
+            - tnl = 1
+            - factor = 0.85753
+            - levels = 50
+                - #     Title                       Kills           Kills to next rank
+                - 1     Innocent                    0               1
+                - 2     Harmless                    1               1
+                - 3     Menacing                    2               3
+                - 4     Noxious                     6               5
+                - 5     Malignant                   11              8
+                - 6     Damaging                    19              11
+                - 7     Sinister                    31              16
+                - 8     Toxic                       47              22
+                - 9     Crippling                   70              28
+                - 10    Corroding                   98              35
+                - 11    Ominous                     134             43
+                - 12    Calamitous                  178             51
+                - 13    Ranksacker                  230             59
+                - 14    Bomber                      289             67
+                - 15    Cancer                      357             75
+                - 16    Demolisher                  433             83
+                - 17    Vandal                      517             90
+                - 18    Eradicator                  607             97
+                - 19    Savage                      704             103
+                - 20    Exterminator                808             108
+                - 21    Slaughterer                 917             113
+                - 22    Radiator                    1,031           118
+                - 23    Butcher                     1,149           122
+                - 24    Guerilla                    1,272           126
+                - 25    Annihilator                 1,398           129
+                - 26    Liquidator                  1,527           131
+                - 27    Slayer                      1,659           134
+                - 28    Hunter                      1,793           136
+                - 29    Cannibal                    1,930           138
+                - 30    Ruthless                    2,068           139
+                - 31    Fuckin' Lethal              2,208           141
+                - 32    Unrelenting                 2,349           142
+                - 33    Reaper                      2,492           143
+                - 34    Evil                        2,635           144
+                - 35    Malefic                     2,780           145
+                - 36    Devastating                 2,925           145
+                - 37    Desecrator                  3,071           146
+                - 38    Smasher                     3,218           147
+                - 39    Wrecker                     3,365           147
+                - 40    Extinguisher                3,512           147
+                - 41    Decimator                   3,660           148
+                - 42    Obliterator                 3,808           148
+                - 43    Depriver                    3,957           148
+                - 44    Plunderer                   4,105           148
+                - 45    Marauder                    4,254           149
+                - 46    Tormentor                   4,403           149
+                - 47    1337                        4,552           149
+                - 48    Godly                       4,702           149
+                - 49    Monster                     4,851           149
+                - 50    Harbinger of your Salvation 5,000           95,000
+                - 51    FUCKING BRUCE LEE           100,000          
+    - Weapon damage overhaul
+    - Class updates
+        - Sentries
+            - turret damage scales with amount of zombies
+                - 0.8x for 1-5 zombies
+                - 1x for 6-11 zombies
+                - 1.3x for 12-18 zombies
+                - 1.5x for 19-27 zombies
+                - 1.8x for 28+ zombies
+            - damage scale stacks with regular engineer's "marking" feature
+        - Combat engineer
+            - sentry is more like the mini-sentry from tf2
+            - 400 HP
+            - once destroyed, explodes and removes itself from map
+            - can be "repurchased" from an ammobox (after a cooldown of 30 secs)
+        - Combat medic
+            - remove grenade heal ability
+            - increase smg damage
+        - Combat support
+            - no ammobox carrying
+            - nerf mp44 damage
+            - each kill increases nearby allies (<512 units) armour by 25
+            - rage mode when nearby ally dies (<512 units) - +250 armour and 50% damage increase for 7 seconds
+        - Engineer
+            - increase base sentry damage by 10
+            - decrease bullet damage by 25%
+        - Medic
+            - increase self-heal amount by +2 hp
+        - Fast zombie
+            - increase shellshock grenade to 75%
+    - Misc
+        - dynamic ammoboxes
+            - please petition cp for coordinates
+            - at least 8 positions per map
+            - randomly changes locations every 45 seconds with a 15 second cooldown
+            - if players are getting ammo, don't disappear until they are done
+        - fix sharkscanner on harbor for out of map recons
+        - sharkscanner for depot / dawnville

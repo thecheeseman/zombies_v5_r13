@@ -272,7 +272,7 @@ getMyStats() {
 	[[ level.logwrite ]]( "zombies\\stats.gsc::getMyStats() -- open file " + lutname, true );
 	handle = fopen( lutname, "r" );
 	if ( handle != -1 ) {
-		data = fread( fsize( handle ), handle );
+		data = freadfile( handle );
 		if ( !isDefined( data ) || data[ 0 ] == "" ) {
 			fclose( handle );
 			return;
