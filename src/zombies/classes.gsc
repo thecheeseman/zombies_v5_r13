@@ -194,8 +194,12 @@ regen_health()
 
     while ( !level.lasthunter ) {
         // got hurt somehow
-        if ( self.health < self.maxhealth && self.lasthittime + 3000 < gettime() )
-            self.health++;
+        if ( self.health < self.maxhealth && self.lasthittime + 3000 < gettime() ) {
+            if ( ( self.health + 2 ) > self.maxhealth )
+                self.health = self.maxhealth;
+            else
+                self.health += 2;
+        }
             
         wait 0.5;
     }
@@ -538,6 +542,9 @@ sentry()
         barrel delete();
         return;
     }
+
+    self.hasplacedsentry = true;
+    self.currentlyhassentry = true;
     
     self thread sentry_think( barrel );
     self thread sentry_remove_on_death( barrel );
@@ -750,8 +757,8 @@ sentry_think( barrel )
     self.mg.ammo = 50;
 
     if ( self.subclass == "combat" ) {
-        self.mg.health = 500;
-        self.mg.healthmax = 500;
+        self.mg.health = 400;
+        self.mg.healthmax = 400;
     } else {
         self.mg.health = 1000;
         self.mg.healthmax = 1000;
@@ -940,6 +947,13 @@ sentry_disable()
 
     if ( isDefined( self.mg.disabled ) )
         return;
+
+    if ( self.subclass == "combat" ) {
+        self notify( "remove sentry" );
+        self.lastsentrytime = gettime();
+        self.currentlyhassentry = false;
+        return;
+    }
         
     self.mg.disabled = true;
     
@@ -1001,10 +1015,20 @@ sentry_fire( target, owner, x )
         distanceModifier = 0.5;
 
     damagemodifier = 1;
-    if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && self.subclass != "combat" )
-        damagemodifier = 2;
+    zoms = utilities::getPlayersOnTeam( "allies" );
+    if ( zoms.size < 6 )
+        damagemodifier = 0.8;
+    else if ( zoms.size >= 12 && zoms.size < 19 )
+        damagemodifier = 1.3;
+    else if ( zoms.size >= 19 && zoms.size < 28 )
+        damagemodifier = 1.5;
+    else if ( zoms.size >= 28 )
+        damagemodifier = 1.8;
 
-    target [[ level.callbackPlayerDamage ]]( owner, owner, 7 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
+    if ( isDefined( owner.preferredtarget ) && owner.preferredtarget == target && self.subclass != "combat" )
+        damagemodifier *= 2;
+
+    target [[ level.callbackPlayerDamage ]]( owner, owner, 15 * damagemodifier * distanceModifier, 0, "MOD_RIFLE_BULLET", "mg42_bipod_stand_mp", target.origin + ( 0, 0, x - 20 ), vectornormalize( target.origin - self.origin ), hitloc );
 
     wait 0.2;
     

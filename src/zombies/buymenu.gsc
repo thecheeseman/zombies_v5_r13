@@ -123,6 +123,9 @@ buymenu( response )
 		
 	if ( self.sessionstate != "playing" )
 		return;
+
+	if ( level.lasthunter )
+		return;
 		
 	if ( !isDefined( level.points[ response ] ) )
 	{

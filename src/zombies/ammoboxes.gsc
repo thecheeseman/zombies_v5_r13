@@ -465,6 +465,10 @@ getammo( box )
 				if ( level.gamestarted ) {
 					if ( self.class != "engineer" && self.class != "medic" && self.class != "support" ) 
 						self setWeaponSlotAmmo( "grenade", self.stickynades );
+
+					if ( self.hasplacedsentry && !self.currentlyhassentry && self.class == "engineer" && self.subclass == "combat" && ( gettime() - self.lastsentrytime ) > 30000 ) {
+						self thread zombies\classes::sentry();
+					}
 				
 					if ( self.healthpacks < self.maxhealthpacks )
 						self.healthpacks++;

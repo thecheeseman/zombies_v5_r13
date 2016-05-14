@@ -2,6 +2,8 @@
 // utility functions 
 // ------------------------------------------------------------------------- //
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 _randomInt( max ) {
     arr = [];
 
@@ -12,6 +14,8 @@ _randomInt( max ) {
     return arr[ randomInt( arr.size ) ];
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 _randomIntRange( min, max ) {
     arr = [];
 
@@ -26,45 +30,6 @@ _randomIntRange( min, max ) {
     arr = arrayShuffle( arr );
     return arr[ randomInt( arr.size ) ];
 }
-
-/*
-_randomInt( iMax )
-{
-    oArray = [];
-    
-    for ( i = 0; i < 100; i++ ) 
-        oArray[ i ] = randomInt( iMax );
-    
-    for ( k = 0; k < 50; k++ )
-    {
-        for ( i = 0; i < oArray.size; i++ )
-        {
-            j = randomInt( oArray.size );
-            oElem = oArray[ i ];
-            oArray[ i ] = oArray[ j ];
-            oArray[ j ] = oElem;
-        }
-    }
-    
-    return oArray[ randomInt( oArray.size ) ];
-}
-
-_randomIntRange( min, max ) {
-    temparr = [];
-    for ( i = 0; i < 1024; i++ )
-        temparr[ i ] = randomInt( max );
-        
-    goods = [];
-    for ( i = 0; i < temparr.size; i++ ) {
-        if ( temparr[ i ] < min )
-            continue;
-        goods[ goods.size ] = temparr[ i ];
-    }
-    
-    thisint = goods[ randomInt( goods.size ) ];
-    return thisint;
-}
-*/
 
 arrayShuffle(arr)
 {
@@ -83,6 +48,8 @@ arrayShuffle(arr)
     return arr;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 atoi( sString ) {
     sString = strreplacer( sString, "numeric" );
     if ( sString == "" )
@@ -90,6 +57,8 @@ atoi( sString ) {
     return (int)sString;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 atof( sString ) {
     sString = strreplacer( sString, "numeric" );
     if ( sString == "" )
@@ -156,6 +125,8 @@ cleanScreen()
     }
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 cleanString( str, ignorespaces )
 {
     if ( !isDefined( str ) || str == "" )
@@ -179,6 +150,8 @@ cleanString( str, ignorespaces )
     return newstr;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 contains( sString, sOtherString ) {
     if ( sOtherString.size > sString.size )
         return false;
@@ -216,6 +189,8 @@ contains( sString, sOtherString ) {
     return false;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 distance2D( origin1, origin2 ) {
     return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
 }
@@ -728,6 +703,8 @@ startsWith( string, start ) {
     return true;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 strip(s) {
     if(!isDefined(s) || s == "")
         return "";
@@ -759,6 +736,8 @@ strip(s) {
     return s3;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 strreplacer( sString, sType ) {
     out = "";
     in = "";
@@ -817,15 +796,21 @@ strreplacer( sString, sType ) {
     return sOut;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 toLower( str ) {
     return ( utilities::mapChar( str, "U-L" ) );
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 vectorScale( vec, scale ) {
     vec = ( vec[ 0 ] * scale, vec[ 1 ] * scale, vec[ 2 ] * scale );
     return vec;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+// this is only here for compatibility
 waittillframeend() {
     if ( !isDefined( level.frametime ) ) {
         level.frametime = (float)( (float)1 / (float)getCvarFloat( "sv_fps" ) );

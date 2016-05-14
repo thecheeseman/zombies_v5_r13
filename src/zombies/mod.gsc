@@ -26,8 +26,10 @@ main()
     [[ level.logwrite ]]( "VV---------- mod.gsc::Main() ----------VV" );
     
     zombies\precache::init();
-
+    
     precache();
+
+    modules\modules::init();
 
     zombies\objects::init();
     zombies\config::init();
@@ -43,7 +45,8 @@ main()
     zombies\ranks::init();
     zombies\classes::init();
     zombies\skins::init();
-    modules\modules::init();
+
+    zombies\bots\bots::init();
 
     zombies\config::main();
     zombies\ammoboxes::main();
@@ -51,6 +54,8 @@ main()
     zombies\extra::main();
     zombies\weather::main();
     zombies\sharkscanner::main();
+
+    zombies\bots\bots::main();
 
     [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
 
@@ -88,6 +93,9 @@ precache()
 
     [[ level.precache ]]( "^3Spectating is not allowed." );
     [[ level.precache ]]( "Waiting for ^22 ^7players..." );
+
+    [[ level.precache ]]( "Medic!" );
+    [[ level.precache ]]( "Need ammo!" );
 
     [[ level.precache ]]( "xmodel/health_large" );
     [[ level.precache ]]( "xmodel/gear_russian_load_coat" );
@@ -723,6 +731,9 @@ onConnect()
     self.nightvision = false;
     self.preferredtarget = undefined;
     self.specplayer = undefined;
+    self.hasplacedsentry = false;
+    self.currentlyhassentry = false;
+    self.lastsentrytime = gettime();
     
     self.barricades = [];
 
@@ -784,6 +795,9 @@ spawnPlayer()
     self.flashbangs = false;
     self.preferredtarget = undefined;
     self.specplayer = undefined;
+    self.hasplacedsentry = false;
+    self.currentlyhassentry = false;
+    self.lastsentrytime = gettime();
 
     if ( isDefined( self.spechud ) || isDefined( self.specnotice ) )
     {
@@ -977,7 +991,7 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
                     if ( eAttacker.zombietype == "jumper" && y > 50) {
                         self.health += 2000;
                         self finishPlayerDamage( eAttacker, eAttacker, 2000, 0, "MOD_PROJECTILE", "panzerfaust_mp", (self.origin + (0,0,-1)), vectornormalize( self.origin - eAttacker.origin ), "none" );
-                    } else if ( eAttacker.zombietype == "fast" && y > 50 ) {
+                    } else if ( eAttacker.zombietype == "fast" && y > 25 ) {
                         self shellshock( "groggy", 2 );
                     }
                 }

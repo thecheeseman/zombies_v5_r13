@@ -54,7 +54,7 @@ Callback_PlayerConnect()
     self.statusicon = "";
 
     iprintln( self.name + "^7 joined the game." );
-    
+   
     self thread zombies\mod::onConnect();
 
     if ( game[ "state" ] == "intermission" ) {

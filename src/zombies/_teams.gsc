@@ -1085,12 +1085,12 @@ quickstatements(response)
 
 		case "7":
 			soundalias = "american_need_reinforcements";
-			saytext = &"QUICKMESSAGE_NEED_REINFORCEMENTS";
+			saytext = "Need ammo!";
 			break;
 
 		case "8":
 			soundalias = "american_hold_fire";
-			saytext = &"QUICKMESSAGE_HOLD_YOUR_FIRE";
+			saytext = "Medic!";
 			break;
 		}
 		break;
@@ -1130,12 +1130,12 @@ quickstatements(response)
 
 		case "7":
 			soundalias = "british_need_reinforcements";
-			saytext = &"QUICKMESSAGE_NEED_REINFORCEMENTS";
+			saytext = "Need ammo!";
 			break;
 
 		case "8":
 			soundalias = "british_hold_fire";
-			saytext = &"QUICKMESSAGE_HOLD_YOUR_FIRE";
+			saytext = "Medic!";
 			break;
 		}
 		break;
@@ -1175,12 +1175,12 @@ quickstatements(response)
 
 		case "7":
 			soundalias = "russian_need_reinforcements";
-			saytext = &"QUICKMESSAGE_NEED_REINFORCEMENTS";
+			saytext = "Need ammo!";
 			break;
 
 		case "8":
 			soundalias = "russian_hold_fire";
-			saytext = &"QUICKMESSAGE_HOLD_YOUR_FIRE";
+			saytext = "Medic!";
 			break;
 		}
 		break;
@@ -1220,12 +1220,12 @@ quickstatements(response)
 
 		case "7":
 			soundalias = "german_need_reinforcements";
-			saytext = &"QUICKMESSAGE_NEED_REINFORCEMENTS";
+			saytext = "Need ammo!";
 			break;
 
 		case "8":
 			soundalias = "german_hold_fire";
-			saytext = &"QUICKMESSAGE_HOLD_YOUR_FIRE";
+			saytext = "Medic!";
 			break;
 		}
 		break;

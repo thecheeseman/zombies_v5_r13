@@ -3,7 +3,7 @@ TODO
 13.2
 - Gameplay changes
     - Zombie bots
-        - add waypoint system
+        ✓ add waypoint system
             - basic wps across all stock maps
             - each map needs at least two entry points for bots
             - ladder, jump, crouch/prone wp types
@@ -24,38 +24,181 @@ TODO
         - at least 1.5x, up to 3x if map is large enough
         - goal is to have a maximum of 48 zombies (29 players + 19 bots)
     - Rank overhaul
-        - lua code used to generate ranks
+        ✓ lua code used to generate ranks
             total = 0
             for i=1,levels do
                 print( i .. ": " .. math.floor(total) .. "    " .. math.floor(tnl) )
                 total = total + tnl
                 tnl = tnl * ( 1 + math.pow( factor, i ) )
             end
+        - Change max armour/explosion armour to 1000 - self.maxhealth
+            - i.e. Demi-God (610 health) only can have 390 max armour 
+            - starting players (175 health) can have 825 max
         - Hunters
             - tnl = 100
             - factor = 0.93481944
             - levels = 30
                 - #     Title                   XP              XP to next rank
                 - 1     Enlisted                0               100
+                    Health:             175
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
+                    Starting armour:    225
                 - 2     Private                 100             193
+                    Health:             185
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        2
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
+                    Starting armour:    215
                 - 3     Private II              293             362
+                    Health:             195
+                    Ammo bonus:         1x
+                    Proximity mines:    2
+                    Healthpacks:        2
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
+                    Starting armour:    205
                 - 4     Private First Class     656             658
+                    Health:             210
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +2%
+                    Damage increase:    +5%
+                    Starting armour:    190
                 - 5     Corporal                1,314           1,161
+                    Health:             235
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +2%
+                    Damage increase:    +5%
+                    Starting armour:    165
                 - 6     Sergeant                2,476           1,991
+                    Health:             260
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +2%
+                    Damage increase:    +5%
+                    Starting armour:    140
                 - 7     Master Sergeant         4,467           3,320
+                    Health:             285
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +2%
+                    Damage increase:    +5%
+                    Starting armour:    115
                 - 8     Sergeant Major          7,788           5,391
+                    Health:             310
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +5%
+                    Damage increase:    +9%
+                    Starting armour:    90
                 - 9     2nd Lieutenant          13,179          8,535
+                    Health:             340
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +5%
+                    Damage increase:    +9%
+                    Starting armour:    60
                 - 10    1st Lieutenant          21,715          13,189
+                    Health:             365
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +5%
+                    Damage increase:    +9%
+                    Starting armour:    35
                 - 11    Captain                 34,904          19,911
+                    Health:             390
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +5%
+                    Damage increase:    +9%
+                    Starting armour:    10
                 - 12    Major                   54,816          29,398
+                    Health:             415
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +8%
+                    Damage increase:    +13%
+                    Starting armour:    0
                 - 13    Lieutenant Colonel      84,214          42,491
+                    Health:             440
+                    Ammo bonus:         1x
+                    Proximity mines:    1
+                    Healthpacks:        1
+                    Speed modifier:     +8%
+                    Damage increase:    +13%
+                    Starting armour:    0
                 - 14    Colonel                 126,706         60,183
+                    Health:             465
+                    Ammo bonus:         1x
+                    Proximity mines:    2
+                    Healthpacks:        2
+                    Speed modifier:     +8%
+                    Damage increase:    +13%
+                    Starting armour:    0
                 - 15    Brigadier General       186,890         83,607
+                    Health:             480
+                    Ammo bonus:         1x
+                    Proximity mines:    3
+                    Healthpacks:        3
+                    Speed modifier:     +8%
+                    Damage increase:    +13%
+                    Starting armour:    0
                 - 16    Major General           270,497         114,027
+                    Health:             505
+                    Ammo bonus:         1x
+                    Proximity mines:    4
+                    Healthpacks:        4
+                    Speed modifier:     +12%
+                    Damage increase:    +18%
+                    Starting armour:    0
                 - 17    Lieutenant General      384,525         152,811
+                    Health:             530
+                    Ammo bonus:         1x
+                    Proximity mines:    5
+                    Healthpacks:        5
+                    Speed modifier:     +12%
+                    Damage increase:    +18%
+                    Starting armour:    0
                 - 18    General                 537,337         201,399
+                    Health:             555
+                    Ammo bonus:         1x
+                    Proximity mines:    6
+                    Healthpacks:        6
+                    Speed modifier:     +12%
+                    Damage increase:    +18%
+                    Starting armour:    0
                 - 19    General of the Army     738,737         261,262
+                    Health:             580
+                    Ammo bonus:         1x
+                    Proximity mines:    7
+                    Healthpacks:        7
+                    Speed modifier:     +12%
+                    Damage increase:    +18%
+                    Starting armour:    0
                 - 20    Demi-god                1,000,000       333,857
+                    Health:             610
+                    Ammo bonus:         1x
+                    Proximity mines:    8
+                    Healthpacks:        8
+                    Speed modifier:     +15%
+                    Damage increase:    +22%
+                    Starting armour:    0
                 - 21    God                     1,333,858       420,577
                 - 22    NOT CHUCK NORRIS        1,754,435       522,701
                 - 23    FUUUUU!!1               2,277,136       641,349
@@ -125,34 +268,38 @@ TODO
     - Weapon damage overhaul
     - Class updates
         - Sentries
-            - turret damage scales with amount of zombies
+            ✓ turret damage scales with amount of zombies
                 - 0.8x for 1-5 zombies
                 - 1x for 6-11 zombies
                 - 1.3x for 12-18 zombies
                 - 1.5x for 19-27 zombies
                 - 1.8x for 28+ zombies
-            - damage scale stacks with regular engineer's "marking" feature
+            ✓ damage scale stacks with regular engineer's "marking" feature
+            - sentries should actually turn like tf2 instead of snapping
+            - slow turn that is too slow to catch fast zombies
         - Combat engineer
-            - sentry is more like the mini-sentry from tf2
-            - 400 HP
-            - once destroyed, explodes and removes itself from map
-            - can be "repurchased" from an ammobox (after a cooldown of 30 secs)
+            ✓ sentry is more like the mini-sentry from tf2
+            ✓ 400 HP
+            ✓ once destroyed, explodes and removes itself from map
+            ✓ can be "repurchased" from an ammobox (after a cooldown of 30 secs)
         - Combat medic
-            - remove grenade heal ability
+            ✓ remove grenade heal ability
             - increase smg damage
         - Combat support
-            - no ammobox carrying
+            ✓ no ammobox carrying
             - nerf mp44 damage
             - each kill increases nearby allies (<512 units) armour by 25
             - rage mode when nearby ally dies (<512 units) - +250 armour and 50% damage increase for 7 seconds
         - Engineer
-            - increase base sentry damage by 10
+            ✓ increase base sentry damage to 15
             - decrease bullet damage by 25%
         - Medic
-            - increase self-heal amount by +2 hp
+            ✓ increase self-heal amount to 4 hp/sec
         - Fast zombie
-            - increase shellshock grenade to 75%
+            ✓ increase shellshock grenade to 75%
     - Misc
+        - fix bug where barricades persist after disconnect
+        - stop ammobox progress if damaged
         - dynamic ammoboxes
             - please petition cp for coordinates
             - at least 8 positions per map
@@ -160,3 +307,12 @@ TODO
             - if players are getting ammo, don't disappear until they are done
         - fix sharkscanner on harbor for out of map recons
         - sharkscanner for depot / dawnville
+        ✓ no more last hunter buy menu
+        - music at end?
+            - "codtheme" for when zombies/nuke win
+            - "pegasusbridge_credits" when hunters win
+        - Vsay menu
+            ✓ "Grenade!" to "Need ammo!"
+            ✓ "Sniper!" to "Need a Medic!"
+                x "stalingrad_wounded_guys" ?
+        - fix proxy killing hunters when dead zombies don't respawn right away
