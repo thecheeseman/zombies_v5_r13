@@ -141,7 +141,10 @@ main()
         
     setarchive(true);
 
-    bots_init();
+    zombies\debug::init();
+    zombies\precache::init();
+    zombies\skins::init();
+    botlib\main::init();
 }
 
 Callback_StartGameType()
@@ -201,17 +204,19 @@ Callback_StartGameType()
     //thread addBotClients(); // For development testing
     thread updateScriptCvars();
 
-    thread bots_main();
+    thread botlib\main::main();
 }
 
 Callback_PlayerConnect()
 {
+    if ( self isBot() ) {
+        self [[ level.bot_connect ]]();
+        return;
+    }
+
     self.statusicon = "gfx/hud/hud@status_connecting.tga";
     self waittill("begin");
     self.statusicon = "";
-
-    if ( self isBot() )
-        return;
 
     iprintln(&"MPSCRIPT_CONNECTED", self);
 
@@ -474,6 +479,11 @@ Callback_PlayerConnect()
 
 Callback_PlayerDisconnect()
 {
+    if ( self isBot() ) {
+        self [[ level.bot_disconnect ]]();
+        return;
+    }
+
     iprintln(&"MPSCRIPT_DISCONNECTED", self);
 
     lpselfnum = self getEntityNumber();
@@ -482,6 +492,11 @@ Callback_PlayerDisconnect()
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
+    if ( self isBot() ) {
+        self [[ level.bot_damage ]]( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+        return;
+    }
+
     if(self.sessionteam == "spectator")
         return;
 
@@ -565,6 +580,11 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
 Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc)
 {
+    if ( self isBot() ) {
+        self [[ level.bot_killed ]]( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc );
+        return;
+    }
+
     self endon("spawned");
     
     if(self.sessionteam == "spectator")
@@ -775,9 +795,6 @@ spawnIntermission()
 respawn()
 {
     if(!isdefined(self.pers["weapon"]))
-        return;
-
-    if ( self isBot() )
         return;
 
     self endon("end_respawn");
@@ -1263,7 +1280,7 @@ addBotClients()
         }
     }
 }
-
+/*
 botcheck( ply ) {
     if ( !level.botmap )
         return false;
@@ -1427,7 +1444,7 @@ bots_init() {
     level.kBOT_BS_DEAD = 16;        // no longer living, final state
     //
 
-/*
+
     level.kBOT_NONE = 0;
     level.kBOT_IDLE = 1;
     level.kBOT_ROAM = 2;
@@ -1437,7 +1454,7 @@ bots_init() {
     level.kBOT_WANDER = 16;
     level.kBOT_SEARCH = 32;
     level.kBOT_FOLLOWPLAYER = 64;
-*/
+
 
     level.falldamagemax = 512;
 
@@ -1445,7 +1462,7 @@ bots_init() {
     if ( wp_init( wpfile ) )
         level.botmap = true;
 }
-/*
+
 bots_main() {
     if ( !botcheck() )
         return;
@@ -1704,4 +1721,11 @@ bots_thinkLogic() {
 }
 */
 shit() {
+    if ( self isBot() )
+        return;
+
+    while ( true ) {
+        iPrintLn( self getStance() );
+        wait 1;
+    }
 }

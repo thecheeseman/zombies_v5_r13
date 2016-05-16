@@ -176,7 +176,7 @@ writeLUT() {
 }
 */
 saveAll() {
-	players = getEntArray( "player", "classname" );
+	players = utilities::getPlayersOnTeam( "any" );
 	for ( i = 0; i < players.size; i++ ) {
 		players[ i ] saveMyStats();
 		//players[ i ] addToLUT();

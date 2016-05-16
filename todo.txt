@@ -23,6 +23,35 @@ TODO
         - bot count is variable, depending on number of players and map
         - at least 1.5x, up to 3x if map is large enough
         - goal is to have a maximum of 48 zombies (29 players + 19 bots)
+    - XP / Points overhaul
+        - XP gained for doing item
+            - Kills : 25 XP
+                - +25 for poison
+                - +15 for jumper / fire
+                - Means of Death bonus:
+                    - Explosion: +25 XP
+                    - Grenade: +50 XP
+                    - Headshot: +10 XP
+                    - Melee: +100 XP
+                    - Projectile: +25 XP
+                    - Bullet: +0 XP
+                    - Pistol: +75 XP
+            - Assists: +50 XP
+            - Hunter Survival: +5000 XP
+            - Becoming Last Hunter: +2500 XP
+            - Healing teammate: +25 XP
+            - Giving ammo to teammate: +25 XP
+        - Points gained for doing item
+            - Kills: 25 points
+                - Headshot: +5 points
+                - Melee: +25 points
+                - Pistol: +15 points
+            - Assists: 10 points
+            - Hunter Survival: 1000 points
+            - Becoming Last Hunter: 500 points
+            - Healing teammate: 10 points
+            - Giving ammo to teammate: 10 points
+    - Weapon damage overhaul
     - Rank overhaul
         ✓ lua code used to generate ranks
             total = 0
@@ -215,10 +244,25 @@ TODO
             - levels = 50
                 - #     Title                       Kills           Kills to next rank
                 - 1     Innocent                    0               1
+                    Health:             750
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
                 - 2     Harmless                    1               1
+                    Health:             750
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
                 - 3     Menacing                    2               3
+                    Health:             750
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
                 - 4     Noxious                     6               5
+                    Health:             750
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
                 - 5     Malignant                   11              8
+                    Health:             750
+                    Speed modifier:     +0%
+                    Damage increase:    +0%
                 - 6     Damaging                    19              11
                 - 7     Sinister                    31              16
                 - 8     Toxic                       47              22
@@ -265,8 +309,10 @@ TODO
                 - 49    Monster                     4,851           149
                 - 50    Harbinger of your Salvation 5,000           95,000
                 - 51    FUCKING BRUCE LEE           100,000          
-    - Weapon damage overhaul
     - Class updates
+        - Medic & Support
+            - turn ammobox / medicbag into placeable entity like Sentries
+            - can be picked up
         - Sentries
             ✓ turret damage scales with amount of zombies
                 - 0.8x for 1-5 zombies
@@ -298,6 +344,9 @@ TODO
         - Fast zombie
             ✓ increase shellshock grenade to 75%
     - Misc
+        - firebomb blows up barricades (or at least does quite a bit of damage)
+        - for mp_rocket, put Dumas in the middle bunker and have him rape anyone who comes up
+        - smoke FX when Sniper goes invisible :)
         - fix bug where barricades persist after disconnect
         - stop ammobox progress if damaged
         - dynamic ammoboxes

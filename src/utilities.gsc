@@ -348,7 +348,7 @@ getPlayerByID( iID )
     return eGuy;
 }
 
-getPlayersOnTeam( team )
+getPlayersOnTeam( team, countbots )
 {
     players = getEntArray( "player", "classname" );
 
@@ -358,6 +358,13 @@ getPlayersOnTeam( team )
     guys = [];
     for ( i = 0; i < players.size; i++ )
     {
+        if ( players[ i ] isBot() ) {
+            if ( isDefined( countbots ) && countbots )
+                guys[ guys.size ] = players[ i ];
+
+            continue;
+        }
+
         if ( players[ i ].pers[ "team" ] == team || team == "any" )
             guys[ guys.size ] = players[ i ];
     }
@@ -372,7 +379,7 @@ getStance( returnValue )
  
     org = spawn( "script_model", self.origin );
     org linkto( self, "tag_helmet", ( 0, 0, 0 ), ( 0, 0, 0 ) );
-    wait 0.03;  // this is required, or else the model will not move to tag_helmet by the time it's removed
+    wait frame();  // this is required, or else the model will not move to tag_helmet by the time it's removed
  
     z = org.origin[ 2 ] - self.origin[ 2 ];
  

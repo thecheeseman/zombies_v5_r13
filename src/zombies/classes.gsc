@@ -746,7 +746,7 @@ sentry_think( barrel )
 {     
     self.mg = spawn( "script_model", barrel getOrigin() + ( 0, 0, 42 ) );
     self.mg setModel( "xmodel/mg42_bipod" );
-    self.mg setContents( 1 );
+    //self.mg setContents( 1 );
     
     self thread mg_remove( self.mg );
     self thread mg_remove_on_disconnect( self.mg );

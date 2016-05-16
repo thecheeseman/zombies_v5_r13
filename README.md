@@ -23,7 +23,24 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     *   change
     #   fix
 
-#### Revision 13.1.3 (wip)
+#### Revision 13.2
+#### 08/05/16 - 14/05/16
+    
+    # Fixed a bug where Combat Medics/Supports didn't get grenades
+    - Removed Sentry collision to attempt to prevent blocking
+    # Fixed a bug where Last Hunter did not receive kills properly in stats
+    + Added Sentry damage scaling based on number of Zombies (up to 1.8x damage maximum - Engineer w/ marked Zombie = 54 dmg per shot)
+    + Added "Need a Medic!" and "Need Ammo!" to the voice chat menu (replacing "Sniper!" and "Grenade!", respectively)
+    * Changed Combat Engineer's Sentry HP to 400
+    * Combat Engineer's Sentry now explodes on death, and can be replenished from an ammobox (cooldown 30 secs)
+    - Last Hunter can no longer use the Buy Menu
+    * Increased Fast Zombie's slow nade chance to 75%
+    * Increased Medic's self-heal rate to 4 HP / sec (up from 2 HP / sec)
+    * Increased base Sentry damage to 15 (was 7)
+    - Removed Ammobox from Combat Support
+    - Removed "grenade heal" ability from Combat Medic
+
+#### Revision 13.1.3
 #### 14/04/16 - 27/04/16
     
     - Removed and cleaned up a ton of code, now there are a lot less unused functions laying around

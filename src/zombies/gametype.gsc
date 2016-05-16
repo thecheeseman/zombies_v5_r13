@@ -49,6 +49,11 @@ Callback_StartGameType()
 
 Callback_PlayerConnect()
 {
+    if ( self isBot() ) {
+        self [[ level.bot_connect ]]();
+        return;
+    }
+
     self.statusicon = "gfx/hud/hud@status_connecting.tga";
     self waittill("begin");
     self.statusicon = "";
@@ -86,6 +91,11 @@ Callback_PlayerConnect()
 
 Callback_PlayerDisconnect()
 {
+    if ( self isBot() ) {
+        self [[ level.bot_disconnect ]]();
+        return;
+    }
+
     iprintln( self.name + "^7 left the game." );
     
     self thread zombies\mod::onDisconnect();
@@ -93,6 +103,11 @@ Callback_PlayerDisconnect()
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
+    if ( self isBot() ) {
+        self [[ level.bot_damage ]]( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc );
+        return;
+    }
+
     if(self.sessionteam == "spectator")
         return;
         
@@ -249,6 +264,11 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 
 Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc)
 {
+    if ( self isBot() ) {
+        self [[ level.bot_killed ]]( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc );
+        return;
+    }
+    
     self endon("spawned");
     
     if(self.sessionteam == "spectator")

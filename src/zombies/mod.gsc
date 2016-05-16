@@ -29,8 +29,8 @@ main()
     
     precache();
 
+    botlib\main::init();
     modules\modules::init();
-
     zombies\objects::init();
     zombies\config::init();
     zombies\killstreaks::init();
@@ -46,16 +46,13 @@ main()
     zombies\classes::init();
     zombies\skins::init();
 
-    zombies\bots\bots::init();
-
     zombies\config::main();
     zombies\ammoboxes::main();
     zombies\admin::main();   
     zombies\extra::main();
     zombies\weather::main();
     zombies\sharkscanner::main();
-
-    zombies\bots\bots::main();
+    botlib\main::main();
 
     [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
 
@@ -1078,34 +1075,6 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
     }
     else if ( isPlayer( eAttacker ) && eAttacker == self )
         self iPrintLn( "You hit yourself in " + getHitLoc( sHitLoc ) + "^7 with ^1" + (int)iDamage + "^7 damage!" );
-    
-    if(self.sessionstate != "dead")
-    {
-        lpselfnum = self getEntityNumber();
-        lpselfname = self.name;
-        lpselfteam = self.pers["team"];
-        lpattackerteam = "";
-
-        if(isPlayer(eAttacker))
-        {
-            lpattacknum = eAttacker getEntityNumber();
-            lpattackname = eAttacker.name;
-            lpattackerteam = eAttacker.pers["team"];
-        }
-        else
-        {
-            lpattacknum = -1;
-            lpattackname = "";
-            lpattackerteam = "world";
-        }
-
-        if(isdefined(reflect)) 
-        {  
-            lpattacknum = lpselfnum;
-            lpattackname = lpselfname;
-            lpattackerteam = lpattackerteam;
-        }
-    }
 }
 
 onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
@@ -1126,7 +1095,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
             }
 
             if ( level.lasthunter ) {
-                self.stats[ "lastHunterKills" ]++;
+                attacker.stats[ "lastHunterKills" ]++;
             } else {
                 switch ( attacker.class ) {
                     case "engineer":

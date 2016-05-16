@@ -1,0 +1,1 @@
+maps/mp/gametypes/bottest.gsc

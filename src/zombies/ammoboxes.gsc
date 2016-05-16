@@ -463,7 +463,7 @@ getammo( box )
 					self setWeaponSlotWeapon( "grenade", "stielhandgranate_mp" );
 				
 				if ( level.gamestarted ) {
-					if ( self.class != "engineer" && self.class != "medic" && self.class != "support" ) 
+					if ( self.class != "engineer" && ( self.class != "medic" && self.class != "support" && self.subclass != "combat" ) ) 
 						self setWeaponSlotAmmo( "grenade", self.stickynades );
 
 					if ( self.hasplacedsentry && !self.currentlyhassentry && self.class == "engineer" && self.subclass == "combat" && ( gettime() - self.lastsentrytime ) > 30000 ) {
