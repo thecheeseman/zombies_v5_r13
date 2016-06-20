@@ -5,12 +5,14 @@ Zombies is a modification for Call of Duty 1.1. It is my take on the classic Zom
 ### Requirements
 
 - Call of Duty version 1.1
-- CoDExtended (at least version v20)
+- zomxtended (custom version of CoDExtended)
 - Any flavour of Linux you like
 
 ### Some notes
 
-You can probably try and get this working without CoDExtended -- I'm only really using it for file I/O and a few of its functions. I left the original stats saving method (with cvars) in `_stats_legacy.gsc`, so if you really want to work without CoDExtended there are instructions in `_stats.gsc` for getting that working. Otherwise good luck in trying to convert it. I was originally trying to make it work for both, but that's really too much work and I can't be bothered. Sorry.
+Previous versions of this mod (prior to 13.2) can be run just fine with a regular version of CoDExtended. However, versions 13.2+ require my custom version of CoDExtended (zomextended). I don't provide any binaries, so you'll have to compile it from the source. You can grab the source [here](https://github.com/thecheeseman/zomextended). Please don't send me requests for tutorials or asking how to build it -- there are plenty of resources available online. 
+
+There are no plans for a "non-CoDExtended" version.
 
 Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/id/thecheeseman999/) if you have any questions, comments, suggestions, or hate mail.
 
@@ -24,8 +26,17 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 14/05/16
+#### 08/05/16 - 20/06/16
     
+    + Added Endgame music for different outcomes
+    + Dropped all the Hunter's speeds by 0.1x (to allow for new Rank perks)
+    + Added a 1.5-style jump cooldown for Recon's double-jump
+    + Blocked the centre bunker in Rocket to prevent extreme camping situations
+    + Added a bunch of secrets :)
+    + Ammobox will stop giving ammo if you are damaged during
+    + Disallowed placement of barricades within 64 units of ammoboxes
+    # Fixed a bug where Hunters could die from Proxies when dead zombies haven't respawned yet
+    # Fixed a bug where barricades would stay after someone disconnected
     # Fixed a bug where Combat Medics/Supports didn't get grenades
     - Removed Sentry collision to attempt to prevent blocking
     # Fixed a bug where Last Hunter did not receive kills properly in stats

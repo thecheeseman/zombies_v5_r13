@@ -252,6 +252,15 @@ doItem( response )
 				self iPrintLnBold( "You can't place barricades in the air." );
 				return false;
 			}
+
+			if ( isDefined( level.ammoboxes ) ) {
+				for ( i = 0; i < level.ammoboxes.size; i++ ) {
+					if ( distance( self.origin, level.ammoboxes[ i ] ) < 64 ) {
+						self iPrintLnBold( "You can't place barricades that close to an ammobox" );
+						return false;
+					}
+				}
+			}
 			
 			self thread barricade( response );
 			break;

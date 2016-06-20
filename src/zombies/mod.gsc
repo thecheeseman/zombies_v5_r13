@@ -29,10 +29,11 @@ main()
     
     precache();
 
+    zombies\config::init();
+    
     botlib\main::init();
     modules\modules::init();
     zombies\objects::init();
-    zombies\config::init();
     zombies\killstreaks::init();
     zombies\buymenu::init();
     zombies\mapvote::init();
@@ -364,6 +365,7 @@ endGame( winner )
     else if ( winner == "nuke" )
         iPrintLnBold( "^3Nuke killed everyone!" );
         
+    ambientStop( 3 );
     wait 3;
     
     if ( winner == "hunters" )
@@ -403,6 +405,11 @@ endGame( winner )
             
             utilities::slowMo( 3.5 );
         }
+
+        if ( winner == "zombies" || winner == "nuke" )
+            ambientPlay( "codtheme", 15 );
+        else
+            ambientPlay( "pegasusbridge_credits", 15 );
 
         for ( i = 0; i < players.size; i++ )
         {
@@ -526,6 +533,7 @@ endGame( winner )
             
         setCullFog( 0, 1, 0, 0, 0, 7 );
         
+        ambientStop( 10 );
         wait 10;
     }
 
@@ -664,7 +672,7 @@ onConnect()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc:onConnect() -- " + self.name + " connected (" + self getip() + ")" );
 
-    if ( self.name == "Unknown Soldier" )
+    if ( self.name == "Unknown Soldier" || self.name == "UnnamedPlayer" )
         self setClientCvar( "name", "I^1<3^7ZOMBAIS^1" + gettime() );
         
     self.oldname = self.name;
@@ -749,6 +757,8 @@ onConnect()
 onDisconnect()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc::onDisconnect() -- " + self.name + " disconnected (" + self getip() + ")", true );
+
+    thread zombies\buymenu::cleanUp( self getEntityNumber() );
 }
 
 spawnPlayer()
@@ -2190,6 +2200,9 @@ monitorSticky( owner )
         zombies = utilities::getPlayersOnTeam( "allies" );
         for ( i = 0; i < zombies.size; i++ )
         {
+            if ( zombies[ i ].sessionstate != "playing" )
+                continue;
+
             if ( distance( zombies[ i ].origin, self.origin ) < 128 )
             {
                 trace = bullettrace( self.origin + ( 0, 0, 1 ), zombies[ i ].origin + ( 0, 0, 1 ), false, undefined );

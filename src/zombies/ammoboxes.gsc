@@ -305,6 +305,11 @@ spawnAmmoboxes( locs, angs )
 {
 	for ( i = 0; i < locs.size; i++ )
 	{
+		if ( !isDefined( level.ammoboxes ) )
+			level.ammoboxes = [];
+
+		level.ammoboxes[ level.ammoboxes.size ] = locs[ i ];
+
 		box = spawn( "script_model", locs[ i ] );
 		box.angles = angs[ i ];
 		box setModel( "xmodel/crate_misc1" );
@@ -418,8 +423,15 @@ getammo( box )
 			self linkto( org );
 			
 			self.progresstime = 0;
+			lasthealth = self.health;
 			while( self useButtonPressed() && ( self.progresstime < level.planttime ) && isAlive( self ) )
 			{
+				// if we've been hit, stop early
+				if ( self.health < lasthealth )
+					break;
+
+				lasthealth = self.health;
+
 				self.progresstime += 0.05;
 				wait 0.05;
 			}

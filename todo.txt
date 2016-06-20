@@ -331,6 +331,8 @@ TODO
         - Combat medic
             ✓ remove grenade heal ability
             - increase smg damage
+            - bullets do "bleed" damage - 10 dmg/sec for 5 seconds (non-stackable)
+                - heals self while active
         - Combat support
             ✓ no ammobox carrying
             - nerf mp44 damage
@@ -341,14 +343,35 @@ TODO
             - decrease bullet damage by 25%
         - Medic
             ✓ increase self-heal amount to 4 hp/sec
+        - Recon
+            - ability to "tag" zombies
+                - shows up on compass as ?
+                - susceptible to more damage while tagged
+                - cannot tag fast zombies
+            ✓ add 1.5-style jump cooldown
         - Fast zombie
             ✓ increase shellshock grenade to 75%
     - Misc
+        - cp bot / cheese bot
+            ✓ rocket
+                ✓ centre bunker blocking :)
+            - ship
+                - bumper boats
+            - harbor
+                - dance party on barge?
+            - brecourt
+                - driving in a tank (cheese driver, cp commander)
+                - maybe shooting at other tanks?
+            - dawnville
+                - train on tracks flying through
+                - cheese driving
+                - kills people in the way :)
         - firebomb blows up barricades (or at least does quite a bit of damage)
         - for mp_rocket, put Dumas in the middle bunker and have him rape anyone who comes up
         - smoke FX when Sniper goes invisible :)
-        - fix bug where barricades persist after disconnect
-        - stop ammobox progress if damaged
+        ✓ fix bug where barricades persist after disconnect
+        ✓ disallow barricades near sentries and ammoboxes
+        ✓ stop ammobox progress if damaged
         - dynamic ammoboxes
             - please petition cp for coordinates
             - at least 8 positions per map
@@ -357,11 +380,11 @@ TODO
         - fix sharkscanner on harbor for out of map recons
         - sharkscanner for depot / dawnville
         ✓ no more last hunter buy menu
-        - music at end?
+        ✓ music at end?
             - "codtheme" for when zombies/nuke win
             - "pegasusbridge_credits" when hunters win
-        - Vsay menu
+        ✓ Vsay menu
             ✓ "Grenade!" to "Need ammo!"
             ✓ "Sniper!" to "Need a Medic!"
                 x "stalingrad_wounded_guys" ?
-        - fix proxy killing hunters when dead zombies don't respawn right away
+        ✓ fix proxy killing hunters when dead zombies don't respawn right away

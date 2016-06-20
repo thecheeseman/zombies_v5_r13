@@ -50,7 +50,7 @@ setup() {
             case "m1carbine_mp":
                 self.class = "recon";
 
-                self setMoveSpeedScale( 1.45 );
+                self setMoveSpeedScale( 1.35 );
 
                 self thread recon();
                 break;
@@ -64,13 +64,13 @@ setup() {
 
                 if ( self.pers[ "weapon" ] == "mp40_mp" ) {
                     self.subclass = "combat";
-                    self setMoveSpeedScale( 1.35 );
+                    self setMoveSpeedScale( 1.25 );
                     self.maxhealthpacks += 4;
                     self.healthpacks = self.maxhealthpacks;
                 } else {
                     self.stickynades = 0;
 
-                    self setMoveSpeedScale( 1.25 );
+                    self setMoveSpeedScale( 1.15 );
                     self thread healthbag();
                 }
 
@@ -88,12 +88,12 @@ setup() {
                 if ( self.pers[ "weapon" ] == "mp44_mp" ) {
                     self.subclass = "combat";
 
-                    self setMoveSpeedScale( 1.15 );
+                    self setMoveSpeedScale( 1.05 );
                     self.ammobonus += 5;
                     self.maxhealth += 100;
                     self.health = self.maxhealth;
                 } else {
-                    self setMoveSpeedScale( 1.1 );
+                    self setMoveSpeedScale( 1 );
                     self.stickynades = 0;
 
                     self thread ammobox();
@@ -108,9 +108,9 @@ setup() {
                 if ( self.pers[ "weapon" ] == "kar98k_mp" ) {
                     self.subclass = "combat";
 
-                    self setMoveSpeedScale( 1.25 );
-                } else {
                     self setMoveSpeedScale( 1.15 );
+                } else {
+                    self setMoveSpeedScale( 1.05 );
                 }
 
                 self thread sentry();
@@ -120,7 +120,7 @@ setup() {
             case "springfield_mp":
                 self.class = "sniper";
 
-                self setMoveSpeedScale( 1.2 );
+                self setMoveSpeedScale( 1.1 );
 
                 if ( self.pers[ "weapon" ] == "kar98k_sniper_mp" ) {
                     self.subclass = "combat";
@@ -133,7 +133,7 @@ setup() {
         switch ( self.pers[ "weapon" ] ) {
             case "enfield_mp":
                 self.zombietype = "jumper";
-                self setMoveSpeedScale( 1.3 );
+                self setMoveSpeedScale( 1.2 );
                 self thread superJump();
                 break;
             case "sten_mp":
@@ -144,12 +144,12 @@ setup() {
                 break;
             case "bren_mp":
                 self.zombietype = "poison";
-                self setMoveSpeedScale( 1.1 );
+                self setMoveSpeedScale( 1 );
                 self thread poisonZombie();
                 break;
             case "springfield_mp":
                 self.zombietype = "fire";
-                self setMoveSpeedScale( 1.2 );
+                self setMoveSpeedScale( 1.1 );
                 self thread fireZombie();
                 break;
         }
@@ -172,7 +172,7 @@ recon() {
                 
             if ( airjumps == 1 ) {
                 airjumps = 0;
-                self thread blockjump();
+                self thread blockjump_recon();
             }
 
             for ( i = 0; i < 2; i++ ) 
@@ -184,6 +184,24 @@ recon() {
         }
         wait 0.05;
     }
+}
+
+//
+// block jump after they land for a short while
+//
+blockjump_recon() 
+{
+    self.jumpblocked = true;
+    
+    while ( isAlive( self ) && !self isOnGround() )
+        wait 0.05;
+
+    wait 0.3;
+
+    while ( isAlive( self ) && !self isOnGround() )
+        wait 0.05;
+        
+    self.jumpblocked = false;
 }
 
 regen_health()
