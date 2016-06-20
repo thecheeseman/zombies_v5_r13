@@ -758,7 +758,7 @@ onDisconnect()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc::onDisconnect() -- " + self.name + " disconnected (" + self getip() + ")", true );
 
-    thread zombies\buymenu::cleanUp( self getEntityNumber() );
+    thread zombies\buymenu::cleanUp();
 }
 
 spawnPlayer()
