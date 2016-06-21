@@ -20,7 +20,7 @@ init()
 {
     [[ level.logwrite ]]( "zombies\\config.gsc::init()", true );
 
-    [[ level.precache ]]( "^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)" );
+    [[ level.precache ]]( toLocalizedString( level.zombies_full_version_tag ) );
     [[ level.precache ]]( "Mod by ^3Cheese" );
     [[ level.precache ]]( "Steam^2:^7 thecheeseman999" );
     [[ level.precache ]]( "^5http^7:^5//^71.1^1zom^7bies.com" );
@@ -36,9 +36,9 @@ init()
     level.iCVAR_NORESTART   = 1024;
 
     setCvarOpt( "^1Zom^7bies",      "by ^3Cheese",                  level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
-    setCvarOpt( "z.build",          "16.172.152",                   level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
-    setCvarOpt( "z.lastupdated",    "20 June 2016",                 level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
-    setCvarOpt( "z.version",        "^1R^713.^22 ^7(^3dev^7)",      level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
+    setCvarOpt( "z.build",          level.zombies_build,            level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
+    setCvarOpt( "z.lastupdated",    level.zombies_last_updated,     level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
+    setCvarOpt( "z.version",        level.zombies_version,          level.iCVAR_SERVERINFO | level.iCVAR_ROM | level.iCVAR_NORESTART );
 
     level.servermessages = [];
     level.welcomemessages = [];
@@ -67,7 +67,7 @@ logo() {
     while ( 1 )
     {
         level.logo.alpha = 0;
-        level.logo setText( &"^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)" );
+        level.logo setText( toLocalizedString( level.zombies_full_version_tag ) );
         level.logo fadeOverTime( 2 );
         level.logo.alpha = 1;
         

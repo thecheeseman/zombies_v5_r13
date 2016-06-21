@@ -506,16 +506,9 @@ darkness()
 	while ( !level.gamestarted && isAlive( self ) )
 		wait 1;
 	
-	i = 0.00;
-	stop = false;
-	while ( isAlive( self ) && self.pers[ "team" ] == "axis" && !level.lasthunter && !self.nightvision && !stop && i < 0.60 )
-	{
-		i += 0.01;
-		self.darkness.alpha = i;
-		
-		for ( j = 0; j < 15; j++ ) {			
-			wait 1;
-		}
+	while ( isAlive( self ) && self.pers[ "team" ] == "axis" && !level.lasthunter && !self.nightvision ) {
+		self.darkness.alpha = level.darkness;
+		wait 0.05;
 	}
 }
 

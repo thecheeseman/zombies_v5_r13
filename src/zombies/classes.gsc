@@ -225,6 +225,8 @@ regen_health()
 
 healthbag()
 {
+    level endon( "intermission" );
+
     mypack = spawn( "script_model", self getOrigin() );
     mypack setModel( "xmodel/health_large" );
     mypack hide();

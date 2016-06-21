@@ -116,7 +116,6 @@ addStatField( fieldname, type ) {
 	field = spawnstruct();
 	field.id = id;
 	field.name = fieldname;
-	field.datname = datname;
 	field.type = type;
 
 	level.statsvalidfields[ id ] = field;

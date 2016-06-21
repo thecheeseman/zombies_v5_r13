@@ -21,7 +21,16 @@
 */
 
 main()
-{
+{   
+    // version information
+    level.zombies_build =           "16.173.155";
+    level.zombies_last_updated =    "21 June 2016";
+    level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
+    level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
+    //
+
+    zombies\sql::init();
+
     zombies\debug::init();
     [[ level.logwrite ]]( "VV---------- mod.gsc::Main() ----------VV" );
     
@@ -29,7 +38,7 @@ main()
     
     precache();
 
-    zombies\config::init();
+    zombies\config::init();     // cvar-related
     
     botlib\main::init();
     modules\modules::init();
@@ -422,8 +431,10 @@ endGame( winner )
             players[ i ] linkto( players[ i ].org );
         }
         
-        if ( !level.nuked )
-            setCullFog( 0, 7500, 0, 0, 0, 3 );
+        if ( !level.nuked ) {
+            //setCullFog( 0, 7500, 0, 0, 0, 3 );
+            zombies\weather::setdefaultfog();
+        }
         
         thread zombies\stats::saveAll();
         thread zombies\hud::endgamehud();
@@ -531,11 +542,14 @@ endGame( winner )
         for ( i = 0; i < players.size; i++ )
             players[ i ] [[ level.callbackspawnIntermission ]]();
             
-        setCullFog( 0, 1, 0, 0, 0, 7 );
+        //setCullFog( 0, 1, 0, 0, 0, 7 );
+        setExpFog( 0.1, 0, 0, 0, 7 );
         
         ambientStop( 10 );
         wait 10;
     }
+
+    zombies\sql::sql_close();
 
     [[ level.logwrite ]]( "zombies\\mod.gsc::endGame( " + winner + " ) -- exiting level", true );
     exitLevel( false );

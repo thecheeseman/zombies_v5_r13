@@ -23,282 +23,310 @@ init()
 	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
 	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
 
+    level.timeofday = "day";
+    if ( _randomInt( 100 ) > 30 )
+        level.timeofday = "night";
+
+    level.darkness = 0;
 	level.fogdist = 1500;
 }
 
 main() {
 	// [mapname].gsc is called on the same frame as this script
 	// wait a frame to override map's fog
-	utilities::waittillframeend();
+	wait frame();
 
-	[[ level.logwrite ]]( "zombies\\weather.gsc::main()", true );
+    [[ level.logwrite ]]( "zombies\\weather.gsc::main()", true );
 
-	mapname = utilities::toLower( getCvar( "mapname" ) );
-	
-	override = true;
-	switch ( mapname )
-	{
-		case "cp_zombies":
-		case "cp_trifles":
-		case "cp_sewerzombies":
-			override = false;
-			break;
-	}
+    // find map center
+    entities = getEntArray();
+    
+    xmin = entities[ 0 ].origin[ 0 ];
+    xmax = xmin;
+    ymin = entities[ 0 ].origin[ 1 ];
+    ymax = ymin;
+    zmin = entities[ 0 ].origin[ 2 ];
+    zmax = zmin;
+    
+    for ( i = 0; i < entities.size; i++ ) {
+        e = entities[ i ];
+        if ( e.origin[ 0 ] > xmax )
+            xmax = e.origin[ 0 ];
+        if ( e.origin[ 1 ] > ymax )
+            ymax = e.origin[ 2 ];
+        if ( e.origin[ 2 ] > zmax )
+            zmax = e.origin[ 2 ];
+            
+        if ( e.origin[ 0 ] < xmin )
+            xmin = e.origin[ 0 ];
+        if ( e.origin[ 1 ] < ymin )
+            ymin = e.origin[ 2 ];
+        if ( e.origin[ 2 ] < zmin )
+            zmin = e.origin[ 2 ];    
+    }
+    
+    x = (int)( xmax + xmin ) / 2;
+    y = (int)( ymax + ymin ) / 2;
+    z = (int)( zmax + zmin ) / 2;
+    
+    endz = z + 65536;
+    trace = bullettrace( ( x, y, z ), ( x, y, endz ), false, undefined );
+    if ( trace[ "fraction" ] != 1 ) 
+        z = endz - ( 65536 * trace[ "fraction" ] ) - 100;
+        
+    level.center = ( x, y, z );
+    // find map center
 
-	if ( override )
-		thread dofog( mapname );
+    setdefaultfog();
 }
 
-dofog( mapname )
-{
-	min = 600;
-	max = 2200;
-	r = 0;
-	g = 0;
-	b = 0;
-	
-	switch ( mapname )
-	{
-		case "mp_brecourt":
-		case "mp_dawnville":
-		case "mp_hurtgen":
-		case "mp_rocket":
-		case "mp_ship":
-			max = 2600;
-			break;
+setdefaultfog() {
+    if ( level.timeofday == "night" ) {
+        level.darkness = 0.7;
+        set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
 
-		case "mp_chateau":
-		case "mp_powcamp":
-		case "simon_hai":
-		case "goldeneye_bunker":
-			max = 2200;
-			break;
-		
-		case "mp_vok_final_night":
-			max = 2700;
-			break;
-			
-		case "cp_apartments":
-			max = 1400;
-			min = 650;
-			r = .45;
-			g = .85;
-			b = .15;
-			break;
-	}
-	
-	setCullFog( 0, max, r, g, b, 0 );
-	
-	wait 5;
-	
-	while ( !level.gamestarted )
-		wait 1;
-	
-	level.fogdist = max;
-    currentfog = max;
-    fogpersec = (float)( max / (float)( (float)level.timelimit * 60.0 * 0.6 ) );
+        if ( !level.mapended && level.mapname != "mp_ship" ) {
+            if ( _randomInt( 100 ) > 50 )
+                ambientPlay( "ambient_mp_chateau" );
+            else
+                ambientPlay( "ambient_mp_powcamp" );
+        }
+    } else {
+        level.darkness = 0.1;
 
-    level endon( "endgame" );
+        switch ( level.mapname ) {
+            // other stuff
+            case "mp_brecourt":
+                set_fog( "expfog", 0, 0.005, ( 0.32157, 0.39608, 0.1451 ), 0 ); // camo green
+                break;
+            case "mp_depot":
+                set_fog( "expfog", 0, 0.0009, ( 0.69804, 0.6, 0.43137 ), 0 );   // dust
+                break;
+                
+            // dusty maps
+            case "mp_dawnville":
+                set_fog( "expfog", 0, 0.0009, ( 0.69804, 0.6, 0.43137 ), 0 );   // dust
+                create_hazard( "haboob" );
+                break;
+                
+            // rainy maps
+            case "mp_carentan":
+            case "mp_chateau":
+            case "mp_powcamp":
+            case "mp_ship":
+                level.darkness = 0.4; // :D
+                set_fog( "expfog", 0, 0.001, ( 0.53725, 0.62745, 0.6902 ), 0 ); // bluey gray
+                create_hazard( "rainstorm" );
+                break;
+                
+            // snow maps
+            case "mp_harbor":
+            case "mp_hurtgen":
+            case "mp_pavlov":
+            case "mp_railyard":
+            case "mp_rocket":
+                set_fog( "expfog", 0, 0.0007, ( 1, 1, 1 ), 0 );
+                create_hazard( "blizzard" );
+                break;
 
-    while ( currentfog > min ) {
-        currentfog -= fogpersec;
-        level.fogdist = currentfog;
-	    setCullFog( 0, currentfog, r, g, b, 1 );
-	    wait 1;
+            // custom maps with custom fog
+            case "cp_zombies":
+            case "cp_trifles":
+            case "cp_sewerzombies":
+                break;
+            
+            // otherwise, just revert to original
+            default:
+                level.darkness = 0.7;
+                set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
+
+                if ( !level.mapended )
+                    ambientPlay( "ambient_mp_chateau" );
+                break;
+        }
     }
 }
 
-debugfog()
-{
-	while ( 1 )
-	{
-		if ( getCvar( "fog" ) != "" )
-		{
-			rawr = utilities::explode( getCvar( "fog" ), " " );
-			setCullFog( rawr[ 0 ], rawr[ 1 ], rawr[ 2 ], rawr[ 3 ], rawr[ 4 ], 1 );
-			setCvar( "fog", "" );
-		}
-		
-		wait 0.05;
-	}
+set_fog( type, closeDist, farDist, color, transTime ) {
+    if ( !isDefined( type ) || !isDefined( closeDist ) || !isDefined( farDist ) )
+        return false;
+
+    if ( !isDefined( color ) )
+        color = ( 0, 0, 0 );
+
+    if ( !isDefined( transTime ) )
+        transTime = 0;
+
+    switch ( type ) {
+        case "cullfog":
+            setCullFog( closeDist, farDist, color[ 0 ], color[ 1 ], color[ 2 ], transTime );
+            break;
+        case "expfog":
+            setExpFog( farDist, color[ 0 ], color[ 1 ], color[ 2 ], transTime );
+            break;
+    }
 }
 
-lightning()
-{
-	level endon( "intermission" );
-	
-	while ( 1 )
-	{
-		wait randomFloat( 15.0 );
-		
-		ranX = randomInt( 512 );
-		ranY = randomInt( 512 );
-		if ( randomInt( 1000 ) > 500 )
-			ranX *= -1;
-		if ( randomInt( 1000 ) < 500 )
-			ranY *= -1;
-			
-		pos = center + ( ranX, ranY, 512 );
-			
-		playFx( level._effect[ "lowlevelburst" ], pos );
-	}
-}
-
-do_cloudflashes() 
-{
-    level endon( "intermission" );
+create_hazard( sType ) {
+    if ( !isDefined( sType ) )
+        return false;
+        
+    hazard = create_weather_event( "blank" );
     
-	while ( 1 ) 
-	{
-		wait randomfloat( 15.0 );
-
-		ranX = randomInt( 512 );
-		ranY = randomInt( 512 );
-		if ( randomInt( 1000 ) > 500 )
-			ranX *= -1;
-		if ( randomInt( 1000 ) < 500 )
-			ranY *= -1;
-			
-		pos = center + ( ranX, ranY, 2048 );
-		
-		thread lightningBolt( pos );
-	}
+    switch ( sType ) {
+        case "blizzard":
+        case "haboob":
+        case "rainstorm":
+            hazard = create_weather_event( sType, 30, 150 );
+            break;
+        default:
+            return;
+            break;
+    }
+    
+    thread run_hazard( hazard );
 }
 
-lightningBolt( v ) 
-{
-	x = v[ 0 ];
-	y = v[ 1 ];
-	z = 2048;
-	l = v[ 2 ];
-	arcs = randomint( 7 ) + 3;
-	positive = true;
-	
-	for ( a = 0; a < arcs; a++ ) 
-	{
-		arcvariant = randomint( 7 ) + 1;
-		avFloat = (float)arcvariant / 10;
-		len = randomint( 1024 ) + 1024;
-		offset = z - len;
-		inc = randomint( 2 ) + 1;
-		inc = inc * 10;
-		
-		if ( positive )
-			positive = false;
-		else 
-		{
-			inc = inc * -1;
-			positive = true;
-		}
-		
-		for ( z = z; z > offset; z -= 15 ) 
-		{
-			thread drawlightning( ( x, y, z ) );
-			y += inc;
-			wait .001;
-		}
-		
-		l = l - len;
-	}
-	wait .05;
+run_hazard( event ) {
+    level endon( "end game" );
+    
+    lasteventtime = gettime();
+    nexteventtime = lasteventtime + 300000;
+    nexteventtime += ( _randomInt( 500 ) * 1000 );
+    
+    while ( true ) {
+        // at least 3 minutes inbetween 
+        if ( gettime() > nexteventtime ) {
+            start_weather_event( event );
+            
+            wait 1;
+            
+            while ( level.weatherEvent )
+                wait 1;
+                
+            lasteventtime = gettime();
+            nexteventtime = lasteventtime + 150000;
+            nexteventtime += ( _randomInt( 500 ) * 1000 );
+        }
+        
+        wait 1;
+    }
 }
 
-
-drawlightning( v ) 
-{
-	playfx( level._effect["cloudflash"] , v );
+create_weather_event( sType, iTransitionTime, iLength ) {
+    if ( !isDefined( sType ) || !isDefined( iTransitionTime ) || !isDefined( iLength ) )
+        return false;
+        
+    event = spawnstruct();
+    event.type = sType;
+    event.starttime = iTransitionTime;
+    event.length = iLength;
+    event.haslightning = false;
+        
+    switch ( sType ) {
+        case "haboob":
+            event.fogtype = "expfog";
+            event.fogcolor = ( 0.69804, 0.6, 0.43137 );
+            event.fogdistfar = 0.0009;
+            event.fogdistclose = 0.008;
+            event.fogdistrandom = false;
+            break;
+        case "blizzard":
+            event.fogtype = "expfog";
+            event.fogcolor = ( 1, 1, 1 );
+            event.fogdistfar = 0.0007;
+            event.fogdistclose = 0.007;
+            event.fogdistrandom = false;
+            break;
+        case "rainstorm":
+            event.fogtype = "expfog";
+            event.fogcolor = ( 0.53725, 0.62745, 0.6902 );
+            event.fogdistfar = 0.001;
+            event.fogdistclose = 0.004;
+            event.fogdistrandom = false;
+            event.haslightning = true;
+            break;
+        default:
+            event.type = "blank";
+            return false;
+            break;
+    }
+    
+    return event;
 }
 
-findmapdimensions()
-{
-	entitytypes = getentarray();
+start_weather_event( event ) {
+    if ( !isDefined( event ) || ( isDefined( event.type ) && event.type == "blank" ) )
+        return false;
+        
+    if ( !isDefined( event.fogtype ) )
+        event.fogtype = "cullfog";
+        
+    if ( !isDefined( level.weatherQueue ) )
+        level.weatherQueue = [];
+        
+    if ( !isDefined( level.weatherEvent ) )
+        level.weatherEvent = false;
+        
+    if ( !level.weatherEvent ) {        
+        thread weather_event_runner( event );
+        return;
+    }
+    
+    level.weatherQueue[ level.weatherQueue.size ] = event;
+}
 
-	iMaxX = entitytypes[0].origin[0];
-	iMinX = iMaxX;
-	iMaxY = entitytypes[0].origin[1];
-	iMinY = iMaxY;
-	iMaxZ = entitytypes[0].origin[2];
-	iMinZ = iMaxZ;
+weather_event_runner( event ) {
+    level endon( "endgame" );
 
-	for(i = 1; i < entitytypes.size; i++)
-	{
-		if (entitytypes[i].origin[0]>iMaxX)
-			iMaxX = entitytypes[i].origin[0];
+    level.weatherEvent = true;
+    
+    // transition to event's starting point
+    set_fog( event.fogtype, 0, event.fogdistfar, event.fogcolor, event.starttime );
+    wait ( event.starttime );
+    
+    if ( event.haslightning )
+        thread lightning_runner( event );
+    
+    // transition to event itself
+    set_fog( event.fogtype, 0, event.fogdistclose, event.fogcolor, event.starttime );
+    wait ( event.starttime );
 
-		if (entitytypes[i].origin[1]>iMaxY)
-			iMaxY = entitytypes[i].origin[1];
+    // wait until event is over
+    wait ( event.length );
 
-		if (entitytypes[i].origin[2]>iMaxZ)
-			iMaxZ = entitytypes[i].origin[2];
+    // transition back to start point
+    set_fog( event.fogtype, 0, event.fogdistfar, event.fogcolor, event.starttime );
+    wait ( event.starttime );
+    
+    level.weatherEvent = false;
+    
+    if ( level.weatherQueue.size > 0 ) {
+        next = level.weatherQueue[ 0 ];
+        
+        for ( i = 1; i < level.weatherQueue.size; i++ )
+            level.weatherQueue[ i - 1 ] = level.weatherQueue[ i ];
+        level.weatherQueue[ i - 1 ] = undefined;
+        
+        thread weather_event_runner( next );
+    }
+}
 
-		if (entitytypes[i].origin[0]<iMinX)
-			iMinX = entitytypes[i].origin[0];
-
-		if (entitytypes[i].origin[1]<iMinY)
-			iMinY = entitytypes[i].origin[1];
-
-		if (entitytypes[i].origin[2]<iMinZ)
-			iMinZ = entitytypes[i].origin[2];
-	}
-
-	iX = (int)(iMaxX + iMinX)/2;
-	iY = (int)(iMaxY + iMinY)/2;
-	iZ = (int)(iMaxZ + iMinZ)/2;
-
-	iTraceend = iZ;
-	iTracelength = 50000;
-	iTracestart = iTraceend + iTracelength;
-	trace = bulletTrace((iX,iY,iTracestart),(iX,iY,iTraceend), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMaxZ = iTracestart - (iTracelength * trace["fraction"]) - 100;
-	} 
-
-	iTraceend = iX;
-	iTracelength = 100000;
-	iTracestart = iTraceend + iTracelength;
-	trace = bulletTrace((iTracestart,iY,iZ),(iTraceend,iY,iZ), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMaxX = iTracestart - (iTracelength * trace["fraction"]) - 100;
-	} 
-	
-	iTraceend = iY;
-	iTracelength = 100000;
-	iTracestart = iTraceend + iTracelength;
-	trace = bulletTrace((iX,iTracestart,iZ),(iX,iTraceend,iZ), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMaxY = iTracestart - (iTracelength * trace["fraction"]) - 100;
-	} 
-
-	iTraceend = iX;
-	iTracelength = 100000;
-	iTracestart = iTraceend - iTracelength;
-	trace = bulletTrace((iTracestart,iY,iZ),(iTraceend,iY,iZ), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMinX = iTracestart + (iTracelength * trace["fraction"]) + 100;
-	} 
-
-	iTraceend = iY;
-	iTracelength = 100000;
-	iTracestart = iTraceend - iTracelength;
-	trace = bulletTrace((iX,iTracestart,iZ),(iX,iTraceend,iZ), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMinY = iTracestart + (iTracelength * trace["fraction"]) + 100;
-	} 
-
-	iTraceend = iZ;
-	iTracelength = 50000;
-	iTracestart = iTraceend - iTracelength;
-	trace = bulletTrace((iX,iY,iTracestart),(iX,iY,iTraceend), false, undefined);
-	if(trace["fraction"] != 1)
-	{
-		iMinZ = iTracestart + (iTracelength * trace["fraction"]) + 100;
-	}
-	
-	level.vMax = (iMaxX, iMaxY, iMaxZ);
-	level.vMin = (iMinX, iMinY, iMinZ);
+lightning_runner( event ) {
+    runtime = 0;
+    waittime = 0;
+    // transition in and out and the total length
+    totaltime = ( event.starttime * 2 ) + event.length;
+    while ( runtime < totaltime ) {
+        if ( waittime == 0 ) {
+            // lightning
+            playfx( level._effect[ "lowlevelburst" ], level.center );
+            waittime = _randomIntRange( 10, 30 );
+        }
+        
+        wait 1;
+        
+        waittime--;
+        runtime++;
+    }
 }

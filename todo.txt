@@ -352,6 +352,8 @@ TODO
         - Fast zombie
             ✓ increase shellshock grenade to 75%
     - Misc
+        - weather
+            - hazard's like previous versions
         - cp bot / cheese bot
             ✓ rocket
                 ✓ centre bunker blocking :)

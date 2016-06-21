@@ -675,10 +675,12 @@ nuke()
 	v2.angles = ( 360, 180, 180 );
 	v2 movez( -7300, 2 );
 	
-	setCullFog( 0, 2500, 1, 1, 1, 2 );
+	//setCullFog( 0, 2500, 1, 1, 1, 2 );
+	setExpFog( 0.001, 1, 1, 1, 2 );
 	thread utilities::slowMo( 3 );
 	wait 1.8;
-	setCullFog( 0, 20, 1, 1, 1, 0.2 );
+	//setCullFog( 0, 20, 1, 1, 1, 0.2 );
+	setExpFog( 0.01, 1, 1, 1, 0.2 );
 	wait 0.2;
 	v2 delete();
 	nukehud.alpha = 1;	
@@ -704,7 +706,8 @@ nuke()
 	
 	wait 2;
 	
-	setCullFog( 0, 3500, .45, .95, .18, 3 );
+	//setCullFog( 0, 3500, .45, .95, .18, 3 );
+	setExpFog( 0.0009, 0.32157, 0.39608, 0.1451, 3 );
 	
 	nukehud fadeOverTime( 8 );
 	nukehud.alpha = 0;
