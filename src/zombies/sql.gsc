@@ -17,6 +17,8 @@
 */
 
 init() {
+    level.sql_error = ::sql_error;
+
     level.db = mysql_init();
 
     if ( level.db ) {
@@ -53,7 +55,7 @@ init() {
     printconsole( "[MySQL] Successfully connected to database `" + level.db_database + "`!\n" );
 
 // FIRST TIME CHECK
-    if ( mysql_query( level.db, "SELECT id,zombies_build FROM zombies.server" ) ) {
+    if ( mysql_query( level.db, "SELECT id, zombies_build FROM zombies.server" ) ) {
         sql_error();
         return;
     }
@@ -88,7 +90,7 @@ init() {
         mysql_free_result( result );
 
         // update some persistent info
-        query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "',port=" + getCvarInt( "net_port" ) + ",hostname='" + getCvar( "sv_hostname" ) + "' WHERE id=" + row[ 0 ];
+        query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "', port=" + getCvarInt( "net_port" ) + ", hostname='" + getCvar( "sv_hostname" ) + "' WHERE id=" + row[ 0 ];
         if ( mysql_query( level.db, query ) ) {
             sql_error();
             return;
@@ -96,7 +98,6 @@ init() {
     }
 }
 
-// #wrapper
 sql_error() {
     printconsole( "[MySQL] Error: " + mysql_error( level.db ) + "\n" );
 }
@@ -108,15 +109,29 @@ sql_close() {
 }
 
 /*
+    sql_saveendgame()
+    Update MySQL with _all_ of the saved data
+*/
+sql_saveendgame() {
+    // save player's data first
+    zombies\stats::saveAll();
+    // save player's data first
+
+    // map info
+    zombies\weather::save_mapinfo();
+    // map info
+}
+
+/*
     sql_update() allows us to auto update any SQL entries / changes in the database
     and propogate them without having to do messy sql queries manually
 
     atm it's just a placeholder and really just sets the version info
 */
 sql_update( id ) {
-    query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "',port=" + getCvarInt( "net_port" ) + ",hostname='" + getCvar( "sv_hostname" ) + "',";
-    query += "zomextended_build='" + getCvar( "zomextended_build" ) + "',zombies_build='" + level.zombies_build + "',zombies_last_updated='" + level.zombies_last_updated + "',";
-    query += "zombies_version='" + utilities::monotone( level.zombies_version )+ "',zombies_full_version='" + utilities::monotone( level.zombies_full_version_tag ) + "' ";
+    query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "', port=" + getCvarInt( "net_port" ) + ", hostname='" + getCvar( "sv_hostname" ) + "', ";
+    query += "zomextended_build='" + getCvar( "zomextended_build" ) + "', zombies_build='" + level.zombies_build + "', zombies_last_updated='" + level.zombies_last_updated + "', ";
+    query += "zombies_version='" + utilities::monotone( level.zombies_version )+ "', zombies_full_version='" + utilities::monotone( level.zombies_full_version_tag ) + "' ";
     query += "WHERE id=" + id;
 
     if ( mysql_query( level.db, query ) ) {
@@ -131,9 +146,9 @@ sql_update( id ) {
     first time initialisation of the server
 */
 sql_first_time() {
-    query = "INSERT INTO zombies.server (ip_address,port,hostname,zomextended_build,zombies_build,zombies_last_updated,zombies_version,zombies_full_version) VALUES (";
-    query += "'" + getCvar( "net_ip" ) + "'," + getCvarInt( "net_port" ) + ",'" + getCvar( "sv_hostname" ) + "','" + getCvar( "zomextended_build" ) + "',";
-    query += "'" + level.zombies_build + "','" + level.zombies_last_updated + "','" + utilities::monotone( level.zombies_version )+ "','" + utilities::monotone( level.zombies_full_version_tag ) + "')";
+    query = "INSERT INTO zombies.server (ip_address, port, hostname, zomextended_build, zombies_build, zombies_last_updated, zombies_version, zombies_full_version) VALUES (";
+    query += "'" + getCvar( "net_ip" ) + "', " + getCvarInt( "net_port" ) + ", '" + getCvar( "sv_hostname" ) + "', '" + getCvar( "zomextended_build" ) + "', ";
+    query += "'" + level.zombies_build + "', '" + level.zombies_last_updated + "', '" + utilities::monotone( level.zombies_version )+ "', '" + utilities::monotone( level.zombies_full_version_tag ) + "')";
 
     if ( mysql_query( level.db, query ) ) {
         sql_error();

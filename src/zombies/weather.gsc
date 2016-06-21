@@ -23,12 +23,101 @@ init()
 	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
 	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
 
-    level.timeofday = "day";
-    if ( _randomInt( 100 ) > 30 )
-        level.timeofday = "night";
+    level.mapinfo = mapinfo_struct();
+
+    query = "SELECT * FROM zombies.maps WHERE map_name ='" + level.mapname + "'";
+    if ( mysql_query( level.db, query ) ) {
+        [[ level.sql_error ]]();
+    } else {
+        result = mysql_store_result( level.db );
+        if ( result ) {
+            if ( mysql_num_rows( result ) ) {
+                ret = mysql_fetch_row( result );
+                row = [];
+
+                field = mysql_fetch_field( result );
+                for ( i = 0; i < mysql_num_fields( result ); i++ ) {
+                    if ( !isDefined( field ) )
+                        break;
+
+                    v = ret[ i ];
+
+                    switch ( field ) {
+                        case "id":                  level.mapinfo.id = (int) v; break;
+                        case "map_name":            level.mapinfo.map_name = v; break;
+                        case "long_name":           level.mapinfo.long_name = v; break;
+                        case "weather_type":        level.mapinfo.weather_type = v; break;
+                        case "hazard":              level.mapinfo.hazard = v; break;
+                        case "has_night":           level.mapinfo.has_night = (int) v; break;
+                        case "last_mode":           level.mapinfo.last_mode = (int) v; break;
+                        case "override_fast_sky":   level.mapinfo.override_fast_sky = (int) v; break;
+                        case "amount_played":       level.mapinfo.amount_played = (int) v; break;
+                        case "seconds_played":      level.mapinfo.seconds_played = (int) v; break;
+                    }
+
+                    field = mysql_fetch_field( result );
+                }
+
+                printconsole( "[MySQL] Loaded map info for map " + level.mapinfo.long_name + " (" + level.mapinfo.map_name + ")\n" );
+                mapinfo_struct_print( level.mapinfo );
+            } else {
+                printconsole( "[MySQL] No rows returned for map " + level.mapname + "\n" );
+            }
+        } else {
+            [[ level.sql_error ]]();
+        }
+    }
 
     level.darkness = 0;
 	level.fogdist = 1500;
+}
+
+mapinfo_struct() {
+    s = spawnstruct();
+    s.id = 0;
+    s.map_name = "";
+    s.long_name = "";
+    s.weather_type = "night";
+    s.hazard = "none";
+    s.has_night = true;
+    s.last_mode = 0;
+    s.override_fast_sky = true;
+    s.amount_played = 0;
+    s.seconds_played = 0;
+    return s;
+}
+
+mapinfo_struct_print( s ) {
+    printconsole( "mapinfo struct data:\n" );
+    printconsole( "map_name: " + s.map_name + "\n" );
+    printconsole( "long_name: " + s.long_name + "\n" );
+    printconsole( "weather_type: " + s.weather_type + "\n" );
+    printconsole( "hazard: " + s.hazard  + "\n" );
+    printconsole( "has_night: " + s.has_night + "\n" );
+    printconsole( "last_mode: " + s.last_mode + "\n" );
+    printconsole( "override_fast_sky: " + s.override_fast_sky + "\n" );
+    printconsole( "amount_played: " + s.amount_played + "\n" );
+    printconsole( "seconds_played: " + s.seconds_played + "\n" );
+}
+
+save_mapinfo() {
+    //seconds = ( level.endtime - level.starttime ) / 1000;
+    seconds = 1;
+    level.mapinfo.seconds_played += seconds;
+
+    if ( level.mapinfo.last_mode )
+        level.mapinfo.last_mode = 0;
+    else 
+        level.mapinfo.last_mode = 1;
+
+    query = "UPDATE zombies.maps SET last_mode=" + level.mapinfo.last_mode + ", seconds_played=" + level.mapinfo.seconds_played + ", ";
+    query += "amount_played=" + ( level.mapinfo.amount_played + 1 ) + " WHERE id=" + level.mapinfo.id;
+    if ( mysql_query( level.db, query ) ) {
+        [[ level.sql_erorr ]]();
+        return;
+    }
+
+    printconsole( "[MySQL] Saved mapinfo!\n" );
 }
 
 main() {
@@ -81,6 +170,56 @@ main() {
 }
 
 setdefaultfog() {
+    // 1 = night, 0 = day
+    // alternates between map plays :)
+    // if no night mode is allowed, use this anyway
+    if ( !level.mapinfo.has_night || level.mapinfo.last_mode ) {
+        switch ( level.mapinfo.weather_type ) {
+            case "dusty":
+                set_fog( "expfog", 0, 0.0009, ( 0.69804, 0.6, 0.43137 ), 0 );   // dust
+                break;
+            case "radioactive":
+                level.fogdist = 386;
+                set_fog( "expfog", 0, 0.003, ( 0.32157, 0.39608, 0.1451 ), 0 ); // camo green
+                break;
+            case "rainy":
+                level.darkness = 0.4; // :D
+                set_fog( "expfog", 0, 0.001, ( 0.53725, 0.62745, 0.6902 ), 0 ); // bluey gray
+                break;
+            case "snowy":
+                set_fog( "expfog", 0, 0.0007, ( 1, 1, 1 ), 0 );
+                break;
+            case "custom":
+                break;  // allow other game scripts to set 
+            case "night":
+            case "none":
+            default:
+                level.darkness = 0.7;
+                set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
+
+                if ( !level.mapended )
+                    ambientPlay( "ambient_mp_chateau" );
+                break;
+        }
+
+        if ( level.mapinfo.hazard != "none" )
+            create_hazard( level.mapinfo.hazard );
+    } else {
+        level.darkness = 0.7;
+        set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
+
+        if ( !level.mapended && level.mapname != "mp_ship" ) {
+            if ( _randomInt( 100 ) > 50 )
+                ambientPlay( "ambient_mp_chateau" );
+            else
+                ambientPlay( "ambient_mp_powcamp" );
+        }
+    }
+/*
+    level.timeofday = "day";
+    if ( _randomInt( 100 ) > 30 )
+        level.timeofday = "night";
+
     if ( level.timeofday == "night" ) {
         level.darkness = 0.7;
         set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
@@ -144,7 +283,7 @@ setdefaultfog() {
                     ambientPlay( "ambient_mp_chateau" );
                 break;
         }
-    }
+    }*/
 }
 
 set_fog( type, closeDist, farDist, color, transTime ) {
@@ -287,17 +426,30 @@ weather_event_runner( event ) {
     
     if ( event.haslightning )
         thread lightning_runner( event );
+
+    if ( level.fogdist > 512 ) {
+        olddist = level.fogdist;
+        level.fogdist = 512;
+    }   
     
     // transition to event itself
     set_fog( event.fogtype, 0, event.fogdistclose, event.fogcolor, event.starttime );
     wait ( event.starttime );
 
+    level.fogdist = 128;
+
     // wait until event is over
     wait ( event.length );
+
+    if ( olddist > 512 ) {
+        level.fogdist = 512;
+    }
 
     // transition back to start point
     set_fog( event.fogtype, 0, event.fogdistfar, event.fogcolor, event.starttime );
     wait ( event.starttime );
+
+    level.fogdist = olddist;
     
     level.weatherEvent = false;
     

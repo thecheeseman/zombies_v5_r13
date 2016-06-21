@@ -23,7 +23,7 @@
 main()
 {   
     // version information
-    level.zombies_build =           "16.173.155";
+    level.zombies_build =           "16.173.156";
     level.zombies_last_updated =    "21 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
@@ -358,6 +358,8 @@ endGame( winner )
     level notify( "intermission" );
     
     level.mapended = true;
+
+    level.endtime = gettime();
     
     if ( !level.lasthunter )
         setCvar( "lasthunter", "" );
@@ -436,7 +438,8 @@ endGame( winner )
             zombies\weather::setdefaultfog();
         }
         
-        thread zombies\stats::saveAll();
+        //thread zombies\stats::saveAll();
+        thread zombies\sql::sql_saveendgame();
         thread zombies\hud::endgamehud();
 
         centerImage = newHudElem();
@@ -759,12 +762,12 @@ onConnect()
     //  load coco permissions- merged to avoid issues in future // 
     self thread permissions::main();
     self zombies\stats::setupPlayer();
-    
-    if ( utilities::toLower( getCvar( "mapname" ) ) == "cp_omahgawd" || utilities::toLower( getCvar( "mapname" ) ) == "cp_banana" )
-        self setClientCvar( "r_fastsky", 0 );
-    else
+
+    if ( level.mapinfo.override_fast_sky )      
         self setClientCvar( "r_fastsky", 1 );
-        
+    else
+        self setClientCvar( "r_fastsky", 0 );
+
     self thread extraKeys();
 }
 
