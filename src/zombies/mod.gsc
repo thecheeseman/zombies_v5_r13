@@ -23,8 +23,8 @@
 main()
 {   
     // version information
-    level.zombies_build =           "16.173.156";
-    level.zombies_last_updated =    "21 June 2016";
+    level.zombies_build =           "16.174.157";
+    level.zombies_last_updated =    "22 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
     //
@@ -227,6 +227,8 @@ startGame()
     level.waitnotice.alignY = "middle";
     level.waitnotice setText( &"Waiting for ^22 ^7players..." );
     level.waitnotice.alpha = 0.75;
+
+    level.starttime = gettime();
     
     thread rotateIfEmpty();
     
@@ -439,7 +441,7 @@ endGame( winner )
         }
         
         //thread zombies\stats::saveAll();
-        thread zombies\sql::sql_saveendgame();
+        thread zombies\sql::sql_saveendgame( winner );
         thread zombies\hud::endgamehud();
 
         centerImage = newHudElem();

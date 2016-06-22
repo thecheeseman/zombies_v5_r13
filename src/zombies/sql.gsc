@@ -85,6 +85,8 @@ init() {
                 printconsole( "[MySQL] Versions differ -- processing update...\n" );
                 sql_update( row[ 0 ] );
             }
+        } else {
+            printconsole( "[MySQL] Couldn't retrieve build information\n" );
         }
 
         mysql_free_result( result );
@@ -112,7 +114,14 @@ sql_close() {
     sql_saveendgame()
     Update MySQL with _all_ of the saved data
 */
-sql_saveendgame() {
+sql_saveendgame( winner ) {
+    // update map_history 
+    length = ( level.endtime - level.starttime ) / 1000;
+    query = "INSERT INTO zombies.map_history (map_id, round_length, winner) VALUES (" + level.mapinfo.id + "," + length + "," + "'" + winner + "')";
+    if ( mysql_query( level.db, query ) ) {
+        sql_error();
+    }
+
     // save player's data first
     zombies\stats::saveAll();
     // save player's data first

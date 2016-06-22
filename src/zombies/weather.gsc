@@ -101,8 +101,7 @@ mapinfo_struct_print( s ) {
 }
 
 save_mapinfo() {
-    //seconds = ( level.endtime - level.starttime ) / 1000;
-    seconds = 1;
+    seconds = ( level.endtime - level.starttime ) / 1000;
     level.mapinfo.seconds_played += seconds;
 
     if ( level.mapinfo.last_mode )

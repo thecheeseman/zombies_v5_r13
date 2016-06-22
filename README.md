@@ -28,6 +28,9 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.2
 #### 08/05/16 - 20/06/16
     
+    + Added MySQL support to Weather/Map info
+    + Added new Mapvote System
+    + Added Weather system from the last version of Zombies (zombies_final)
     + Added Endgame music for different outcomes
     + Dropped all the Hunter's speeds by 0.1x (to allow for new Rank perks)
     + Added a 1.5-style jump cooldown for Recon's double-jump

@@ -117,11 +117,13 @@ CREATE TABLE maps (
     For use with intelligent map-vote and for statistics :)
 */
 CREATE TABLE map_history (
-    `id`            INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `map_id`        INT NOT NULL,
-    `time_ended`    TIMESTAMP DEFAULT NOW(),
-    `round_length`  INT NOT NULL,
-    `winner`        VARCHAR( 64 ) NOT NULL,
+    `id`                INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `map_id`            INT NOT NULL,
+    `time_ended`        TIMESTAMP DEFAULT NOW(),
+    `round_length`      INT NOT NULL,
+    `winner`            VARCHAR( 64 ) NOT NULL,
+    `players_at_end`    INT NOT NULL,
+
     FOREIGN KEY ( map_id ) REFERENCES maps( id ) ON DELETE CASCADE
 );
 

@@ -1,834 +1,1008 @@
-/*
-    Zombies, Version 5, Revision 13
-    Copyright (C) 2016, DJ Hepburn
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 init()
-{	
-	[[ level.logwrite ]]( "zombies\\mapvote.gsc::init()", true );
-	
-	min = 0;
-	max = 0;
-	level.gametype = getcvar("g_gametype");
-
-	level.mapvotetime = 10;
-	level.mapvotereplay	= 0;
-	level.nextmap = undefined;
-	
-	game["MapVote"]	= &"Press ^2FIRE^7 to vote                           Votes";
-	game["TimeLeft"] = &"Time Left: ";
-	game["MapVoteHeader"] = &"Next Map Vote";
-
-	[[ level.precache ]]( game[ "MapVote" ] );
-	[[ level.precache ]]( game[ "TimeLeft" ] );
-	[[ level.precache ]]( game[ "MapVoteHeader" ] );
-}
-
-Initialize()
 {
-	level.mapvotehudoffset = 30;
+    precacheShader( "black" );
+    precacheShader( "white" );
+    precacheShader( "hudStopwatch" );
+    precacheShader( "levelshots/unknownmap.dds" );
+    precacheString( &"Time Left: " );
+    precacheString( &"Vote in progress... please wait..." );
+    precacheString( &"You have voted for: " );
 
-	wait .5;
+    level.gametype = cvardef( "g_gametype", "", undefined, undefined, "string", false );
+    level.mapname = getcvar( "mapname" );
 
-	CreateHud();
-
-	thread RunMapVote();
-
-	level waittill("VotingComplete");
-
-	DeleteHud();
-}
-
-CleanUp()
-{
-	wait .05;
-	if(isdefined(level.clock)) level.clock destroy();
-}
-
-CreateHud()
-{
-	level.vote_hud_bgnd = newHudElem();
-	level.vote_hud_bgnd.archived = false;
-	level.vote_hud_bgnd.alpha = .7;
-	level.vote_hud_bgnd.x = 205;
-	level.vote_hud_bgnd.y = level.mapvotehudoffset + 17;
-	level.vote_hud_bgnd.sort = 9000;
-	level.vote_hud_bgnd.color = (0,0,0);
-	level.vote_hud_bgnd setShader("white", 260, 140);
-	
-	level.vote_header = newHudElem();
-	level.vote_header.archived = false;
-	level.vote_header.alpha = .3;
-	level.vote_header.x = 208;
-	level.vote_header.y = level.mapvotehudoffset + 19;
-	level.vote_header.sort = 9001;
-	level.vote_header setShader("white", 254, 21);
-	
-	level.vote_headerText = newHudElem();
-	level.vote_headerText.archived = false;
-	level.vote_headerText.x = 210;
-	level.vote_headerText.y = level.mapvotehudoffset + 21;
-	level.vote_headerText.sort = 9998;
-	level.vote_headerText.label = game["MapVoteHeader"];
-	level.vote_headerText.fontscale = 1.3;
-
-	level.vote_leftline = newHudElem();
-	level.vote_leftline.archived = false;
-	level.vote_leftline.alpha = .3;
-	level.vote_leftline.x = 207;
-	level.vote_leftline.y = level.mapvotehudoffset + 19;
-	level.vote_leftline.sort = 9001;
-	level.vote_leftline setShader("white", 1, 135);
-	
-	level.vote_rightline = newHudElem();
-	level.vote_rightline.archived = false;
-	level.vote_rightline.alpha = .3;
-	level.vote_rightline.x = 462;
-	level.vote_rightline.y = level.mapvotehudoffset + 19;
-	level.vote_rightline.sort = 9001;
-	level.vote_rightline setShader("white", 1, 135);
-	
-	level.vote_bottomline = newHudElem();
-	level.vote_bottomline.archived = false;
-	level.vote_bottomline.alpha = .3;
-	level.vote_bottomline.x = 207;
-	level.vote_bottomline.y = level.mapvotehudoffset + 154;
-	level.vote_bottomline.sort = 9001;
-	level.vote_bottomline setShader("white", 256, 1);
-
-	level.vote_hud_timeleft = newHudElem();
-	level.vote_hud_timeleft.archived = false;
-	level.vote_hud_timeleft.x = 400;
-	level.vote_hud_timeleft.y = level.mapvotehudoffset + 26;
-	level.vote_hud_timeleft.sort = 9998;
-	level.vote_hud_timeleft.fontscale = .8;
-	level.vote_hud_timeleft.label = game["TimeLeft"];
-	level.vote_hud_timeleft setValue( level.mapvotetime );	
-	
-	level.vote_hud_instructions = newHudElem();
-	level.vote_hud_instructions.archived = false;
-	level.vote_hud_instructions.x = 340;
-	level.vote_hud_instructions.y = level.mapvotehudoffset + 56;
-	level.vote_hud_instructions.sort = 9998;
-	level.vote_hud_instructions.fontscale = 1;
-	level.vote_hud_instructions.label = game["MapVote"];
-	level.vote_hud_instructions.alignX = "center";
-	level.vote_hud_instructions.alignY = "middle";
-	
-	level.vote_map1 = newHudElem();
-	level.vote_map1.archived = false;
-	level.vote_map1.x = 434;
-	level.vote_map1.y = level.mapvotehudoffset + 69;
-	level.vote_map1.sort = 9998;
-		
-	level.vote_map2 = newHudElem();
-	level.vote_map2.archived = false;
-	level.vote_map2.x = 434;
-	level.vote_map2.y = level.mapvotehudoffset + 85;
-	level.vote_map2.sort = 9998;
-		
-	level.vote_map3 = newHudElem();
-	level.vote_map3.archived = false;
-	level.vote_map3.x = 434;
-	level.vote_map3.y = level.mapvotehudoffset + 101;
-	level.vote_map3.sort = 9998;	
-
-	level.vote_map4 = newHudElem();
-	level.vote_map4.archived = false;
-	level.vote_map4.x = 434;
-	level.vote_map4.y = level.mapvotehudoffset + 117;
-	level.vote_map4.sort = 9998;	
-
-	level.vote_map5 = newHudElem();
-	level.vote_map5.archived = false;
-	level.vote_map5.x = 434;
-	level.vote_map5.y = level.mapvotehudoffset + 133;
-	level.vote_map5.sort = 9998;	
-}
-
-RunMapVote()
-{
-	maps = undefined;
-	x = undefined;
-
-	currentmap = getcvar("mapname");
-	currentgt = level.gametype;
- 
-	maps = GetRandomMapRotation();
-    if(!isdefined(maps) || !isdefined(maps[0]))
-	{
-		wait 0.05;
-		level notify("VotingComplete");
-		return;
-	}
-
-	for(j=0;j<5;j++)
-	{
-		level.mapcandidate[j]["map"] = "random";
-		level.mapcandidate[j]["mapname"] = "Random map";
-		level.mapcandidate[j]["gametype"] = "zombies";
-		level.mapcandidate[j]["votes"] = 0;
-	}
-	
-	i = 0;
-	for(j=0;j<4;j++)
-	{
-		if(maps[i]["map"] == currentmap && maps[i]["gametype"] == level.gametype)
-			i++;
-
-		if(!isdefined(maps[i]))
-			break;
-
-		level.mapcandidate[j]["map"] = maps[i]["map"];
-		level.mapcandidate[j]["mapname"] = getMapName(maps[i]["map"]);
-		level.mapcandidate[j]["gametype"] = "zombies";
-		level.mapcandidate[j]["votes"] = 0;
-
-		i++;
-
-		if(!isdefined(maps[i]))
-			break;
-	}
-	
-	thread DisplayMapChoices();
-	
-	game["menu_team"] = "";
-
-	players = getentarray("player", "classname");
-	for(i = 0; i < players.size; i++)
-		players[i] thread PlayerVote();
-	
-	thread VoteLogic();
-	
-	wait 0.1;	
-	level.mapended = true;	
-}
-
-DeleteHud()
-{
-	level.vote_headerText destroy();
-	level.vote_hud_timeleft destroy();	
-	level.vote_hud_instructions destroy();
-	level.vote_map1 destroy();
-	level.vote_map2 destroy();
-	level.vote_map3 destroy();
-	level.vote_map4 destroy();
-	level.vote_map5 destroy();
-	level.vote_hud_bgnd destroy();
-	level.vote_header destroy();
-	level.vote_leftline destroy();
-	level.vote_rightline destroy();
-	level.vote_bottomline destroy();
-
-	players = getentarray("player", "classname");
-	for(i = 0; i < players.size; i++)
-		if(isdefined(players[i].vote_indicator))
-			players[i].vote_indicator destroy();
-}
-
-DisplayMapChoices()
-{
-	level endon("VotingDone");
-	for(;;)
-	{
-		iprintlnbold(level.mapcandidate[0]["mapname"]);
-		iprintlnbold(level.mapcandidate[1]["mapname"]);
-		iprintlnbold(level.mapcandidate[2]["mapname"]);
-		iprintlnbold(level.mapcandidate[3]["mapname"]);
-		iprintlnbold(level.mapcandidate[4]["mapname"]);
-		wait 7.8;
-	}	
-}
 /*
-DisplayMapChoices()
-{
-	level endon("VotingDone");
-	for(;;)
-	{
-		iprintlnbold(level.mapcandidate[0]["mapname"] + " (" + level.mapcandidate[0]["gametype"] +")");
-		iprintlnbold(level.mapcandidate[1]["mapname"] + " (" + level.mapcandidate[1]["gametype"] +")");
-		iprintlnbold(level.mapcandidate[2]["mapname"] + " (" + level.mapcandidate[2]["gametype"] +")");
-		iprintlnbold(level.mapcandidate[3]["mapname"] + " (" + level.mapcandidate[3]["gametype"] +")");
-		iprintlnbold(level.mapcandidate[4]["mapname"] + " (" + level.mapcandidate[4]["gametype"] +")");
-		wait 7.8;
-	}	
-}
+    mapvote struct setup
 */
-PlayerVote()
-{
-	level endon("VotingDone");
-	self endon("disconnect");
+    level.mapvote = spawnstruct();
+    level.mapvote.time = cvardef( "mv_time", 20, 5, 30, "int" );
+    level.mapvote.include_custom = cvardef( "mv_include_custom", 1, 0, 1, "int" );
+    level.mapvote.maprotation = cvardef( "mv_maprotation", "", undefined, undefined, "string", true );
 
-	novote = false;
-	
-	resettimeout();
-	
-	self setClientCvar("g_scriptMainMenu", "");
-	self closeMenu();
+    level.mapvote.stockmaps = [];
+    level.mapvote.stockmaps[ 0 ] = "mp_brecourt";
+    level.mapvote.stockmaps[ 1 ] = "mp_carentan";
+    level.mapvote.stockmaps[ 2 ] = "mp_chateau";
+    level.mapvote.stockmaps[ 3 ] = "mp_dawnville";
+    level.mapvote.stockmaps[ 4 ] = "mp_depot";
+    level.mapvote.stockmaps[ 5 ] = "mp_harbor";
+    level.mapvote.stockmaps[ 6 ] = "mp_hurtgen";
+    level.mapvote.stockmaps[ 7 ] = "mp_pavlov";
+    level.mapvote.stockmaps[ 8 ] = "mp_powcamp";
+    level.mapvote.stockmaps[ 9 ] = "mp_railyard";
+    level.mapvote.stockmaps[ 10 ] = "mp_rocket";
+    level.mapvote.stockmaps[ 11 ] = "mp_ship";
 
-	if(novote)
-		return;
+    level.mapvote.custommaps = [];
+    level.mapvote.selections = [];
 
-	colors[0] = (0  ,  0,  1);
-	colors[1] = (0  ,0.5,  1);
-	colors[2] = (0  ,  1,  1);
-	colors[3] = (0  ,  1,0.5);
-	colors[4] = (0  ,  1,  0);
-	
-	self.vote_indicator = newClientHudElem( self );
-	self.vote_indicator.alignY = "middle";
-	self.vote_indicator.x = 208;
-	self.vote_indicator.y = level.mapvotehudoffset + 75;
-	self.vote_indicator.archived = false;
-	self.vote_indicator.sort = 9998;
-	self.vote_indicator.alpha = 0;
-	self.vote_indicator.color = colors[0];
-	self.vote_indicator setShader("white", 254, 17);
-	
-	hasVoted = false;
-
-	for (;;)
-	{
-		wait .01;
-								
-		if(self attackButtonPressed() == true)
-		{
-			if(!hasVoted)
-			{
-				self.vote_indicator.alpha = .3;
-				self.votechoice = 0;
-				hasVoted = true;
-			}
-			else
-				self.votechoice++;
-
-			if (self.votechoice == 5)
-				self.votechoice = 0;
-				
-			self iprintln("You have voted for ^2" + level.mapcandidate[self.votechoice]["mapname"]);
-			self.vote_indicator.y = level.mapvotehudoffset + 77 + self.votechoice * 16;			
-			self.vote_indicator.color = colors[self.votechoice];
-		}					
-		while(self attackButtonPressed() == true)
-			wait .05;
-
-		self.sessionstate = "spectator";
-		self.spectatorclient = -1;
-	}
+    parse_map_rotation();
+    pick_random_maps();
 }
 
-VoteLogic()
-{
-	for (;level.mapvotetime>=0;level.mapvotetime--)
-	{
-		for(j=0;j<10;j++)
-		{
-			for(i=0;i<5;i++)	level.mapcandidate[i]["votes"] = 0;
-			players = getentarray("player", "classname");
-			for(i = 0; i < players.size; i++)
-				if(isdefined(players[i].votechoice))
-					level.mapcandidate[players[i].votechoice]["votes"]++;
+/*
+    parse_map_rotation()
+    Reads sv_maprotation and parses out 'gametype' and 'map'
+    keywords, leaving behind only the map list
+*/ 
+parse_map_rotation() {
+    if ( !level.mapvote.include_custom )
+        return;
 
-			level.vote_map1 setValue( level.mapcandidate[0]["votes"] );
-			level.vote_map2 setValue( level.mapcandidate[1]["votes"] );
-			level.vote_map3 setValue( level.mapcandidate[2]["votes"] );
-			level.vote_map4 setValue( level.mapcandidate[3]["votes"] );
-			level.vote_map5 setValue( level.mapcandidate[4]["votes"] );
-			wait .1;
-		}
-		level.vote_hud_timeleft setValue( level.mapvotetime );
-	}	
-
-	wait 0.2;
-	
-	newmapnum = 0;
-	topvotes = 0;
-	for(i=0;i<5;i++)
-	{
-		if (level.mapcandidate[i]["votes"] > topvotes)
-		{
-			newmapnum = i;
-			topvotes = level.mapcandidate[i]["votes"];
-		}
-	}
-
-	SetMapWinner(newmapnum);
-}
-
-SetMapWinner(winner)
-{
-	map	= level.mapcandidate[winner]["map"];
-	mapname	= level.mapcandidate[winner]["mapname"];
-
-	wait 0.1;
-
-	level notify( "VotingDone" );
-
-	wait 0.05;
-
-	utilities::cleanScreen();
-    iprintlnbold("The winner is");
-    iprintlnbold("^2" + mapname);
-
-    if ( map == "random" ) {
-        rot = GetRandomMapRotation();
-
-        // no maps?
-        if ( !isDefined( rot ) ) {
-            rot = GetRandomMapRotation( true ); // ignore small sizes
-            if ( !isDefined( rot ) ) {  // still no maps?
-                rot = level.mapcandidate;
-            }
-        }
-
-        rnd = 0;
-        if ( rot.size > 0 ) {
-            rnd = randomInt( rot.size );
-            while ( rot[ rnd ][ "map" ] == getCvar( "mapname" ) ) {
-                rnd = randomInt( rot.size );
-            }
-        }
-
-        map = rot[ rnd ][ "map" ];
+    // grab rotation
+    mv_maprotation = strip( getCvar( "mv_maprotation" ) );
+    if ( mv_maprotation == "" ) {
+        return;
     }
 
-    level.nextmap = map;
-    setcvar("sv_maprotationcurrent", "gametype zombies map " + map);
+    // parse rotation
+    rot = explode( mv_maprotation, " " );
+    maps = [];
+    for ( i = 0; i < rot.size; i++ ) {
+        // skip over stock maps
+        skip = false;
 
-	level.vote_headerText fadeOverTime (1);
-	level.vote_hud_timeleft fadeOverTime (1);	
-	level.vote_hud_instructions fadeOverTime (1);
-	level.vote_map1 fadeOverTime (1);
-	level.vote_map2 fadeOverTime (1);
-	level.vote_map3 fadeOverTime (1);
-	level.vote_map4 fadeOverTime (1);
-	level.vote_map5 fadeOverTime (1);
-	level.vote_hud_bgnd fadeOverTime (1);
-	level.vote_header fadeOverTime (1);
-	level.vote_leftline fadeOverTime (1);
-	level.vote_rightline fadeOverTime (1);
-	level.vote_bottomline fadeOverTime (1);
+        for ( j = 0; j < level.mapvote.stockmaps.size; j++ ) {
+            stock = level.mapvote.stockmaps[ j ];
+            if ( rot[ i ] == stock )
+                skip = true;
+        }
 
-	level.vote_headerText.alpha = 0;
-	level.vote_hud_timeleft.alpha = 0;	
-	level.vote_hud_instructions.alpha = 0;
-	level.vote_map1.alpha = 0;
-	level.vote_map2.alpha = 0;
-	level.vote_map3.alpha = 0;
-	level.vote_map4.alpha = 0;
-	level.vote_map5.alpha = 0;
-	level.vote_hud_bgnd.alpha = 0;
-	level.vote_header.alpha = 0;
-	level.vote_leftline.alpha = 0;
-	level.vote_rightline.alpha = 0;
-	level.vote_bottomline.alpha = 0;
-
-	players = getentarray("player", "classname");
-	for(i = 0; i < players.size; i++)
-	{
-		if(isdefined(players[i].vote_indicator))
-		{
-			players[i].vote_indicator fadeOverTime (1);
-			players[i].vote_indicator.alpha = 0;
-		}
-	}
-
-	wait 4;
-	level notify( "VotingComplete" );
-}
-
-GetRandomMapRotation( ignoresize )
-{
-	maprot = strip(getcvar("sv_maprotation"));
-
-    if ( !isDefined( ignoresize ) )
-        ignoresize = false;
-
-	if ( maprot == "" ) {
-		maprot = strip( getcvar( "sv_maprotationcurrent" ) );
-		if ( maprot == "" )
-			return undefined;
-
-		setcvar( "sv_maprotation", maprot );
-	}
-	
-	j=0;
-	temparr2[j] = "";	
-	for(i=0;i<maprot.size;i++)
-	{
-		if(maprot[i]==" ")
-		{
-			j++;
-			temparr2[j] = "";
-		}
-		else
-			temparr2[j] += maprot[i];
-	}
-
-	temparr = [];
-	for(i=0;i<temparr2.size;i++)
-	{
-		element = strip(temparr2[i]);
-		if(element != "")
-			temparr[temparr.size] = element;
-	}
-
-	maps = [];
-	lastgt = level.gametype;
-	for(i=0;i<temparr.size;)
-	{
-		switch(temparr[i])
-		{
-			case "gametype":
-				if(isdefined(temparr[i+1]))
-					lastgt = temparr[i+1];
-				i += 2;
-				break;
-
-			case "map":
-				if(isdefined(temparr[i+1]))
-				{
-					maps[maps.size]["gametype"]	= lastgt;
-					maps[maps.size-1]["map"] = temparr[i+1];
-				}
-
-				i += 2;
-				break;
-
-			default:
-				iprintlnbold("Warning: Error detected in map rotation");
-	
-				if(isGametype(temparr[i]))
-					lastgt = temparr[i];
-				else
-				{
-					maps[maps.size]["gametype"]	= lastgt;
-					maps[maps.size-1]["map"] = temparr[i];
-				}
-					
-
-				i += 1;
-				break;
-		}
-	}
-
-	for(k = 0; k < 20; k++)
-	{
-		for(i = 0; i < maps.size; i++)
-		{
-			j = randomInt(maps.size);
-			element = maps[i];
-			maps[i] = maps[j];
-			maps[j] = element;
-		}
-	}
-
-    players = getEntArray( "player", "classname" );
-
-    // display results depending on number of players
-    // some maps are too large for <5 people
-    goodmaps = [];
-    for ( i = 0 ; i < maps.size; i++ ) {
-        minsize = getMinSize( maps[ i ][ "map" ] );
-
-        if ( players.size >= minsize ) 
-            goodmaps[ goodmaps.size ] = maps[ i ];
+        if ( !skip )
+            maps[ maps.size ] = rot[ i ];
     }
 
-    if ( goodmaps.size >= 4 && !ignoresize )
-        return goodmaps;
-
-	return maps;
+    level.mapvote.custommaps = maps;
 }
 
-getMinSize( map ) {
+/*
+    pick_random_maps()
+    Chooses three random maps from the rotation and then
+    precaches their info
+
+    Determines maps ahead of time based on the previous
+    match's player count at the end of the game
+*/
+pick_random_maps() {
+    maps = [];
+
+    // TODO: sql
+    playercount = 0;
+    
+    for ( i = 0; i < level.mapvote.stockmaps.size; i++ ) {
+        map = level.mapvote.stockmaps[ i ];
+
+        if ( map == level.mapname )
+            continue;
+
+        // limit map choice by playercount
+        if ( playercount >= get_map_minimum_players( map ) )
+            maps[ maps.size ] = map;
+    }
+
+    if ( level.mapvote.include_custom ) {
+        for ( i = 0; i < level.mapvote.custommaps.size; i++ ) {
+            map = level.mapvote.custommaps[ i ];
+
+            if ( map == level.mapname )
+                continue;
+
+            // limit map choice by playercount
+            if ( playercount >= get_map_minimum_players( map ) )
+                maps[ maps.size ] = map;
+        }
+    }
+
+    // shuffle the array a bunch
+    for ( i = 0; i < 20; i++ ) {
+        maps = arrayShuffle( maps );
+    }
+
+    add_selection( maps[ 0 ] );
+    add_selection( maps[ 1 ] );
+    add_selection( maps[ 2 ] );
+    add_selection( "random" );
+}
+
+add_selection( mapname ) {
+    s = spawnstruct();
+    s.map_name = mapname;
+    s.long_name = get_long_name( mapname );
+    s.localized = get_localized_name( s.map_name );
+    s.votes = 0;
+
+    iPrintln( s.map_name );
+
+    precacheString( get_localized_name( s.map_name ) );
+    precacheShader( "levelshots/" + s.map_name + ".dds" );
+
+    level.mapvote.selections[ level.mapvote.selections.size ] = s;
+}
+
+get_map_minimum_players( map ) {
     switch ( map ) {
         case "mp_brecourt":
         case "mp_rocket":
         case "mp_hurtgen":
         case "mp_ship":
+        case "mp_vok_final_night":
+        case "quaratine":
             return 8;
+        case "alcatraz":
+        case "cp_trainingday":
+        case "cp_sewerzombies":
+        case "cp_shipwreck":
         case "mp_dawnville":
-        case "mp_powcamp":
             return 6;
+        case "germantrainingbase":
+        case "goldeneye_bunker":
         case "mp_depot":
+        case "mp_neuville":
         case "mp_pavlov":
+        case "mp_powcamp":
+        case "cp_zombiebunkers":
+        case "toybox_bloodbath":
             return 5;
+        case "cp_apartments":
+        case "cp_banana":
+        case "cp_omahgawd":
+        case "cp_trifles":
+        case "cp_zombies":
         case "mp_carentan":
         case "mp_chateau":
         case "mp_harbor":
         case "mp_railyard":
+        case "mp_stalingrad":
+        case "mp_tigertown":
+        case "simon_hai":
         default: 
             return 0;
     }
 }
 
-strip(s)
-{
-	if(s=="")
-		return "";
+/*
+    run_map_vote()
+*/
+run_map_vote() {
+    // grab current list of players
+    players = getEntArray( "player", "classname" );
 
-	s2="";
-	s3="";
+    spawn_hud();
 
-	i=0;
-	while(i<s.size && s[i]==" ")
-		i++;
+    // set map candidates
+    level.mv_cand1 setText( level.mapvote.selections[ 0 ].localized );
+    level.mv_cand2 setText( level.mapvote.selections[ 1 ].localized );
+    level.mv_cand3 setText( level.mapvote.selections[ 2 ].localized );
+    level.mv_cand4 setText( level.mapvote.selections[ 3 ].localized );
 
-	if(i==s.size)
-		return "";
-	
-	for(;i<s.size;i++)
-	{
-		s2 += s[i];
-	}
+    hud_fade( "in", 1 );
 
-	i=s2.size-1;
-	while(s2[i]==" " && i>0)
-		i--;
+    for ( i = 0; i < players.size; i++ ) {
+        players[ i ] spawn_player_hud();
+        players[ i ] player_hud_fade( "in", 1 );
+    }
 
-	for(j=0;j<=i;j++)
-	{
-		s3 += s2[j];
-	}
-		
-	return s3;
+    wait 1;
+
+    thread timer();
+
+    for ( i = 0; i < players.size; i++ )
+        players[ i ] thread player_vote();
+
+    thread vote_logic( players );
+
+    level waittill( "mapvote_voting_done" );
+
+    for ( i = 0; i < players.size; i++ )
+        players[ i ] player_hud_fade( "out", 1 );
+
+    winner = 0;
+    points = 0;
+    for ( i = 0; i < level.mapvote.selections.size; i++ ) {
+        sel = level.mapvote.selections[ i ];
+
+        if ( sel.votes > points ) {
+            winner = i;
+            points = sel.votes;
+        }
+    }
+
+    level.mv_notice fadeOverTime( 1 );
+    level.mv_notice.alpha = 0;
+
+    if ( winner != 0 ) {
+        level.mv_cand1 fadeOverTime( 1 );   level.mv_cand1_votes fadeOverTime( 1 );
+        level.mv_cand1.alpha = 0;           level.mv_cand1_votes.alpha = 0;
+    } 
+    if ( winner != 1 ) {
+        level.mv_cand2 fadeOverTime( 1 );   level.mv_cand2_votes fadeOverTime( 1 );
+        level.mv_cand2.alpha = 0;           level.mv_cand2_votes.alpha = 0;
+    }
+    if ( winner != 2 ) {
+        level.mv_cand3 fadeOverTime( 1 );   level.mv_cand3_votes fadeOverTime( 1 );
+        level.mv_cand3.alpha = 0;           level.mv_cand3_votes.alpha = 0;
+    } 
+    if ( winner != 3 ) {
+        level.mv_cand4 fadeOverTime( 1 );   level.mv_cand4_votes fadeOverTime( 1 );
+        level.mv_cand4.alpha = 0;           level.mv_cand4_votes.alpha = 0;
+    }
 }
 
-isGametype(gt)
-{
-	switch(gt)
-	{
-		case "dm":
-		case "tdm":
-		case "sd":
-		case "hq":
-		case "re":
-		case "bel":
-		case "zombies":		
-			return true;
+timer() {
+    stopwatch = newHudElem();
+    stopwatch.alignx = "center";
+    stopwatch.aligny = "middle";
+    stopwatch.x = 320;
+    stopwatch.y = 60;
+    stopwatch setTimer( level.mapvote.time );
+    stopwatch.fontscale = 2;
+    stopwatch.color = ( 0, 1, 0 );
 
-		default:
-			return false;
-	}
+    wait level.mapvote.time;
+
+    wait 1;
+
+    stopwatch destroy();
+
+    level notify( "mapvote_voting_done" );
 }
-getMapName(map)
-{
-	switch(map)
-	{
-		case "mp_bocage":
-			mapname = "Bocage";
-			break;
-		
-		case "mp_brecourt":
-			mapname = "Brecourt";
-			break;
 
-		case "mp_carentan":
-			mapname = "Carentan";
-			break;
+vote_logic( players ) {
+    wait 0.05;
 
-		case "mp_chateau":
-			mapname = "Chateau";
-			break;
-		
-		case "mp_dawnville":
-			mapname = "Dawnville";
-			break;
-		
-		case "mp_depot":
-			mapname = "Depot";
-			break;
+    level endon( "ampvote_voting_done" );
 
-		case "mp_harbor":
-			mapname = "Harbor";
-			break;
-		
-		case "mp_hurtgen":
-			mapname = "Hurtgen";
-			break;
+    while ( true ) {
+        for ( i = 0; i < level.mapvote.selections.size; i++ )
+            level.mapvote.selections[ i ].votes = 0;
 
-		case "mp_neuville":
-			mapname = "Neuville";
-			break;
-		
-		case "mp_pavlov":
-			mapname = "Pavlov";
-			break;
+        for ( i = 0; i < players.size; i++ ) {
+            if ( isDefined( players[ i ].mv_vote ) )
+                level.mapvote.selections[ players[ i ].mv_vote ].votes++;
+        }
 
-		case "mp_powcamp":
-			mapname = "P.O.W Camp";
-			break;
-		
-		case "mp_railyard":
-			mapname = "Railyard";
-			break;
+        level.mv_cand1_votes setValue( level.mapvote.selections[ 0 ].votes );
+        level.mv_cand2_votes setValue( level.mapvote.selections[ 1 ].votes );
+        level.mv_cand3_votes setValue( level.mapvote.selections[ 2 ].votes );
+        level.mv_cand4_votes setValue( level.mapvote.selections[ 3 ].votes );
 
-		case "mp_rocket":
-			mapname = "Rocket";
-			break;
-		
-		case "mp_ship":
-			mapname = "Ship";
-			break;
+        wait 0.1;
+    }
+}
 
-		case "mp_stalingrad":
-			mapname = "Stalingrad";
-			break;
-		
-		case "mp_tigertown":
-			mapname = "Tigertown";
-			break;
-			
-		case "cp_zombies":
-			mapname = "Zombies (CP)";
-			break;
-			
-		case "cp_trifles":
-			mapname = "Trifles (CP)";
-			break;
-		
-		case "cp_shipwreck":
-			mapname = "Shipwreck (CP)";
-			break;
-		
-		case "cp_zombiebunkers":
-			mapname = "Zombie Bunkers (CP)";
-			break;
-		
-		case "cp_omahgawd":
-			mapname = "omahgawd (CP)";
-			break;
-			
-		case "simon_hai":
-			mapname = "Hai (Simon)";
-			break;
-			
-		case "cp_sewerzombies":
-			mapname = "Sewer Zombies (CP)";
-			break;
-			
-		case "cp_banana":
-			mapname = "Banana (CP)";
-			break;
-			
-		case "cp_trainingday":
-			mapname = "Training Day (CP)";
-			break;
-			
-		case "cp_apartments":
-			mapname = "Apartments (CP)";
-			break;
-			
-		case "germantrainingbase":
-			mapname = "German Training Base";
-			break;
-			
-		case "mp_vok_final_night":
-			mapname = "Valley of the Kings";
-			break;
-			
-		case "quarantine":
-			mapname = "Quarantine";
-			break;
-		
-		case "goldeneye_bunker":
-			mapname = "Goldeneye Bunker";
-			break;
+player_vote() {
+    level endon( "mapvote_voting_done" );
 
-		default:
-			mapname = map;
-			break;
-	}
+    self setClientCvar( "g_scriptmainmenu", "" );
+    self closeMenu();
 
-	return mapname;
+    loc = 0;
+    has_voted = false;
+    while ( true ) {
+        wait 0.05;
+
+        if ( self attackbuttonpressed() ) {
+            if ( !has_voted ) {
+                has_voted = true;
+
+                self.mv_selector fadeOverTime( 0.2 );
+                self.mv_selector.alpha = 0.4;
+                
+                self.mv_vote = 0;
+            } else {
+                self.mv_vote++;
+            }
+
+            if ( self.mv_vote == 4 )
+                self.mv_vote = 0;
+
+            self.mv_txt_ply_vote fadeOverTime( 0.1 );
+            self.mv_txt_ply_vote.alpha = 0;
+
+            self.mv_img fadeOverTime( 0.1 );
+            self.mv_img.alpha = 0;
+
+            self.mv_selector moveOverTime( 0.2 );
+            self.mv_selector.y = 300 + ( self.mv_vote * 26 );
+
+            wait 0.1;
+
+            self.mv_txt_ply_vote fadeOverTime( 0.1 );
+            self.mv_txt_ply_vote.alpha = 1;
+            self.mv_txt_ply_vote setText( level.mapvote.selections[ self.mv_vote ].localized );
+
+            self.mv_img fadeOverTime( 0.1 );
+            self.mv_img.alpha = 1;
+
+            if ( level.mapvote.selections[ self.mv_vote ].map_name == "random" )
+                self.mv_img setShader( "levelshots/unknownmap.dds", 256, 192 );
+            else
+                self.mv_img setShader( "levelshots/" + level.mapvote.selections[ self.mv_vote ].map_name + ".dds", 256, 192 );
+
+            wait 0.1;
+        }
+
+        while ( !self attackbuttonpressed() )
+            wait 0.05;
+    }
+}
+
+hud_fade( type, time ) {
+    val = 1;
+    if ( type == "out" )
+        val = 0;
+
+    level.mv_bg fadeOverTime( time );
+    level.mv_bg_top fadeOverTime( time );
+    level.mv_bg_bot fadeOverTime( time );
+    level.mv_bg_midtop fadeOverTime( time );
+    level.mv_bg_midbot fadeOverTime( time );
+    level.mv_bg_left fadeOverTime( time );
+    level.mv_bg_right fadeOverTime( time );
+    level.mv_bg_rightmid fadeOverTime( time );
+
+    level.mv_bg.alpha = val;
+    level.mv_bg_top.alpha = val;
+    level.mv_bg_bot.alpha = val;
+    level.mv_bg_midtop.alpha = val;
+    level.mv_bg_midbot.alpha = val;
+    level.mv_bg_left.alpha = val;
+    level.mv_bg_right.alpha = val;
+    level.mv_bg_rightmid.alpha = val;
+
+    wait time;
+
+    level.mv_notice fadeOverTime( time );
+    level.mv_lb_top fadeOverTime( time );
+    level.mv_lb_bot fadeOverTime( time );
+    level.mv_cand1 fadeOverTime( time );
+    level.mv_cand1_votes fadeOverTime( time );
+    level.mv_cand2 fadeOverTime( time );
+    level.mv_cand2_votes fadeOverTime( time );
+    level.mv_cand3 fadeOverTime( time );
+    level.mv_cand3_votes fadeOverTime( time );
+    level.mv_cand4 fadeOverTime( time );
+    level.mv_cand4_votes fadeOverTime( time );
+
+    level.mv_notice.alpha = val;
+    level.mv_lb_top.alpha = val;
+    level.mv_lb_bot.alpha = val;
+    level.mv_cand1.alpha = val;
+    level.mv_cand1_votes.alpha = val;
+    level.mv_cand2.alpha = val;
+    level.mv_cand2_votes.alpha = val;
+    level.mv_cand3.alpha = val;
+    level.mv_cand3_votes.alpha = val;
+    level.mv_cand4.alpha = val;
+    level.mv_cand4_votes.alpha = val;
+}
+
+spawn_hud() {
+// background black
+    level.mv_bg = spawn_hud_element();
+    level.mv_bg.x = 320;
+    level.mv_bg.y = 240;
+    level.mv_bg setShader( "black", 260, 308 );
+    level.mv_bg.sort = 10;
+    level.mv_bg.alpha = 0;
+// background black
+
+    level.mv_notice = spawn_hud_element();
+    level.mv_notice.x = 320;
+    level.mv_notice.y = 216;
+    level.mv_notice.fontscale = 1.25;
+    level.mv_notice setText( &"Vote in progress... please wait..." );
+    level.mv_notice.color = ( 0, 1 , 0 );
+    level.mv_notice.sort = 12;
+    level.mv_notice.alpha = 0;
+
+// background white bars
+    level.mv_bg_top = spawn_hud_element();;
+    level.mv_bg_top.x = 320;
+    level.mv_bg_top.y = 87;
+    level.mv_bg_top setShader( "white", 256, 2 );
+    level.mv_bg_top.sort = 50;
+    level.mv_bg_top.alpha = 0;
+
+    level.mv_bg_bot = spawn_hud_element();
+    level.mv_bg_bot.x = 320;
+    level.mv_bg_bot.y = 393;
+    level.mv_bg_bot setShader( "white", 256, 2 );
+    level.mv_bg_bot.sort = 50;
+    level.mv_bg_bot.alpha = 0;
+
+    level.mv_bg_midtop = spawn_hud_element();
+    level.mv_bg_midtop.x = 320;
+    level.mv_bg_midtop.y = 146;
+    level.mv_bg_midtop setShader( "white", 256, 2 );
+    level.mv_bg_midtop.sort = 50;
+    level.mv_bg_midtop.alpha = 0;
+
+    level.mv_bg_midbot = spawn_hud_element();
+    level.mv_bg_midbot.x = 320;
+    level.mv_bg_midbot.y = 286;
+    level.mv_bg_midbot setShader( "white", 256, 2 );
+    level.mv_bg_midbot.sort = 50;
+    level.mv_bg_midbot.alpha = 0;
+
+    level.mv_bg_left = spawn_hud_element();
+    level.mv_bg_left.x = 191;
+    level.mv_bg_left.y = 240;
+    level.mv_bg_left setShader( "white", 2, 308 );
+    level.mv_bg_left.sort = 50;
+    level.mv_bg_left.alpha = 0;
+
+    level.mv_bg_right = spawn_hud_element();
+    level.mv_bg_right.x = 449;
+    level.mv_bg_right.y = 240;
+    level.mv_bg_right setShader( "white", 2, 308 );
+    level.mv_bg_right.sort = 50;
+    level.mv_bg_right.alpha = 0;
+
+    level.mv_bg_rightmid = spawn_hud_element();
+    level.mv_bg_rightmid.x = 416;
+    level.mv_bg_rightmid.y = 340;
+    level.mv_bg_rightmid setShader( "white", 2, 106 );
+    level.mv_bg_rightmid.sort = 50;
+    level.mv_bg_rightmid.alpha = 0;
+// background white bars
+
+// letterbox bars
+    level.mv_lb_top = spawn_hud_element();
+    level.mv_lb_top.x = 320;
+    level.mv_lb_top.y = 116;
+    level.mv_lb_top setShader( "black", 256, 60 );
+    level.mv_lb_top.sort = 18;
+    level.mv_lb_top.alpha = 0;
+
+    level.mv_lb_bot = spawn_hud_element();
+    level.mv_lb_bot.x = 320;
+    level.mv_lb_bot.y = 316;
+    level.mv_lb_bot setShader( "black", 256, 60 );
+    level.mv_lb_bot.sort = 18;
+    level.mv_lb_bot.alpha = 0;
+// letterbox bars
+
+    level.mv_img = newHudElem();
+    level.mv_img.alignx = "center";
+    level.mv_img.aligny = "middle";
+    level.mv_img.x = 320;
+    level.mv_img.y = 216;
+    //level.mv_img setShader( "levelshots/mp_harbor.dds", 256, 256 );
+    level.mv_img setShader( "black", 256, 192 );
+    level.mv_img.sort = 15;
+    level.mv_img.alpha = 0;
+
+    level.mv_cand1 = spawn_hud_element();
+    level.mv_cand1.x = 300;
+    level.mv_cand1.y = 298;
+    level.mv_cand1.sort = 40;
+    level.mv_cand1.fontscale = 1.4;
+    level.mv_cand1.alpha = 0;
+
+    level.mv_cand1_votes = spawn_hud_element();
+    level.mv_cand1_votes.x = 432;
+    level.mv_cand1_votes.y = 298;
+    level.mv_cand1_votes setValue( 0 );
+    level.mv_cand1_votes.sort = 40;
+    level.mv_cand1_votes.fontscale = 1.4;
+    level.mv_cand1_votes.alpha = 0;
+
+    level.mv_cand2 = spawn_hud_element();
+    level.mv_cand2.x = 300;
+    level.mv_cand2.y = 324;
+    level.mv_cand2.sort = 40;
+    level.mv_cand2.fontscale = 1.4;
+    level.mv_cand2.alpha = 0;
+
+    level.mv_cand2_votes = spawn_hud_element();
+    level.mv_cand2_votes.x = 432;
+    level.mv_cand2_votes.y = 324;
+    level.mv_cand2_votes setValue( 0 );
+    level.mv_cand2_votes.sort = 40;
+    level.mv_cand2_votes.fontscale = 1.4;
+    level.mv_cand2_votes.alpha = 0;
+
+    level.mv_cand3 = spawn_hud_element();
+    level.mv_cand3.x = 300;
+    level.mv_cand3.y = 350;
+    level.mv_cand3.sort = 40;
+    level.mv_cand3.fontscale = 1.4;
+    level.mv_cand3.alpha = 0;
+
+    level.mv_cand3_votes = spawn_hud_element();
+    level.mv_cand3_votes.x = 432;
+    level.mv_cand3_votes.y = 350;
+    level.mv_cand3_votes setValue( 0 );
+    level.mv_cand3_votes.sort = 40;
+    level.mv_cand3_votes.fontscale = 1.4;
+    level.mv_cand3_votes.alpha = 0;
+
+    level.mv_cand4 = spawn_hud_element();
+    level.mv_cand4.x = 300;
+    level.mv_cand4.y = 376;
+    level.mv_cand4.sort = 40;
+    level.mv_cand4.fontscale = 1.4;
+    level.mv_cand4.alpha = 0;
+
+    level.mv_cand4_votes = spawn_hud_element();
+    level.mv_cand4_votes.x = 432;
+    level.mv_cand4_votes.y = 376;
+    level.mv_cand4_votes setValue( 0 );
+    level.mv_cand4_votes.sort = 40;
+    level.mv_cand4_votes.fontscale = 1.4;
+    level.mv_cand4_votes.alpha = 0;
+}
+
+player_hud_fade( type, time ) {
+    val = 1;
+    if ( type == "out" )
+        val = 0;
+
+    self.mv_img fadeOverTime( time );
+    self.mv_txt_voted_for fadeOverTime( time );
+    self.mv_txt_ply_vote fadeOverTime( time );
+    self.mv_selector fadeOverTime( time );
+
+    self.mv_img.alpha = val;
+    self.mv_txt_voted_for.alpha = val;
+    self.mv_txt_ply_vote.alpha = val;
+
+    // don't fade in
+    if ( type == "in" )
+        self.mv_selector.alpha = 0;
+    else
+        self.mv_selector.alpha = val;
+}
+
+spawn_player_hud() {
+// these should be player HUD elems
+// voted for img goes here
+    self.mv_img = newClientHudElem( self );
+    self.mv_img.alignx = "center";
+    self.mv_img.aligny = "middle";
+    self.mv_img.x = 320;
+    self.mv_img.y = 216;
+    //self.mv_img setShader( "levelshots/mp_harbor.dds", 256, 256 );
+    self.mv_img setShader( "black", 256, 256 );
+    self.mv_img.sort = 15;
+    self.mv_img.alpha = 0;
+// voted for img goes here
+
+    self.mv_txt_voted_for = newClientHudElem( self );
+    self.mv_txt_voted_for.alignx = "center";
+    self.mv_txt_voted_for.aligny = "middle";
+    self.mv_txt_voted_for.x = 320;
+    self.mv_txt_voted_for.y = 102;
+    self.mv_txt_voted_for.sort = 30;
+    self.mv_txt_voted_for.fontscale = 1.5;
+    self.mv_txt_voted_for setText( &"You have voted for: " );
+    self.mv_txt_voted_for.alpha = 0;
+
+    self.mv_txt_ply_vote = newClientHudElem( self );
+    self.mv_txt_ply_vote.alignx = "center";
+    self.mv_txt_ply_vote.aligny = "middle";
+    self.mv_txt_ply_vote.x = 320;
+    self.mv_txt_ply_vote.y = 126;
+    self.mv_txt_ply_vote.sort = 30;
+    self.mv_txt_ply_vote.fontscale = 2;
+    self.mv_txt_ply_vote.color = ( 0, 1, 0 );
+    self.mv_txt_ply_vote.alpha = 0;
+// these should be player HUD elems
+
+    self.mv_selector = newClientHudElem( self );
+    self.mv_selector.alignx = "center";
+    self.mv_selector.aligny = "middle";
+    self.mv_selector.x = 320;
+    self.mv_selector.y = 300;
+    self.mv_selector setShader( "white", 256, 28 );
+    self.mv_selector.color = ( 0, 1, 0 );
+    self.mv_selector.sort = 35;
+    self.mv_selector.alpha = 0;
+}
+
+spawn_hud_element() {
+    elem = newHudElem();
+    elem.alignx = "center";
+    elem.aligny = "middle";
+
+    return elem;
+}
+
+remove_hud() {
+    if ( isDefined( level.mv_bg ) )             level.mv_bg destroy();
+    if ( isDefined( level.mv_notice ) )         level.mv_notice destroy();
+    if ( isDefined( level.mv_bg_top ) )         level.mv_bg_top destroy();
+    if ( isDefined( level.mv_bg_bot ) )         level.mv_bg_bot destroy();
+    if ( isDefined( level.mv_bg_midtop ) )      level.mv_bg_midtop destroy();
+    if ( isDefined( level.mv_bg_midot ) )       level.mv_bg_midbot destroy();
+    if ( isDefined( level.mv_bg_left ) )        level.mv_bg_left destroy();
+    if ( isDefined( level.mv_bg_right ) )       level.mv_bg_right destroy();
+    if ( isDefined( level.mv_bg_rightmid ) )    level.mv_bg_right destroy();
+    if ( isDefined( level.mv_lb_top ) )         level.mv_lb_top destroy();
+    if ( isDefined( level.mv_lb_bot ) )         level.mv_lb_bot destroy();
+}
+
+remove_player_hud() {
+    if ( isDefined( self.mv_img ) )             self.mv_img destroy();
+    if ( isDefined( self.mv_txt_voted_for) )    self.mv_txt_voted_for destroy();
+    if ( isDefined( self.mv_txt_ply_vote ) )    self.mv_txt_ply_vote destroy();
+    if ( isDefined( self.mv_selector ) )        self.mv_selector destroy();
 }
 
 /*
-spawnSpectator(origin, angles)
-{
-	self notify("spawned");
-	self notify("end_respawn");
-
-	resettimeout();
-
-	self stopShellshock();
-
-	self.sessionstate = "spectator";
-	self.spectatorclient = -1;
-	self.archivetime = 0;
-	self.psoffsettime = 0;
-	self.friendlydamage = undefined;
-
-	if(self.pers["team"] == "spectator")
-		self.statusicon = "";
-
-	maps\mp\gametypes\_zom_teams::setSpectatePermissions();
-	
-	if(isDefined(origin) && isDefined(angles))
-		self spawn(origin, angles);
-	else
-	{
-       	spawnpointname = "mp_global_intermission";
-		spawnpoints = getentarray(spawnpointname, "classname");
-		spawnpoint = maps\mp\gametypes\_spawnlogic::getSpawnpoint_Random(spawnpoints);
-	
-		if(isDefined(spawnpoint))
-			self spawn(spawnpoint.origin, spawnpoint.angles);
-		else
-			maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
-	}
-}
+    other funcs
 */
-getGametypeName(gt)
+blank() { }
+
+// tmp
+tolocalizedstring( text ) {
+    return text;
+}
+
+// tmp
+printconsole( text ) {
+    iPrintLn( text );
+}
+
+strip(s) {
+    if(!isDefined(s) || s == "")
+        return "";
+
+    resettimeout();
+
+    s2 = "";
+    s3 = "";
+
+    i = 0;
+    while(i < s.size && s[i] == " ")
+        i++;
+
+    if(i == s.size)
+        return "";
+    
+    for(; i < s.size; i++) {
+        s2 += s[i];
+    }
+
+    i = s2.size-1;
+    while(s2[i] == " " && i > 0)
+        i--;
+
+    for(j = 0; j <= i; j++) {
+        s3 += s2[j];
+    }
+        
+    return s3;
+}
+
+arrayShuffle(arr)
 {
-	switch(gt)
-	{
-		case "bel":
-			gtname = "Behind Enemy Lines";
-			break;
+    for(i = 0; i < arr.size; i++) {
+        // Store the current array element in a variable
+        _tmp = arr[i];
 
-		case "dm":
-			gtname = "Deathmatch";
-			break;
-		
-		case "tdm":
-			gtname = "Team Deathmatch";
-			break;
+        // Generate a random number
+        rN = randomInt(arr.size);
 
-		case "sd":
-			gtname = "Search & Destroy";
-			break;
+        // Replace the current with the random
+        arr[i] = arr[rN];
+        // Replace the random with the current
+        arr[rN] = _tmp;
+    }
+    return arr;
+}
 
-		case "hq":
-			gtname = "Headquarters";
-			break;
-	
-		case "re":
-			gtname = "Retrieval";
-			break;
-			
-		case "zom":
-			gtname = "Zombies";
-			break;					
+explode( s, delimiter, num )
+{
+    temparr = [];
+    
+    if ( !isDefined ( s ) || s == "" )
+        return temparr;
+        
+    if ( !isDefined( num ) )
+        num = 1024;
+        
+    j = 0;
+    temparr[ j ] = "";  
 
-		default:
-			gtname = gt;
-			break;
-	}
+    for ( i = 0; i < s.size; i++ )
+    {
+        if ( s[ i ] == delimiter && j < num )
+        {
+            j++;
+            temparr[ j ] = "";
+        }
+        else
+            temparr[ j ] += s[i];
+    }
+    return temparr;
+}
 
-	return gtname;
+cvardef(varname, vardefault, min, max, type, setifblank)
+{
+    if ( !isDefined( setifblank) )
+        setifblank = true;
+
+    if ( setifblank && getCvar( varname ) == "" )
+        setCvar( varname, vardefault );
+
+    switch(type)
+    {
+        case "int":
+            if(getcvar(varname) == "")
+                definition = vardefault;
+            else
+                definition = getcvarint(varname);
+            break;
+        case "float":
+            if(getcvar(varname) == "")
+                definition = vardefault;
+            else
+                definition = getcvarfloat(varname);
+            break;
+        case "string":
+        default:
+            if(getcvar(varname) == "")
+                definition = vardefault;
+            else
+                definition = getcvar(varname);
+            break;
+    }
+
+    if((type == "int" || type == "float") && min != "" && definition < min)
+        definition = min;
+
+    if((type == "int" || type == "float") && max != "" && definition > max)
+        definition = max;
+
+    return definition;
+}
+
+get_localized_name( map ) {
+    switch ( map ) {
+    // stock maps 1.5
+        case "mp_bocage":
+            mapname = &"Bocage";
+            break;
+        case "mp_brecourt":
+            mapname = &"Brecourt";
+            break;
+        case "mp_carentan":
+            mapname = &"Carentan";
+            break;
+        case "mp_chateau":
+            mapname = &"Chateau";
+            break;
+        case "mp_dawnville":
+            mapname = &"Dawnville";
+            break;
+        case "mp_depot":
+            mapname = &"Depot";
+            break;
+        case "mp_harbor":
+            mapname = &"Harbor";
+            break;
+        case "mp_hurtgen":
+            mapname = &"Hurtgen";
+            break;
+        case "mp_neuville":
+            mapname = &"Neuville";
+            break;
+        case "mp_pavlov":
+            mapname = &"Pavlov";
+            break;
+        case "mp_powcamp":
+            mapname = &"P.O.W Camp";
+            break;
+        case "mp_railyard":
+            mapname = &"Railyard";
+            break;
+        case "mp_rocket":
+            mapname = &"Rocket";
+            break;
+        case "mp_ship":
+            mapname = &"Ship";
+            break;
+        case "mp_stalingrad":
+            mapname = &"Stalingrad";
+            break;
+        case "mp_tigertown":
+            mapname = &"Tigertown";
+            break;
+
+    // custom maps
+        case "alcatraz":
+            mapname = &"Alcatraz";
+            break;
+        case "cp_zombies":
+            mapname = &"Zombies (CP)";
+            break;
+        case "cp_trifles":
+            mapname = &"Trifles (CP)";
+            break;
+        case "cp_shipwreck":
+            mapname = &"Shipwreck (CP)";
+            break;
+        case "cp_zombiebunkers":
+            mapname = &"Zombie Bunkers (CP)";
+            break;
+        case "cp_omahgawd":
+            mapname = &"omahgawd (CP)";
+            break;
+        case "simon_hai":
+            mapname = &"Hai (Simon)";
+            break;
+        case "cp_sewerzombies":
+            mapname = &"Sewer Zombies (CP)";
+            break;
+        case "cp_banana":
+            mapname = &"Banana (CP)";
+            break;
+        case "cp_trainingday":
+            mapname = &"Training Day (CP)";
+            break;
+        case "cp_apartments":
+            mapname = &"Apartments (CP)";
+            break;
+        case "germantrainingbase":
+            mapname = &"German Training Base";
+            break;
+        case "mp_vok_final_night":
+            mapname = &"Valley of the Kings";
+            break;
+        case "quarantine":
+            mapname = &"Quarantine";
+            break;
+        case "goldeneye_bunker":
+            mapname = &"Goldeneye Bunker";
+            break;
+        case "toybox_bloodbath":
+            mapname = &"Toybox";
+            break;  
+    //
+        case "random":
+            mapname = &"Random Map";
+            break;
+    //
+        default:
+            mapname = map;
+            break;
+    }
+
+    return mapname;
+}
+
+get_long_name( map ) {
+    switch ( map ) {
+    // stock maps 1.5
+        case "mp_bocage":
+            mapname = "Bocage";
+            break;
+        case "mp_brecourt":
+            mapname = "Brecourt";
+            break;
+        case "mp_carentan":
+            mapname = "Carentan";
+            break;
+        case "mp_chateau":
+            mapname = "Chateau";
+            break;
+        case "mp_dawnville":
+            mapname = "Dawnville";
+            break;
+        case "mp_depot":
+            mapname = "Depot";
+            break;
+        case "mp_harbor":
+            mapname = "Harbor";
+            break;
+        case "mp_hurtgen":
+            mapname = "Hurtgen";
+            break;
+        case "mp_neuville":
+            mapname = "Neuville";
+            break;
+        case "mp_pavlov":
+            mapname = "Pavlov";
+            break;
+        case "mp_powcamp":
+            mapname = "P.O.W Camp";
+            break;
+        case "mp_railyard":
+            mapname = "Railyard";
+            break;
+        case "mp_rocket":
+            mapname = "Rocket";
+            break;
+        case "mp_ship":
+            mapname = "Ship";
+            break;
+        case "mp_stalingrad":
+            mapname = "Stalingrad";
+            break;
+        case "mp_tigertown":
+            mapname = "Tigertown";
+            break;
+
+    // custom maps
+        case "alcatraz":
+            mapname = "Alcatraz";
+            break;
+        case "cp_zombies":
+            mapname = "Zombies (CP)";
+            break;
+        case "cp_trifles":
+            mapname = "Trifles (CP)";
+            break;
+        case "cp_shipwreck":
+            mapname = "Shipwreck (CP)";
+            break;
+        case "cp_zombiebunkers":
+            mapname = "Zombie Bunkers (CP)";
+            break;
+        case "cp_omahgawd":
+            mapname = "omahgawd (CP)";
+            break;
+        case "simon_hai":
+            mapname = "Hai (Simon)";
+            break;
+        case "cp_sewerzombies":
+            mapname = "Sewer Zombies (CP)";
+            break;
+        case "cp_banana":
+            mapname = "Banana (CP)";
+            break;
+        case "cp_trainingday":
+            mapname = "Training Day (CP)";
+            break;
+        case "cp_apartments":
+            mapname = "Apartments (CP)";
+            break;
+        case "germantrainingbase":
+            mapname = "German Training Base";
+            break;
+        case "mp_vok_final_night":
+            mapname = "Valley of the Kings";
+            break;
+        case "quarantine":
+            mapname = "Quarantine";
+            break;
+        case "goldeneye_bunker":
+            mapname = "Goldeneye Bunker";
+            break;
+        case "toybox_bloodbath":
+            mapname = "Toybox";
+            break;  
+    //
+        case "random":
+            mapname = "Random Map";
+            break;
+    //
+        default:
+            mapname = map;
+            break;
+    }
+
+    return mapname;
 }
