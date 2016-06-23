@@ -150,9 +150,6 @@ sql_update( id ) {
 
 // new updates here
     switch ( level.zombies_build ) {
-        case "16.174.158":
-            query = "ALTER TABLE zombies.map_history ADD players_at_end INT NOT NULL";
-            break;
         default:
             query = "";
             break;

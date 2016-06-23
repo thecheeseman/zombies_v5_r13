@@ -53,7 +53,7 @@ init()
     level.mapvote.randommap = undefined;
 
     parse_map_rotation();
-    pick_random_maps();
+    pick_maps();
 }
 
 /*
@@ -212,18 +212,138 @@ parse_map_rotation() {
 }
 
 /*
-    pick_random_maps()
-    Chooses three random maps from the rotation and then
+    pick_maps()
+    Chooses three maps from the rotation and then
     precaches their info
 
     Determines maps ahead of time based on the previous
     match's player count at the end of the game
 */
-pick_random_maps() {
+pick_maps() {
     maps = [];
+    mostplayed = [];    // option #1 - random selection from the top 3 most played maps
+    middleplayed = [];  // option #2 - random selection from the middle tier of played maps
+    leastplayed = [];   // option #3 - random selection from the bottom 3 played maps
 
-    // TODO: sql
-    playercount = 0;
+    // grab the second to last map we played
+    lastmap = undefined;
+    query = "SELECT m.map_name FROM zombies.map_history mh, zombies.maps m WHERE mh.map_id = m.id ORDER BY time_ended DESC LIMIT 1";
+    if ( mysql_query( level.db, query ) ) {
+        [[ level.sql_error ]]();
+        pick_rotation_fallback();
+        return;
+    }
+
+    result = mysql_store_result( level.db );
+    if ( !result ) {
+        [[ level.sql_error ]]();
+        pick_rotation_fallback();
+        return;
+    }
+
+    if ( mysql_num_rows( result ) ) {
+        row = mysql_fetch_row( result );
+        if ( isDefined( row ) ) {
+            lastmap = row[ 0 ];
+        }
+    }
+
+    mysql_free_result( result );
+
+    printconsole( "last map : " + lastmap + "\n" );
+    
+    // grab the list of maps sorted by how often they've been played
+    if ( level.mapvote.include_custom )
+        query = "SELECT map_name FROM zombies.maps ORDER BY amount_played DESC";
+    else
+        query = "SELECT map_name FROM zombies.maps WHERE is_stock_map=1 ORDER BY amount_played DESC";
+
+    if ( mysql_query( level.db, query ) ) {
+        [[ level.sql_error ]]();
+        pick_rotation_fallback();  // if we can't grab MySQL info, just pick random maps from the rotation
+        return;
+    }
+
+    result = mysql_store_result( level.db );
+    if ( !result ) {
+        [[ level.sql_error ]]();
+        pick_rotation_fallback();
+        return;
+    }
+
+    if ( mysql_num_rows( result ) == 0 ) {
+        printconsole( "[MySQL] No rows in the `maps` table!\n" );
+        pick_rotation_fallback();
+        return;
+    }
+
+    row = mysql_fetch_row( result );
+    for ( i = 0; i < mysql_num_rows( result ); i++ ) {
+        if ( !isDefined( row ) )
+            break;
+
+        skip = false;
+
+        // don't add the current map to the list
+        if ( row[ 0 ] == level.mapname )
+            skip = true;
+
+        // don't add second to last map
+        if ( row[ 0 ] == lastmap )
+            skip = true;            
+
+        if ( !skip )
+            maps[ maps.size ] = row[ 0 ];
+
+        row = mysql_fetch_row( result );
+    }
+
+    mysql_free_result( result );
+
+    if ( maps.size == 0 ) {
+        printconsole( "[MySQL] Didn't add any maps to maps array!\n" );
+        pick_rotation_fallback();
+        return;
+    }
+
+    // sort maps
+    for ( i = 0; i < maps.size; i++ ) {
+        if ( i < 3 ) 
+            mostplayed[ mostplayed.size ] = maps[ i ];
+        else if ( i >= ( maps.size - 3 ) )
+            leastplayed[ leastplayed.size ] = maps[ i ];
+        else
+            middleplayed[ middleplayed.size ] = maps[ i ];
+    }
+
+    opt1 = mostplayed[ randomInt( mostplayed.size ) ];
+    opt2 = middleplayed[ randomInt( middleplayed.size ) ];
+    opt3 = leastplayed[ randomInt( leastplayed.size ) ];
+
+    add_selection( opt1 );
+    add_selection( opt2 );
+    add_selection( opt3 );
+
+    // remove the #2 option from the random pool
+    availablernd = [];
+    for ( i = 0; i < middleplayed.size; i++ ) {
+        if ( middleplayed[ i ] == opt2 )
+            continue;
+
+        availablernd[ availablernd.size ] = middleplayed[ i ];
+    }
+
+    add_selection( "random" );
+
+    if ( availablernd.size > 0 )
+        level.mapvote.randommap = availablernd[ randomInt( availablernd.size ) ];
+    else
+        level.mapvote.randommap = undefined;
+}
+
+pick_rotation_fallback() {
+    maps = [];
+    playercount = 16;
     
     for ( i = 0; i < level.mapvote.stockmaps.size; i++ ) {
         map = level.mapvote.stockmaps[ i ];
@@ -328,6 +448,9 @@ vote_logic( players ) {
             level.mapvote.selections[ i ].votes = 0;
 
         for ( i = 0; i < players.size; i++ ) {
+            if ( !isDefined( players[ i ] ) )
+                continue;
+            
             if ( isDefined( players[ i ].mv_vote ) )
                 level.mapvote.selections[ players[ i ].mv_vote ].votes++;
         }
@@ -346,6 +469,7 @@ vote_logic( players ) {
     handle's each player's vote and hud updates
 */
 player_vote() {
+    self endon( "disconnect" );
     level endon( "mapvote_voting_done" );
 
     self setClientCvar( "g_scriptmainmenu", "" );

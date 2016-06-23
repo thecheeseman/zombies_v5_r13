@@ -54,6 +54,7 @@ CREATE TABLE maps (
     `id`                INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `map_name`          VARCHAR( 128 ) NOT NULL,
     `long_name`         VARCHAR( 256 ) NOT NULL,
+    `is_stock_map`      INT NOT NULL DEFAULT 0,
     `weather_type`      VARCHAR( 64 ) NOT NULL DEFAULT 'stock',
     `hazard`            VARCHAR( 64 ) NOT NULL DEFAULT 'none',
     `has_night`         INT NOT NULL DEFAULT 1,
@@ -67,19 +68,19 @@ CREATE TABLE maps (
         Stock maps
     */
     INSERT INTO maps 
-        ( map_name,         long_name,      weather_type,   hazard,         has_night ) VALUES 
-        ( 'mp_brecourt',    'Brecourt',     'radioactive',  'none',         0 ), 
-        ( 'mp_carentan',    'Carentan',     'rainy',        'rainstorm',    1 ), 
-        ( 'mp_chateau',     'Chateau',      'rainy',        'rainstorm',    1 ),
-        ( 'mp_dawnville',   'Dawnville',    'dusty',        'haboob',       1 ),
-        ( 'mp_depot',       'Depot',        'dusty',        'haboob',       1 ),
-        ( 'mp_harbor',      'Harbor',       'snowy',        'blizzard',     1 ),
-        ( 'mp_hurtgen',     'Hurtgen',      'snowy',        'blizzard',     1 ),
-        ( 'mp_pavlov',      'Pavlov',       'snowy',        'blizzard',     1 ),
-        ( 'mp_powcamp',     'POW Camp',     'rainy',        'rainstorm',    1 ),
-        ( 'mp_railyard',    'Railyard',     'snowy',        'blizzard',     1 ),
-        ( 'mp_rocket',      'Rocket',       'snowy',        'blizzard',     1 ),
-        ( 'mp_ship',        'Ship',         'rainy',        'rainstorm',    1 );
+        ( map_name,         long_name,      is_stock_map,   weather_type,   hazard,         has_night ) VALUES 
+        ( 'mp_brecourt',    'Brecourt',     1,              'radioactive',  'none',         0 ), 
+        ( 'mp_carentan',    'Carentan',     1,              'rainy',        'rainstorm',    1 ), 
+        ( 'mp_chateau',     'Chateau',      1,              'rainy',        'rainstorm',    1 ),
+        ( 'mp_dawnville',   'Dawnville',    1,              'dusty',        'haboob',       1 ),
+        ( 'mp_depot',       'Depot',        1,              'dusty',        'haboob',       1 ),
+        ( 'mp_harbor',      'Harbor',       1,              'snowy',        'blizzard',     1 ),
+        ( 'mp_hurtgen',     'Hurtgen',      1,              'snowy',        'blizzard',     1 ),
+        ( 'mp_pavlov',      'Pavlov',       1,              'snowy',        'blizzard',     1 ),
+        ( 'mp_powcamp',     'POW Camp',     1,              'rainy',        'rainstorm',    1 ),
+        ( 'mp_railyard',    'Railyard',     1,              'snowy',        'blizzard',     1 ),
+        ( 'mp_rocket',      'Rocket',       1,              'snowy',        'blizzard',     1 ),
+        ( 'mp_ship',        'Ship',         1,              'rainy',        'rainstorm',    1 );
 
     /* 
         Custom maps included in 

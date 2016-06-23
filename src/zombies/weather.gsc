@@ -59,10 +59,12 @@ init()
                 }
 
                 printconsole( "[MySQL] Loaded map info for map " + level.mapinfo.long_name + " (" + level.mapinfo.map_name + ")\n" );
-                mapinfo_struct_print( level.mapinfo );
+                //mapinfo_struct_print( level.mapinfo );
             } else {
                 printconsole( "[MySQL] No rows returned for map " + level.mapname + "\n" );
             }
+
+            mysql_free_result( result );
         } else {
             [[ level.sql_error ]]();
         }
