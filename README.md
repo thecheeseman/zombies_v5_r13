@@ -26,7 +26,7 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 20/06/16
+#### 08/05/16 - 22/06/16
     
     + Added MySQL support to Weather/Map info
     + Added new Mapvote System

@@ -23,22 +23,25 @@
 main()
 {   
     // version information
-    level.zombies_build =           "16.174.157";
+    level.zombies_build =           "16.174.158";
     level.zombies_last_updated =    "22 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
     //
 
+    // should be first
     zombies\sql::init();
+    // should be first
 
+    // should be second
     zombies\debug::init();
     [[ level.logwrite ]]( "VV---------- mod.gsc::Main() ----------VV" );
+    // should be second
     
     zombies\precache::init();
-    
     precache();
 
-    zombies\config::init();     // cvar-related
+    zombies\config::init();
     
     botlib\main::init();
     modules\modules::init();
@@ -147,6 +150,8 @@ precache()
                 break;
         }
     }
+
+    level.gametype = "zombies";
 
     layoutname = "levelshots/layouts/hud@layout_" + game[ "layoutimage" ];
     setCvar( "scr_layoutimage", layoutname );
@@ -535,11 +540,11 @@ endGame( winner )
             centerImage destroy();
             utilities::cleanScreen();
         }
-        
-        thread zombies\mapvote::Initialize();
-        level waittill( "VotingComplete" );
-            
+
         thread zombies\hud::endgamehud_cleanup();
+        
+        thread zombies\mapvote::main();
+        level waittill( "mapvote_done" );
         
         game[ "state" ] = "intermission";
         

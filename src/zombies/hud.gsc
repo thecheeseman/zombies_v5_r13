@@ -698,6 +698,13 @@ endgamehud()
 
 endgamehud_cleanup()
 {
+	if ( isDefined( level.stat_hud_bgnd ) )			level.stat_hud_bgnd destroy();
+	if ( isDefined( level.stat_header ) )			level.stat_header destroy();
+	if ( isDefined( level.stat_headerText ) )		level.stat_headerText destroy();
+	if ( isDefined( level.stat_leftline ) )			level.stat_leftline destroy();
+	if ( isDefined( level.stat_rightline ) )		level.stat_rightline destroy();
+	if ( isDefined( level.stat_bottomline ) )		level.stat_bottomline destroy();
+
 	players = getEntArray( "player", "classname" );
 	
 	for ( i = 0; i < players.size; i++ )
