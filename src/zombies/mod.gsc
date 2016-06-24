@@ -23,8 +23,8 @@
 main()
 {   
     // version information
-    level.zombies_build =           "16.174.159";
-    level.zombies_last_updated =    "22 June 2016";
+    level.zombies_build =           "16.176.160";
+    level.zombies_last_updated =    "24 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
     //

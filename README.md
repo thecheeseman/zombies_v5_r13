@@ -26,11 +26,18 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 22/06/16
+#### 08/05/16 - 24/06/16
     
+    build 16.176.160
+    * Changed Barricades / Sentry collision to factor in other players (so people can't get stuck inside them)
+    # Finally fixed barricade physics (now properly drops barricades to the ground)
+
+    build 16.173.155-156 / build 16.174.157-159
     + Added MySQL support to Weather/Map info
     + Added new Mapvote System
     + Added Weather system from the last version of Zombies (zombies_final)
+    
+    build 16.172.152-154
     + Added Endgame music for different outcomes
     + Dropped all the Hunter's speeds by 0.1x (to allow for new Rank perks)
     + Added a 1.5-style jump cooldown for Recon's double-jump
@@ -40,6 +47,8 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     + Disallowed placement of barricades within 64 units of ammoboxes
     # Fixed a bug where Hunters could die from Proxies when dead zombies haven't respawned yet
     # Fixed a bug where barricades would stay after someone disconnected
+
+    previous builds:
     # Fixed a bug where Combat Medics/Supports didn't get grenades
     - Removed Sentry collision to attempt to prevent blocking
     # Fixed a bug where Last Hunter did not receive kills properly in stats

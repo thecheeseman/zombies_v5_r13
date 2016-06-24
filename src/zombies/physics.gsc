@@ -19,27 +19,38 @@
 init()
 {
 	[[ level.logwrite ]]( "zombies\\physics.gsc::init()", true );
-	level.gravity = getCvar( "g_gravity" );
+	level.gravity = getCvarInt( "g_gravity" );
 }
 
-doPhysics()
+doPhysics( owner )
 {
 	self endon( "stop_physics" );
+    level endon( "intermission" );
 	
-	while ( 1 )
-	{
+	while ( true ) {
 		thisorg = self.origin;
 		
-		trace = bullettrace( thisorg + ( 0, 0, 8 ), thisorg + ( 0, 0, -10000 ), false, self );
-		if ( trace[ "fraction" ] == 1 )
-		{
+		trace = bullettrace( thisorg + ( 0, 0, 1 ), thisorg + ( 0, 0, -10000 ), true, self );
+		if ( trace[ "fraction" ] > 0.0001 ) {
+            owner iprintln( "Dropping barricade to ground..." );
+            
 			dist = distance( thisorg, trace[ "position" ] );
-			speed = dist / 384;
+			speed = sqrt( ( dist * 2 ) / getCvarInt( "g_gravity" ) );
+
+            accel = ( speed / 1.3 ) - 0.05;
+            if ( accel < 0 )
+                accel = 0;
+
+            decel = 0.05;
+            if ( speed < frame() ) {
+                decel = 0;
+                speed = frame();
+            }
 			
-			self moveto( trace[ "position" ], speed, 0.5, 0.5 );
+			self moveto( trace[ "position" ], speed, accel, decel );
 			self waittill( "movedone" );
 		}
 		
-		wait 0.05;
+		wait 0.5;
 	}
 }

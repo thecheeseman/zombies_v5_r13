@@ -247,12 +247,12 @@ doItem( response )
 				self iPrintLnBold( "Please move out of your barricade before placing a new one." );
 				return false;
 			}
-
+/*
 			if ( !self isOnGround() ) {
 				self iPrintLnBold( "You can't place barricades in the air." );
 				return false;
 			}
-
+*/
 			if ( isDefined( level.ammoboxes ) ) {
 				for ( i = 0; i < level.ammoboxes.size; i++ ) {
 					if ( distance( self.origin, level.ammoboxes[ i ] ) < 64 ) {
@@ -357,7 +357,7 @@ spawn_barricade( model, clip, trigdistance )
 	org = self.origin;
 	
 	self.barricades[ num ] = spawnstruct();
-	self.barricades[ num ].model = spawn( "script_model", org );
+	self.barricades[ num ].model = spawn( "script_model", org + ( 0, 0, 8 ) );
 	self.barricades[ num ].model setModel( model );
 
 	wait 0.05;
@@ -385,12 +385,20 @@ spawn_barricade( model, clip, trigdistance )
 	*/
 	level.barricades++;;
 	
-	self.barricades[ num ].model thread zombies\physics::doPhysics();
+	self.barricades[ num ].model thread zombies\physics::doPhysics( self );
 
 	self.insidebarricade = true;
 
-	while ( isAlive( self ) && utilities::distance2D( self.origin, org ) < trigdistance )
-		wait 0.05;
+    while ( true ) {
+        if ( !isAlive( self ) )
+            break;
+
+        nearby = utilities::nearbyPlayers( self.barricades[ num ].model.origin, 44 );
+        if ( nearby.size == 0 )
+            break;
+
+        wait 0.05;
+    }
 
 	self.insidebarricade = undefined;
 

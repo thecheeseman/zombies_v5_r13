@@ -554,9 +554,19 @@ sentry()
     
     wait 0.15;
 
-    while ( isAlive( self ) && utilities::distance2D( self.origin, barrel.origin ) < 40 )
-        wait 0.05;
+    while ( true ) {
+        if ( !isAlive( self ) ) 
+            break;
+        nearby = utilities::nearbyPlayers( barrel.origin, 46 );
+        if ( nearby.size == 0 )
+            break;
 
+        wait 0.05;
+    }
+/*
+    while ( isAlive( self ) && distance2D( self.origin, barrel.origin ) < 40 )
+        wait 0.05;
+*/
     if ( !isAlive( self ) )
     {
         barrel delete();

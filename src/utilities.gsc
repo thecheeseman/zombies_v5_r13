@@ -191,9 +191,9 @@ contains( sString, sOtherString ) {
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-distance2D( origin1, origin2 ) {
-    return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
-}
+//distance2D( origin1, origin2 ) {
+//    return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
+//}
 
 endsWith( string, end ) {
     if ( !isDefined( string ) || !isDefined( end ) )
@@ -558,6 +558,29 @@ monotone( str )
     }
 
     return ( _s );
+}
+
+nearbyPlayers( location, dist, use2d, includeall ) {
+    if ( !isDefined( use2d ) ) 
+        use2d = false;
+
+    if ( !isDefined( includeall ) ) 
+        includeall = false;
+
+    players = getEntArray( "player", "classname" );
+
+    nearby = [];
+    for ( i = 0; i < players.size; i++ ) {
+        if ( use2d ) {
+            if ( distance2d( location, players[ i ].origin ) <= dist && ( players[ i ].sessionstate == "playing" || includeall ) )
+                nearby[ nearby.size ] = players[ i ];
+        } else {
+            if ( distance( location, players[ i ].origin ) <= dist && ( players[ i ].sessionstate == "playing" || includeall ) )
+                nearby[ nearby.size ] = players[ i ];
+        }
+    }
+
+    return nearby;
 }
 
 playSoundInSpace( sAlias, vOrigin, iTime )
