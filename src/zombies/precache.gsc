@@ -82,7 +82,7 @@ precache_runner( item, type, name ) {
             if ( utilities::startsWith( item, "xmodel/" ) ) {
                 type = "model";
             } // shaderish.. could be headicon or statusicon but we'll just assume it's a shader
-            else if ( utilities::startsWith( item, "gfx/" ) ) {
+            else if ( utilities::startsWith( item, "gfx/" ) || utilities::startsWith( item, "levelshots/" ) ) {
                 type = "shader";
             } // weapon
             else if ( utilities::endsWith( item, "_mp" ) || utilities::startsWith( item, "item_" ) ) {

@@ -136,7 +136,8 @@ CREATE TABLE players (
 
     `name`              VARCHAR( 48 ) NOT NULL,
     `guid`              INT NOT NULL,         -- hold over from old version
-    `ip_address`        VARCHAR( 16 ) NOT NULL,
+    `ip_address`        INT UNSIGNED NOT NULL,
+    `country`           VARCHAR( 2 ) NOT NULL,
     `permissions`       INT NOT NULL DEFAULT 0,
 
     `name_list`         VARCHAR( 1024 ),      -- store up to 30 old names

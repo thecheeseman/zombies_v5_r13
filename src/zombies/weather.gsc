@@ -58,10 +58,10 @@ init()
                     field = mysql_fetch_field( result );
                 }
 
-                printconsole( "[MySQL] Loaded map info for map " + level.mapinfo.long_name + " (" + level.mapinfo.map_name + ")\n" );
+                printconsole( "[weather.gsc] Loaded map info for map " + level.mapinfo.long_name + " (" + level.mapinfo.map_name + ")\n" );
                 //mapinfo_struct_print( level.mapinfo );
             } else {
-                printconsole( "[MySQL] No rows returned for map " + level.mapname + "\n" );
+                printconsole( "[weather.gsc] No rows returned for map " + level.mapname + "\n" );
             }
 
             mysql_free_result( result );
@@ -118,7 +118,7 @@ save_mapinfo() {
         return;
     }
 
-    printconsole( "[MySQL] Saved mapinfo!\n" );
+    printconsole( "[weather.gsc] Saved mapinfo!\n" );
 }
 
 main() {
@@ -216,75 +216,6 @@ setdefaultfog() {
                 ambientPlay( "ambient_mp_powcamp" );
         }
     }
-/*
-    level.timeofday = "day";
-    if ( _randomInt( 100 ) > 30 )
-        level.timeofday = "night";
-
-    if ( level.timeofday == "night" ) {
-        level.darkness = 0.7;
-        set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
-
-        if ( !level.mapended && level.mapname != "mp_ship" ) {
-            if ( _randomInt( 100 ) > 50 )
-                ambientPlay( "ambient_mp_chateau" );
-            else
-                ambientPlay( "ambient_mp_powcamp" );
-        }
-    } else {
-        level.darkness = 0.1;
-
-        switch ( level.mapname ) {
-            // other stuff
-            case "mp_brecourt":
-                set_fog( "expfog", 0, 0.005, ( 0.32157, 0.39608, 0.1451 ), 0 ); // camo green
-                break;
-            case "mp_depot":
-                set_fog( "expfog", 0, 0.0009, ( 0.69804, 0.6, 0.43137 ), 0 );   // dust
-                break;
-                
-            // dusty maps
-            case "mp_dawnville":
-                set_fog( "expfog", 0, 0.0009, ( 0.69804, 0.6, 0.43137 ), 0 );   // dust
-                create_hazard( "haboob" );
-                break;
-                
-            // rainy maps
-            case "mp_carentan":
-            case "mp_chateau":
-            case "mp_powcamp":
-            case "mp_ship":
-                level.darkness = 0.4; // :D
-                set_fog( "expfog", 0, 0.001, ( 0.53725, 0.62745, 0.6902 ), 0 ); // bluey gray
-                create_hazard( "rainstorm" );
-                break;
-                
-            // snow maps
-            case "mp_harbor":
-            case "mp_hurtgen":
-            case "mp_pavlov":
-            case "mp_railyard":
-            case "mp_rocket":
-                set_fog( "expfog", 0, 0.0007, ( 1, 1, 1 ), 0 );
-                create_hazard( "blizzard" );
-                break;
-
-            // custom maps with custom fog
-            case "cp_zombies":
-            case "cp_trifles":
-            case "cp_sewerzombies":
-                break;
-            
-            // otherwise, just revert to original
-            default:
-                level.darkness = 0.7;
-                set_fog( "expfog", 0, 0.002, ( 0, 0, 0 ), 0 );
-
-                if ( !level.mapended )
-                    ambientPlay( "ambient_mp_chateau" );
-                break;
-        }
-    }*/
 }
 
 set_fog( type, closeDist, farDist, color, transTime ) {

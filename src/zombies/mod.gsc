@@ -23,7 +23,7 @@
 main()
 {   
     // version information
-    level.zombies_build =           "16.176.160";
+    level.zombies_build =           "13.2.0.161";
     level.zombies_last_updated =    "24 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
@@ -774,8 +774,6 @@ onConnect()
         self setClientCvar( "r_fastsky", 1 );
     else
         self setClientCvar( "r_fastsky", 0 );
-
-    self thread extraKeys();
 }
 
 onDisconnect()
@@ -895,6 +893,7 @@ spawnPlayer()
     }
 
     self thread zombies\hud::runHud();
+    self thread playerThreads();
     
     if ( level.debug )
         self utilities::showpos();
@@ -1520,6 +1519,141 @@ makeZombie()
     
     if ( !level.nuked )
         self openMenu( game[ "menu_weapon_allies" ] );
+}
+
+/*
+    playerThreads()
+    keeping track of important things for stats
+    also for checking hp drops, etc
+
+    trying to move all the extra threads on players 
+    to here, at least the ones that aren't too specialised
+*/
+playerThreads() {
+    level endon( "intermission" );
+
+    fps = getCvarInt( "sv_fps" );
+
+    while ( true ) {
+        primary = self getWeaponSlotWeapon( "primary" );
+        secondary = self getWeaponSlotWeapon( "primaryb" );
+        pistol = self getWeaponSlotWeapon( "pistol" );
+        nade = self getWeaponSlotWeapon( "grenade" );
+        currentweapon = self getCurrentWeapon();
+
+        wait frame();
+
+        if ( !isAlive( self ) ) 
+            break;
+
+        if ( self.sessionstate != "playing" ) 
+            break;
+
+        // change weapons
+        if ( self getCurrentWeapon() != currentweapon ) {
+            primary = self getWeaponSlotWeapon( "primary" );
+            secondary = self getWeaponSlotWeapon( "primaryb" );
+            pistol = self getWeaponSlotWeapon( "pistol" );
+            nade = self getWeaponSlotWeapon( "grenade" );
+            current = self getCurrentWeapon();
+            currentweapon = self getCurrentWeapon();
+        }
+
+        currentweaponslot = "primary";
+        if ( currentweapon == secondary )
+            currentweaponslot = "primaryb";
+        else if ( currentweapon == pistol )
+            currentweaponslot = "pistol";
+        else if ( currentweapon == nade )
+            currentweaponslot = "grenade";
+
+        // hunters
+        if ( self.pers[ "team" ] == "axis" ) {
+            // check healthpack drop
+            // only can be active while not reloading
+            if ( self getWeaponSlotClipAmmo( currentweaponslot ) == getWeaponMaxClipAmmo( currentweapon ) ) {
+                if ( self holdKeysForTime( "reload", 2 ) ) {
+                    if ( self.healthpacks > 0 ) {
+                        self dropHealth();
+                        self.healthpacks--;
+                    }
+                    else
+                        self iprintln( "^2You're not carrying any health packs." );
+                }
+            }
+
+            // killstreaks
+            if ( self holdKeysForTime( "melee,use", 2 ) ) {
+                if ( isDefined( self.powerup ) )
+                    self thread zombies\killstreaks::doPowerup();
+                else
+                    self iPrintLn( "^2You don't have any powerups." );
+            }
+        }
+    }
+}
+
+holdKeysForTime( keystring, time, exclusive ) {
+    if ( !isDefined( keystring ) || !isDefined( time ) )
+        return false;
+
+    if ( !isDefined( exclusive ) ) 
+        exclusive = false;
+
+    keysarr = utilities::explode( keystring, "," );
+    if ( keysarr.size == 0 )
+        return false;
+
+    fps = getCvarInt( "sv_fps" );
+
+    melee = 1;
+    use = 2;
+    attack = 4;
+    reload = 8;
+    aim = 16;
+    leanleft = 32;
+    leanright = 64;
+
+    keys = 0;
+    for ( i = 0; i < keysarr.size; i++ ) {
+        switch ( keysarr[ i ] ) {
+            case "melee":       keys |= melee;      break;
+            case "use":         keys |= use;        break;
+            case "attack":      keys |= attack;     break;
+            case "reload":      keys |= reload;     break;
+            case "aim":         keys |= aim;        break;
+            case "leanleft":    keys |= leanleft;   break;
+            case "leanright":   keys |= leanright;  break;
+            default:            break;
+        }
+    }
+
+    timeup = 0;
+    for ( i = 0; i < ( fps * time ) + 1; i++ ) {
+        wait frame();
+
+        keysdown = 0;
+
+        if ( self meleeButtonPressed() )        keysdown |= melee;
+        if ( self useButtonPressed() )          keysdown |= use;
+        if ( self attackButtonPressed() )       keysdown |= attack;
+        if ( self reloadButtonPressed() )       keysdown |= reload;
+        if ( self aimButtonPressed() )          keysdown |= aim;
+        if ( self leanLeftButtonPressed() )     keysdown |= leanleft;
+        if ( self leanRightButtonPressed() )    keysdown |= leanright;
+
+        if ( ( exclusive && keys == keysdown ) || ( !exclusive && ( keys & keysdown ) ) ) {
+            timeup += frame();
+            continue;
+        }
+
+        break;
+    }
+
+    if ( timeup > time )
+        return true;
+
+    return false;
 }
 
 extraKeys()

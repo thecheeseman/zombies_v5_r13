@@ -4,9 +4,10 @@ Zombies is a modification for Call of Duty 1.1. It is my take on the classic Zom
 
 ### Requirements
 
-- Call of Duty version 1.1
-- zomxtended (custom version of CoDExtended)
-- Any flavour of Linux you like
+- Any distro of Linux (I prefer CentOS 7 or Debian 8)
+- a Call of Duty 1.1 server running [zomextended](https://github.com/thecheeseman/zomextended) (custom version of CoDExtended)
+- a MySQL server
+- Hope
 
 ### Some notes
 
@@ -28,16 +29,25 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.2
 #### 08/05/16 - 24/06/16
     
-    build 16.176.160
+    13.2.0.161
+    # Fixed a few areas of code where I wasn't using level.precache
+    + Added a secondary mode to the PPSh - slower auto mode (225 damage, but slower firetime)
+    * Boosted the PPSh damage from 100 to 125
+    * The Gatlin Gun now has half the ammo capacity it did before
+    * Changed killstreak shortcut to 'Hold Melee + Use for 2 seconds'
+    * Changed healthpack drop shortcut to 'Hold R for 2 seconds'
+    + Added new player thread function to handle most of the player loops
+
+    13.2.0.160
     * Changed Barricades / Sentry collision to factor in other players (so people can't get stuck inside them)
     # Finally fixed barricade physics (now properly drops barricades to the ground)
 
-    build 16.173.155-156 / build 16.174.157-159
+    13.2.0.155-159
     + Added MySQL support to Weather/Map info
     + Added new Mapvote System
     + Added Weather system from the last version of Zombies (zombies_final)
     
-    build 16.172.152-154
+    130.2.0.152-154
     + Added Endgame music for different outcomes
     + Dropped all the Hunter's speeds by 0.1x (to allow for new Rank perks)
     + Added a 1.5-style jump cooldown for Recon's double-jump

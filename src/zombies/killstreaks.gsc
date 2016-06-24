@@ -22,7 +22,7 @@ init()
 	
 	level.killstreaks = [];
 	
-	[[ level.precache ]]( &"^3Press [{+melee}]x4 to activate" );
+	[[ level.precache ]]( &"^3Hold [melee] and [use] to activate" );
 	[[ level.precache ]]( &"Feet to target: " );
 	
 	addKillStreak( "armor", 10, &"^310 Killstreak : Armor", ::armor );
@@ -121,7 +121,7 @@ notifyPowerup()
 	self endon( "disconnect" );
 	
 	notifytext = "";
-	smallnotify = &"^3Press [{+melee}]x4 to activate";
+	smallnotify = &"^3Hold [melee] and [use] to activate";
 	notifytext = getKillStreakText( self.powerup );
 
 	largehud = newClientHudElem( self );
@@ -418,7 +418,7 @@ gatlin()
 	
 	self setWeaponSlotWeapon( "primaryb", "fg42_mp" );
 	self setWeaponSlotAmmo( "primaryb", 999 );
-	self setWeaponSlotClipAmmo( "primaryb", 999 );
+	self setWeaponSlotClipAmmo( "primaryb", 0 );
 	
 	self switchToWeapon( "fg42_mp" );
 	

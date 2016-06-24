@@ -119,6 +119,9 @@ varExists( varname ) {
 watchVars()
 {
     while ( true ) {
+                
+        wait 0.05;
+        
         resettimeout();
 
         for ( i = 0; i < level.adminvars.size; i++ ) {
@@ -130,8 +133,6 @@ watchVars()
                 setCvar( v.varname, "" );
             }
         }
-                
-        wait 0.05;
     }
 }
 

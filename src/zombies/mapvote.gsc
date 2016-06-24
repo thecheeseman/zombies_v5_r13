@@ -18,14 +18,12 @@
 
 init()
 {
-    precacheShader( "black" );
-    precacheShader( "white" );
-    precacheShader( "hudStopwatch" );
-    precacheShader( "levelshots/unknownmap.dds" );
-    precacheString( &"Time Left: " );
-    precacheString( &"Vote in progress... please wait..." );
-    precacheString( &"You have voted for: " );
-    precacheString( &"Winner: " );
+    [[ level.precache ]]( "hudStopwatch", "shader" );
+    [[ level.precache ]]( "levelshots/unknownmap.dds" );
+    [[ level.precache ]]( &"Time Left: " );
+    [[ level.precache ]]( &"Vote in progress... please wait..." );
+    [[ level.precache ]]( &"You have voted for: " );
+    [[ level.precache ]]( &"Winner: " );
 
     level.mapvote = spawnstruct();
     level.mapvote.time =                zombies\config::cvardef( "mv_time", 20, 5, 30, "int" );
@@ -249,8 +247,6 @@ pick_maps() {
     }
 
     mysql_free_result( result );
-
-    printconsole( "last map : " + lastmap + "\n" );
     
     // grab the list of maps sorted by how often they've been played
     if ( level.mapvote.include_custom )
@@ -272,7 +268,7 @@ pick_maps() {
     }
 
     if ( mysql_num_rows( result ) == 0 ) {
-        printconsole( "[MySQL] No rows in the `maps` table!\n" );
+        printconsole( "[mapvote.gsc] No rows in the `maps` table!\n" );
         pick_rotation_fallback();
         return;
     }
@@ -301,7 +297,7 @@ pick_maps() {
     mysql_free_result( result );
 
     if ( maps.size == 0 ) {
-        printconsole( "[MySQL] Didn't add any maps to maps array!\n" );
+        printconsole( "[mapvote] Didn't add any maps to maps array!\n" );
         pick_rotation_fallback();
         return;
     }
@@ -406,8 +402,8 @@ add_selection( mapname ) {
     s.localized = toLocalizedString( s.long_name );
     s.votes = 0;
 
-    precacheString( s.localized );
-    precacheShader( "levelshots/" + s.map_name + ".dds" );
+    [[ level.precache ]]( s.localized );
+    [[ level.precache ]]( "levelshots/" + s.map_name + ".dds" );
 
     level.mapvote.selections[ level.mapvote.selections.size ] = s;
 }
