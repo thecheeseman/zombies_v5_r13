@@ -249,10 +249,12 @@ pick_maps() {
     mysql_free_result( result );
     
     // grab the list of maps sorted by how often they've been played
-    if ( level.mapvote.include_custom )
-        query = "SELECT map_name FROM zombies.maps ORDER BY amount_played DESC";
-    else
-        query = "SELECT map_name FROM zombies.maps WHERE is_stock_map=1 ORDER BY amount_played DESC";
+    query = "SELECT m.map_name FROM zombies.maps AS m LEFT JOIN zombies.map_history AS mh ON mh.map_id = m.id AND mh.server_id = '" + level.serverid + "'";
+    if ( !level.mapvote.include_custom ) {
+        query += " WHERE m.is_stock_map = '1'";
+    }
+
+    query += " GROUP BY m.map_name ORDER BY COUNT(*) DESC";
 
     if ( mysql_query( level.db, query ) ) {
         [[ level.sql_error ]]();

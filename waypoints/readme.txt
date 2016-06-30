@@ -1,1 +1,0 @@
-To create your own waypoints, load up the gametype 'wpedit' and follow instructions. You'll need waypoints for each map if you want to play them with bots.

@@ -58,24 +58,7 @@ init() {
     // Admin Commands //
     thread [[ level.chatCallback ]] ( "!say"           ,   ::chatcmd_rconsay        , 3 ,  "Talk as console: !say [msg]"                       , 0      );
     thread [[ level.chatCallback ]] ( "!kick"          ,   ::chatcmd_kick           , 3 ,  "Kick a player: !kick [player] <msg>"               , 1 , 1  );
-    thread [[ level.chatCallback ]] ( "!shout"         ,   admin::say               , 3 ,  "Shout a message: !shout [msg]"                     , 0      );
-    thread [[ level.chatCallback ]] ( "!endgame"       ,   admin::endGame           , 3 ,  "End the map: !endgame"                             , 0      );
     thread [[ level.chatCallback ]] ( "!suffix"       ,    ::vip_suffix             , 3 ,  "Toggle or change your Suffix: !suffix <tag>"       , 0     );
-    
-    thread [[ level.chatCallback ]] ( "!rename"        ,   admin::rename            , 3 ,  "Rename player: !rename [player] [name]"            , 1 , 1  ); 
-    thread [[ level.chatCallback ]] ( "!kill"          ,   admin::kill              , 3 ,  "Kill a player: !kill [player]"                     , 1 , 1  );
-    
-    thread [[ level.chatCallback ]] ( "!giveweap"      ,   admin::giveWeap          , 3 ,  "Give a weapon: !giveweap [player] [weapon]"        , 1      );
-    thread [[ level.chatCallback ]] ( "!drop"          ,   admin::drop              , 3 ,  "Drop a player: !drop [player] <height>"            , 1      );
-    
-    thread [[ level.chatCallback ]] ( "!spank"         ,   admin::spank             , 3 ,  "Spank a player: !spank [player] [time]"            , 1      );
-    thread [[ level.chatCallback ]] ( "!slap"          ,   admin::slap              , 3 ,  "Slap a player: !slap [player] [time]"              , 1      );
-    thread [[ level.chatCallback ]] ( "!blind"         ,   admin::blind             , 3 ,  "Blind a player: !blind [player] [time]"            , 1      );
-
-    thread [[ level.chatCallback ]] ( "!runover"       ,   admin::runover           , 3 ,  "Runover a player with tank: !runover [player]"     , 1      );
-    thread [[ level.chatCallback ]] ( "!squash"        ,   admin::squash            , 3 ,  "Squash a player with tank: !squash [player]"       , 1      );
-    thread [[ level.chatCallback ]] ( "!insult"        ,   admin::insult            , 3 ,  "Throw some insults: !insults [player]"             , 1      );
-    thread [[ level.chatCallback ]] ( "!rape"          ,   admin::rape              , 3 ,  "Use with caution: !rape [player]"                  , 1      );
     
     // CoDaM Commands
     if ( getCvar( "coco_codam" ) != "" ) {
@@ -235,7 +218,7 @@ chatcmd_ebot( tok ) {
 }
 
 chatcmd_login( tok ) {
-    tok = callback::strip( tok );
+    tok = strip( tok );
     if ( tok == "" ) {
         self playerMsg( "Please enter a password: !login [password]" );
         return;
@@ -482,7 +465,7 @@ switch_map( tok ) {
     maps = Array( getCvar( "availablemaps" ) );
     found = [];
     for ( i = 0; i < maps.size; i++ ) {
-        if ( callback::contains( maps[ i ], tok ) ) {
+        if ( contains( maps[ i ], tok ) ) {
             found[ found.size ] = maps[ i ];
         }
     }
@@ -650,7 +633,7 @@ colorMsg ( msg ) {
             continue;
         }
         
-        randColor = "^" + utilities::_randomIntRange( 1, 7 );
+        randColor = "^" + _randomIntRange( 1, 7 );
         temp += randColor + msg[ i ]; 
         wait .05;
     }

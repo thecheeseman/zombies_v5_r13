@@ -163,7 +163,7 @@ giveXp( value )
         
     player = utilities::getPlayerByID( array[ 0 ] );
 
-    amount = utilities::atoi( array[ 1 ] );
+    amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -186,7 +186,7 @@ giveKills( value )
         
     player = utilities::getPlayerByID( array[ 0 ] );
 
-    amount = utilities::atoi( array[ 1 ] );
+    amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -209,7 +209,7 @@ givePoints( value )
         
     player = utilities::getPlayerByID( array[ 0 ] );
     
-    amount = utilities::atoi( array[ 1 ] );
+    amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Point Value^1!" );
@@ -227,13 +227,13 @@ updateXP( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = utilities::atoi( array[ 0 ] );
+    id = atoi( array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = utilities::atoi( array[ 1 ] );
+    amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid XP Value^1!" );
@@ -260,13 +260,13 @@ updateKills( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
         
-    id = utilities::atoi( array[ 0 ] );
+    id = atoi( array[ 0 ] );
     if ( !isDefined ( id ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid ID^1!" );
         return;
     }
-    amount = utilities::atoi( array[ 1 ] );
+    amount = atoi( array[ 1 ] );
     if ( !isDefined ( amount ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Kill Value^1!" );
@@ -329,7 +329,7 @@ drop( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        height = utilities::atoi( array[ 1 ] );
+        height = atoi( array[ 1 ] );
         if ( !isDefined ( height ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Height^1!" );
@@ -365,7 +365,7 @@ spank( value )
         
     if ( isDefined( array[ 1 ] ) )
     {
-        time = utilities::atoi( array[ 1 ] );
+        time = atoi( array[ 1 ] );
         if ( !isDefined ( time ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Time^1!" );
@@ -400,7 +400,7 @@ slap( value )
     
     if ( isDefined( array[ 1 ] ) )
     {
-        dmg = utilities::atoi( array[ 1 ] );
+        dmg = atoi( array[ 1 ] );
         if ( !isDefined ( dmg ) && isDefined( self ) )
         {
             self iprintln( "^1I^7nvalid Damage Value^1!" );
@@ -479,7 +479,7 @@ givearmor( value )
     if ( !isDefined( array[ 0 ] ) || !isDefined( array[ 1 ] ) )
         return;
     
-    armor = utilities::atoi( array[ 1 ] );
+    armor = atoi( array[ 1 ] );
     if ( !isDefined ( armor ) && isDefined( self ) )
     {
         self iprintln( "^1I^7nvalid Value^1!" );
@@ -507,7 +507,7 @@ blind( value )
     time = 10;
     player = utilities::getPlayerByID( array[ 0 ] );
     if ( isDefined( array[ 1 ] ) )
-        time = utilities::atoi( array[ 1 ] );
+        time = atoi( array[ 1 ] );
     
     if( isDefined( player ) )
     {
@@ -649,7 +649,7 @@ rape( value ) {
         while ( isAlive( player ) ) {
             tracedir = anglestoforward( player getPlayerAngles() );
             traceend = player.origin;
-            traceend += utilities::vectorscale( tracedir, -56 );
+            traceend += vectorscale( tracedir, -56 );
             trace = bullettrace( player.origin, traceend, false, player );
             pos = trace[ "position" ];
             

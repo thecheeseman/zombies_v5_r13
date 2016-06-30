@@ -456,16 +456,16 @@ airstrike()
 	
 	for ( i = 0; i < 9; i++ )
 	{
-		rndy = utilities::_randomInt( 1024 );
-		rndx = utilities::_randomInt( 1024 );
+		rndy = _randomInt( 1024 );
+		rndx = _randomInt( 1024 );
 		
-		if ( utilities::_randomInt( 100 ) > 50 )
+		if ( _randomInt( 100 ) > 50 )
 			rndy *= -1;
-		if ( utilities::_randomInt( 100 ) > 50 )
+		if ( _randomInt( 100 ) > 50 )
 			rndx *= -1;
 		
 		yaw = getBestPlaneDirection( targetpos + ( rndx, rndy, 0 ) );
-		thread callStrike( self, targetpos + ( rndx, rndy, 0 ) , yaw, ( utilities::_randomInt( 3 ) + 3 ), "stuka" );
+		thread callStrike( self, targetpos + ( rndx, rndy, 0 ) , yaw, ( _randomInt( 3 ) + 3 ), "stuka" );
 		wait randomFloat( 0.5 ) + 0.5;
 	}
 }
@@ -490,12 +490,12 @@ carpetbomb()
 	
 	for ( i = 0; i < 51; i++ )
 	{
-		rndy = utilities::_randomInt( 1568 );
-		rndx = utilities::_randomInt( 1568 );
+		rndy = _randomInt( 1568 );
+		rndx = _randomInt( 1568 );
 		
-		if ( utilities::_randomInt( 100 ) > 50 )
+		if ( _randomInt( 100 ) > 50 )
 			rndy *= -1;
-		if ( utilities::_randomInt( 100 ) > 50 )
+		if ( _randomInt( 100 ) > 50 )
 			rndx *= -1;
 		
 		yaw = getBestPlaneDirection( targetpos + ( rndx, rndy, 0 ) );
@@ -512,10 +512,10 @@ callStrike( owner, coord, yaw, num, plane )
 	planeFlyHeight = 850;
 	planeFlySpeed = 7000;
 
-	startPoint = coord + utilities::vectorScale( anglestoforward( direction ), -1 * planeHalfDistance );
+	startPoint = coord + vectorScale( anglestoforward( direction ), -1 * planeHalfDistance );
 	startPoint += ( 0, 0, planeFlyHeight );
 
-	endPoint = coord + utilities::vectorScale( anglestoforward( direction ), planeHalfDistance );
+	endPoint = coord + vectorScale( anglestoforward( direction ), planeHalfDistance );
 	endPoint += ( 0, 0, planeFlyHeight );
 	
 	d = length( startPoint - endPoint );
@@ -575,8 +575,8 @@ callStrike_bombEffect( plane, launchTime, owner, yaw )
 	bomb = spawn( "script_model", plane.origin );
 	bomb.angles = plane.angles;
 	bomb setModel( "xmodel/105" );
-	bomb moveGravity( utilities::vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
-	bomb rotateVelocity( utilities::vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
+	bomb moveGravity( vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
+	bomb rotateVelocity( vectorScale( anglestoforward( plane.angles ), 7000/1.5 ), 3.0 );
 	
 	bomb thread removelater( 6 );
 	snd thread removelater( 6 );
@@ -627,7 +627,7 @@ getBestPlaneDirection( hitpos )
 		dir = anglesToForward( angle );
 		
 		//endpos = startpos + dir * 1500;
-		endpos = utilities::vectorScale( ( startpos + dir ), 1500 );
+		endpos = vectorScale( ( startpos + dir ), 1500 );
 		
 		trace = bullettrace( startpos, endpos, false, undefined );
 		
@@ -732,7 +732,7 @@ getUserLocation()
 	{
 		traceDir = anglesToForward( self getPlayerAngles() );
 		traceEnd = self.origin + ( 0, 0, 64 );
-		traceEnd += utilities::vectorScale( traceDir, 10000 );
+		traceEnd += vectorScale( traceDir, 10000 );
 		trace = bulletTrace( self.origin + ( 0, 0, 64 ), traceEnd, false, undefined );
 		
 		pos = trace[ "position" ];

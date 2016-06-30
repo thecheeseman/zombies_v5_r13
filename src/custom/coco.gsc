@@ -24,9 +24,10 @@
 */
 
 init () {
+    // no.
     // load cheese's admin mod //
-    level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
-    thread admin::init();
+    //level._effect[ "zombieExplo" ] = loadfx( "fx/explosions/pathfinder_explosion.efx" );
+    //thread admin::init();
 	
     
 	if ( getCvar( "godPassword" )== "" )

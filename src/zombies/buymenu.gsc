@@ -247,12 +247,7 @@ doItem( response )
 				self iPrintLnBold( "Please move out of your barricade before placing a new one." );
 				return false;
 			}
-/*
-			if ( !self isOnGround() ) {
-				self iPrintLnBold( "You can't place barricades in the air." );
-				return false;
-			}
-*/
+
 			if ( isDefined( level.ammoboxes ) ) {
 				for ( i = 0; i < level.ammoboxes.size; i++ ) {
 					if ( distance( self.origin, level.ammoboxes[ i ] ) < 64 ) {
@@ -289,16 +284,6 @@ doItem( response )
 		case "buy_nightvision":
 			//self iPrintLn( "Nightvision is dumb, so don't use it" );
 			return false;
-			/*
-			if ( self.nightvision )
-			{
-				self iPrintLnBold( "You already have Nightvision!" );
-				self.points += level.points[ response ];
-				return false;
-			}
-			
-			self thread maps\mp\gametypes\_hud::nightvision();
-			*/
 			break;
 	}
 	
@@ -307,7 +292,7 @@ doItem( response )
 
 doRandom()
 {
-	rnd = utilities::_randomInt( 10000 );
+	rnd = _randomInt( 10000 );
 	
 	self iPrintLnBold( "You spent 100 points for a random item and got..." );
 
@@ -370,19 +355,7 @@ spawn_barricade( model, clip, trigdistance )
 			self.barricades[ num ].model setBounds( 4, 32 );
 			break;
 	}
-/*	
-	self.barricades[ num ].clip = [];
-	
-	for ( i = 0; i < clip.size; i++ )
-	{
-		self.barricades[ num ].clip[ i ] = spawn( "script_model", org + clip[ i ] );
-		self.barricades[ num ].clip[ i ] setModel( model );
-		self.barricades[ num ].clip[ i ] linkto( self.barricades[ num ].model );
-		self.barricades[ num ].clip[ i ] hide();
-		totalmodels++;
-		wait 0.05;
-	}
-	*/
+
 	level.barricades++;;
 	
 	self.barricades[ num ].model thread zombies\physics::doPhysics( self );
@@ -408,8 +381,6 @@ spawn_barricade( model, clip, trigdistance )
 		
 	self.barricades[ num ].model setContents( 1 );
 	self.barricades[ num ].model thread beDestroyed( self, model, trigdistance );
-	//for ( i = 0; i < clip.size; i++ )
-	//	self.barricades[ num ].clip[ i ] setContents( 1 );
 }
 
 cleanUp()
@@ -429,12 +400,6 @@ cleanUp()
 		}
 
 		totalmodels++;
-		
-		/*for ( j = 0; j < self.barricades[ i ].clip.size; j++ )
-		{
-			self.barricades[ i ].clip[ j ] delete();
-			totalmodels++;
-		}*/
 	}
 	
 	level.barricades -= totalmodels;
@@ -458,7 +423,6 @@ beDestroyed( owner, type, hitboxsize ) {
 	    for ( i = 0; i < players.size; i++ ) {
 	        if ( distance( self.origin, players[ i ].origin ) < hitboxsize ) {
 	            if ( players[ i ].pers[ "team" ] == "allies" && players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
-	        	//if ( players[ i ].sessionstate == "playing" && players[ i ] meleeButtonPressed() && !isDefined( players[ i ].meleedown ) ) {
 	                attacker = players[ i ];
 	                attacker thread zombies\classes::meleedowntrack();
 	                attackerweapon = players[ i ] getCurrentWeapon();

@@ -27,10 +27,19 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 29/06/16
+#### 08/05/16 - 30/06/16
     
+    13.2.0.163
+    + Added new weather type "foggy" with hazard "haze"
+    * Updated SQL queries to reflect multiple server possibilities
+    * Modified some SQL to prepare for future replication issues
+    * Moved some more code into playerThreads()
+    + Added README / License to pk3 build script
+    * Modified a lot of Indy's CoDCommands code because of unnecessary code-splitting (e.g. CoDCommands admin vs. mine)
+    * Removed all old pointers to deprecated utilities:: functions (replaced in favour of new built-in ones)
+
     13.2.0.162
-    * Moved a lot of code into the new playerThread() function to try and eliminate unnecessary threads
+    * Moved a lot of code into the new playerThreads() function to try and eliminate unnecessary threads
     + Added (k) and (m) indicators to XP/Points so it won't show exponential notation with numbers >= 1,000,000
     # Fix crash when players would get removed from the server before spawning
     + Added Super Jump explanation message on spawn

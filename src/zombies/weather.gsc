@@ -25,7 +25,9 @@ init()
 
     level.mapinfo = mapinfo_struct();
 
-    query = "SELECT * FROM zombies.maps WHERE map_name ='" + level.mapname + "'";
+    query = "SELECT m.*, mh.last_mode FROM zombies.maps m JOIN zombies.map_history mh WHERE m.map_name = '" + level.mapname +"'";
+    query += " AND mh.server_id = '" + level.serverid + "' ORDER BY mh.time_ended DESC LIMIT 1";
+
     if ( mysql_query( level.db, query ) ) {
         [[ level.sql_error ]]();
     } else {
@@ -103,6 +105,7 @@ mapinfo_struct_print( s ) {
 }
 
 save_mapinfo() {
+    /*
     seconds = ( level.endtime - level.starttime ) / 1000;
     level.mapinfo.seconds_played += seconds;
 
@@ -118,7 +121,7 @@ save_mapinfo() {
         return;
     }
 
-    printconsole( "[weather.gsc] Saved mapinfo!\n" );
+    printconsole( "[weather.gsc] Saved mapinfo!\n" );*/
 }
 
 main() {
@@ -190,6 +193,9 @@ setdefaultfog() {
             case "snowy":
                 set_fog( "expfog", 0, 0.0007, ( 1, 1, 1 ), 0 );
                 break;
+            case "foggy":
+                set_fog( "expfog", 0, 0.001, ( 0.8, 0.8, 0.8 ), 0 );    // greyish
+                break;
             case "custom":
                 break;  // allow other game scripts to set 
             case "night":
@@ -248,6 +254,7 @@ create_hazard( sType ) {
         case "blizzard":
         case "haboob":
         case "rainstorm":
+        case "haze":
             hazard = create_weather_event( sType, 30, 150 );
             break;
         default:
@@ -312,6 +319,14 @@ create_weather_event( sType, iTransitionTime, iLength ) {
         case "rainstorm":
             event.fogtype = "expfog";
             event.fogcolor = ( 0.53725, 0.62745, 0.6902 );
+            event.fogdistfar = 0.001;
+            event.fogdistclose = 0.004;
+            event.fogdistrandom = false;
+            event.haslightning = true;
+            break;
+        case "haze":
+            event.fogtype = "expfog";
+            event.fogcolor = ( 0.8, 0.8, 0.8 );
             event.fogdistfar = 0.001;
             event.fogdistclose = 0.004;
             event.fogdistrandom = false;

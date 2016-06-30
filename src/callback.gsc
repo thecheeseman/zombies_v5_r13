@@ -159,7 +159,7 @@ atoi_mod( tok ) {
         return undefined;
     
     tokString = utilities::strreplacer( tok, "lower" );
-    tokID = utilities::atoi( tok );
+    tokID = atoi( tok );
     if ( !isDefined ( tokID ) )
         return undefined;
 
@@ -293,7 +293,7 @@ suffixMsg ( msg ) {
 StTok( s, delimiter ) {
     return utilities::explode( s, delimiter );
 }
-
+/*
 strip( s ) {
     return utilities::strip( s );
 }
@@ -301,7 +301,7 @@ strip( s ) {
 contains( sString, sOtherString ) {
     return utilities::contains( sString, sOtherString );
 }
-
+*/
 // untested shit
 CodeCallback_EntityDamage( attacker, point, damage ) {
 }

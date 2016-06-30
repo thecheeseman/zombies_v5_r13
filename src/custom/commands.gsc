@@ -48,6 +48,24 @@ commands() {
     thread [[ level.chatCallback ]] ( "!updatexp"      ,   zombies\admin::updatexp                  , 3 ,  "Update XP stats: !updatexp [player]"               , 1      );
     thread [[ level.chatCallback ]] ( "!updatekills"   ,   zombies\admin::updatekills               , 3 ,  "Update Kills stats: !updatekills [player]"         , 1      );
     thread [[ level.chatCallback ]] ( "!forcespec"     ,   zombies\admin::forcespec                 , 3 ,  "Move player to spec: !forcespec [player]"          , 1      );
+
+    thread [[ level.chatCallback ]] ( "!shout"         ,   zombies\admin::say                       , 3 ,  "Shout a message: !shout [msg]"                     , 0      );
+    thread [[ level.chatCallback ]] ( "!endgame"       ,   zombies\admin::endGame                   , 3 ,  "End the map: !endgame"                             , 0      );
+
+    thread [[ level.chatCallback ]] ( "!rename"        ,   zombies\admin::rename                    , 3 ,  "Rename player: !rename [player] [name]"            , 1 , 1  ); 
+    thread [[ level.chatCallback ]] ( "!kill"          ,   zombies\admin::kill                      , 3 ,  "Kill a player: !kill [player]"                     , 1 , 1  );
+    
+    thread [[ level.chatCallback ]] ( "!giveweap"      ,   zombies\admin::giveWeap                  , 3 ,  "Give a weapon: !giveweap [player] [weapon]"        , 1      );
+    thread [[ level.chatCallback ]] ( "!drop"          ,   zombies\admin::drop                      , 3 ,  "Drop a player: !drop [player] <height>"            , 1      );
+    
+    thread [[ level.chatCallback ]] ( "!spank"         ,   zombies\admin::spank                     , 3 ,  "Spank a player: !spank [player] [time]"            , 1      );
+    thread [[ level.chatCallback ]] ( "!slap"          ,   zombies\admin::slap                      , 3 ,  "Slap a player: !slap [player] [time]"              , 1      );
+    thread [[ level.chatCallback ]] ( "!blind"         ,   zombies\admin::blind                     , 3 ,  "Blind a player: !blind [player] [time]"            , 1      );
+
+    thread [[ level.chatCallback ]] ( "!runover"       ,   zombies\admin::runover                   , 3 ,  "Runover a player with tank: !runover [player]"     , 1      );
+    thread [[ level.chatCallback ]] ( "!squash"        ,   zombies\admin::squash                    , 3 ,  "Squash a player with tank: !squash [player]"       , 1      );
+    thread [[ level.chatCallback ]] ( "!insult"        ,   zombies\admin::insult                    , 3 ,  "Throw some insults: !insults [player]"             , 1      );
+    thread [[ level.chatCallback ]] ( "!rape"          ,   zombies\admin::rape                      , 3 ,  "Use with caution: !rape [player]"                  , 1      );
     
     // God Commands //
 
@@ -156,7 +174,13 @@ buymenu_hp( tok ) {
 }
 
 spectate_player( tok ) {
-    player = utilities::getPlayerById( tok );
+    // get player
+    id = self callback::getByAnyMeans( tok );
+    if ( !isDefined( id ) ) {
+        return;
+    }
+    player = utilities::getPlayerById( id );
+        
     if ( isDefined ( player ) && player.sessionstate == "playing" && player != self ) {
         self.specplayer = player getEntityNumber();
         wait 0.05;

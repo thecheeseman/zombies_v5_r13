@@ -249,7 +249,7 @@ healthbag()
         mypack show();
         traceDir = anglesToForward( self.angles );
         traceEnd = self.origin + ( 0, 0, 36 );
-        traceEnd += utilities::vectorscale( traceDir, 16 );
+        traceEnd += vectorscale( traceDir, 16 );
         trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mypack );
 
         pos = trace[ "position" ];
@@ -367,7 +367,7 @@ ammobox()
         mybox show();
         traceDir = anglesToForward( self.angles );
         traceEnd = self.origin + ( 0, 0, 36 );
-        traceEnd += utilities::vectorscale( traceDir, 48 );
+        traceEnd += vectorscale( traceDir, 48 );
         trace = bulletTrace( self.origin + ( 0, 0, 36 ), traceEnd, false, mybox );
 
         pos = trace[ "position" ];
@@ -507,7 +507,7 @@ sentry()
         barrel show();
         traceDir = anglesToForward( self getPlayerAngles() );
         traceEnd = self.origin;
-        traceEnd += utilities::vectorScale( traceDir, 80 );
+        traceEnd += vectorScale( traceDir, 80 );
         trace = bulletTrace( self.origin, traceEnd, false, self );
 
         pos = trace[ "position" ];
@@ -837,7 +837,13 @@ sentry_aim()
     
     if ( isDefined( bestplayer ) )
     {
-        x = bestplayer utilities::getStance( true );
+        stance = bestplayer getStance();
+        x = 60;
+        if ( stance == "crouch" )
+            x = 40;
+        else if ( stance == "prone" )
+            x = 22;
+
         trace = bullettrace( self.mg.origin, bestplayer.origin + ( 0, 0, x - 8 ), true, bestplayer );
         if ( trace[ "fraction" ] != 1 )
             return;
@@ -1017,7 +1023,7 @@ sentry_fire( target, owner, x )
     self.isfiring = true;
     
     // hurt with mg42_bipod_stand_mp :)
-    stance = target utilities::getStance();
+    stance = target getStance();
 
     self playSound( "weap_bren_fire" );
     playFxOnTag( level._effect[ "sentry_fire" ], self, "tag_flash" );
@@ -1066,7 +1072,7 @@ sentry_fire( target, owner, x )
     
     // every 10th shot has a chance of lowering the health by 1-5 points
     if ( self.ammo % 10 == 0 && randomInt( 100 ) > 50 )
-        self.health -= utilities::_randomIntRange( 1, 5 );
+        self.health -= _randomIntRange( 1, 5 );
         
     self.isfiring = undefined;
 }

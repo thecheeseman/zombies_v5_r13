@@ -4,6 +4,7 @@
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 _randomInt( max ) {
     arr = [];
 
@@ -13,9 +14,11 @@ _randomInt( max ) {
     arr = arrayShuffle( arr );
     return arr[ randomInt( arr.size ) ];
 }
+*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 _randomIntRange( min, max ) {
     arr = [];
 
@@ -30,6 +33,7 @@ _randomIntRange( min, max ) {
     arr = arrayShuffle( arr );
     return arr[ randomInt( arr.size ) ];
 }
+*/
 
 arrayShuffle(arr)
 {
@@ -50,21 +54,25 @@ arrayShuffle(arr)
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 atoi( sString ) {
     sString = strreplacer( sString, "numeric" );
     if ( sString == "" )
         return undefined;
     return (int)sString;
 }
+*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 atof( sString ) {
     sString = strreplacer( sString, "numeric" );
     if ( sString == "" )
         return undefined;
     return (float)sString;
 }
+*/
 
 charToDigit( ch )
 {
@@ -127,6 +135,7 @@ cleanScreen()
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 cleanString( str, ignorespaces )
 {
     if ( !isDefined( str ) || str == "" )
@@ -149,9 +158,11 @@ cleanString( str, ignorespaces )
 
     return newstr;
 }
+*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 contains( sString, sOtherString ) {
     if ( sOtherString.size > sString.size )
         return false;
@@ -187,13 +198,14 @@ contains( sString, sOtherString ) {
     }
     
     return false;
-}
+}*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-//distance2D( origin1, origin2 ) {
-//    return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
-//}
+/*
+distance2D( origin1, origin2 ) {
+    return distance( ( origin1[ 0 ], origin1[ 1 ], 0 ), ( origin2[ 0 ], origin2[ 1 ], 0 ) );
+}*/
 
 endsWith( string, end ) {
     if ( !isDefined( string ) || !isDefined( end ) )
@@ -372,6 +384,8 @@ getPlayersOnTeam( team, countbots )
     return guys;
 }
 
+// !! REPLACED WITH BUILT-IN FUNCTION !!
+/*
 getStance( returnValue )
 {
     if ( !self isOnGround() && !isDefined( returnValue ) )
@@ -391,7 +405,7 @@ getStance( returnValue )
     if ( z < 20 )   return "prone";
     if ( z < 50 )   return "crouch";
     if ( z < 70 )   return "stand";
-}
+}*/
 
 isChar( cChar )
 {
@@ -735,7 +749,7 @@ startsWith( string, start ) {
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-strip(s) {
+/*strip(s) {
     if(!isDefined(s) || s == "")
         return "";
 
@@ -764,7 +778,7 @@ strip(s) {
     }
         
     return s3;
-}
+}*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
@@ -828,23 +842,24 @@ strreplacer( sString, sType ) {
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-toLower( str ) {
+/*toLower( str ) {
     return ( utilities::mapChar( str, "U-L" ) );
-}
+}*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-vectorScale( vec, scale ) {
+/*vectorScale( vec, scale ) {
     vec = ( vec[ 0 ] * scale, vec[ 1 ] * scale, vec[ 2 ] * scale );
     return vec;
-}
+}*/
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
+/*
 waittillframeend() {
     if ( !isDefined( level.frametime ) ) {
         level.frametime = (float)( (float)1 / (float)getCvarFloat( "sv_fps" ) );
     }
 
     wait ( level.frametime );
-}
+}*/

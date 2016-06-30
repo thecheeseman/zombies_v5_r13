@@ -22,22 +22,23 @@
 
 main()
 {   
-    // version information
-    level.zombies_build =           "13.2.0.162";
-    level.zombies_last_updated =    "29 June 2016";
+// version information
+    level.zombies_build =           "13.2.0.163";
+    level.zombies_last_updated =    "30 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
-    //
+// version information
 
-    // should be first
+// should be first
     zombies\sql::init();
-    // should be first
+// should be first
 
-    // should be second
+// should be second
     zombies\debug::init();
     [[ level.logwrite ]]( "VV---------- mod.gsc::Main() ----------VV" );
-    // should be second
+// should be second
     
+// must be called before any waits
     zombies\precache::init();
     precache();
 
@@ -58,7 +59,9 @@ main()
     zombies\ranks::init();
     zombies\classes::init();
     zombies\skins::init();
+// must be called before any waits
 
+//
     zombies\config::main();
     zombies\ammoboxes::main();
     zombies\admin::main();   
@@ -66,6 +69,7 @@ main()
     zombies\weather::main();
     zombies\sharkscanner::main();
     botlib\main::main();
+//
 
     [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
 
@@ -130,7 +134,7 @@ precache()
     game[ "axis" ] = "german";
 
     if ( !isDefined( game[ "layoutimage" ] ) ) {
-        level.mapname = utilities::toLower( getCvar( "mapname" ) );
+        level.mapname = toLower( getCvar( "mapname" ) );
         switch ( level.mapname ) {
             case "mp_brecourt":
             case "mp_carentan":
@@ -342,13 +346,13 @@ pickZombie()
         return;
     }
     
-    int = utilities::_randomInt( guys.size );
+    int = _randomInt( guys.size );
     zom = guys[ int ];
     while ( zom.guid == getCvar( "lastzom" ) )
     {
         iPrintLnBold( zom.name + "^7 was the ^1Zombie^7 last time... picking someone else..." );
         wait 2;
-        int = utilities::_randomInt( guys.size );
+        int = _randomInt( guys.size );
         zom = guys[ int ];
     }
     
@@ -698,7 +702,7 @@ onConnect()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc:onConnect() -- " + self.name + " connected (" + self getip() + ")" );
 
-    if ( self.name == "Unknown Soldier" || self.name == "UnnamedPlayer" )
+    if ( self.name == "Unknown Soldier" || self.name == "UnnamedPlayer" || strip( utilities::monotone( self.name ) ) == "" )
         self setClientCvar( "name", "I^1<3^7ZOMBAIS^1" + gettime() );
         
     self.oldname = self.name;
@@ -844,8 +848,6 @@ spawnPlayer()
             self.zombietype = "none";
         }
 
-        self thread whatscooking();
-
         self zombies\ranks::giveHunterRankPerks();
         
         self.headiconteam = "axis";
@@ -874,11 +876,6 @@ spawnPlayer()
 
     if ( self.pers[ "team" ] == "axis" ) {
         self ammoLimiting();
-
-        if ( self.class == "sniper" || self.class == "recon" || 
-           ( self.class == "support" && self.subclass == "combat" ) ||
-           ( self.class == "medic" && self.subclass == "combat" ) )
-            self thread stickynades();
     } else {
         if ( level.firstzombie ) {
             self.maxhealth = 2000;
@@ -892,7 +889,7 @@ spawnPlayer()
         self thread zombies\config::welcomeMessage();
     }
 
-    self thread zombies\hud::runHud();
+    self zombies\hud::setupHud();
     self thread playerThreads();
     
     if ( level.debug )
@@ -1227,7 +1224,7 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
     self.killstreak = 0;
     self.changeweapon = false;
     
-    if ( self.pers[ "team" ] == "allies" && utilities::_randomInt( 100 ) > 85 && !level.lasthunter )
+    if ( self.pers[ "team" ] == "allies" && _randomInt( 100 ) > 85 && !level.lasthunter )
         self dropHealth();
     
     self thread zombies\hud::cleanUpHud();
@@ -1567,7 +1564,9 @@ playerThreads() {
         if ( self.sessionstate != "playing" ) 
             break;
 
-    // every frame check
+    /*
+        Functions run every frame
+    */
         oldweaps = weaps;
         oldweapsclip = weapsclip;
         oldweapsammo = weapsammo;
@@ -1578,19 +1577,21 @@ playerThreads() {
             weapsammo[ slots[ i ] ] = self getWeaponSlotAmmo( slots[ i ] );
         }
 
-        // check fired bullets
+        /*
+            Count up fired shots
+        */
         fired = 0;
         for ( i = 0; i < slots.size; i++ ) {
             if ( weapsclip[ slots[ i ] ] < oldweapsclip[ slots[ i ] ] ) 
                 fired += oldweapsclip[ slots[ i ] ] - weapsclip[ slots[ i ] ]; 
         }
 
-        if ( fired > 0 ) {
+        if ( fired > 0 )
             self.stats[ "shotsFired" ] += fired;
-            iPrintLn( fired + " / " + self.stats[ "shotsFired" ] );
-        }
-
-        // change weapons
+        
+        /*
+            Weapon changes
+        */
         if ( self getCurrentWeapon() != currentweapon ) {
             for ( i = 0; i < slots.size; i++ )
                 weaps[ slots[ i ] ] = self getWeaponSlotWeapon( slots[ i ] );
@@ -1605,16 +1606,41 @@ playerThreads() {
         else if ( isDefined( nade ) && currentweapon == nade )
             currentweaponslot = "grenade";
 
-        // check pressed keys
+        /*
+            Check for combination pressed keys
+        */
         if ( !isDefined( self.checkkeysdown ) )
             self thread checkKeysDown( currentweaponslot, currentweapon );
 
-    // once per 5 frames
+        /*
+            Hunters
+        */
+        if ( self.pers[ "team" ] == "axis" ) {
+            /*
+                Check if planting a proxy
+            */
+            if ( self.class == "sniper" || self.class == "recon" || ( self.class == "support" && self.subclass == "combat" ) || ( self.class == "medic" && self.subclass == "combat" ) ) {
+                if ( self meleeButtonPressed() && ( self getCurrentWeapon() == "stielhandgranate_mp" || self getCurrentWeapon() == "rgd-33russianfrag_mp" ) )
+                    self checkStickyPlacement();
+            }
+
+            /*
+                Check if cooking a grenade
+            */
+            if ( !isDefined( self.cooking ) && self attackButtonPressed() && ( currentweapon == "stielhandgranate_mp" || currentweapon == "rgd-33russianfrag_mp" ) && self getWeaponSlotClipAmmo( "grenade" ) > 0 )
+                self thread cookgrenade();
+        }
+
+    /*
+        Functions only run every 5 frames
+    */
         if ( frame % 5 == 0 ) {
             self zombies\hud::doHud_runner();
         }
 
-    // once per second check
+    /*
+        Functions only run once per second
+    */
         if ( frame % fps == 0 ) {
             if ( timecheck == 10 ) {
                 self.xp += level.xpvalues[ "TIMEALIVE" ];
@@ -1777,24 +1803,6 @@ isWeaponAuto( weapon )
         case "m1carbine_mp":
             return false;
         default: return true;
-    }
-}
-
-whatscooking()
-{
-    self endon( "death" );
-    self endon( "disconnect" );
-    self endon( "spawn_spectator" );
-    
-    while ( isAlive( self ) && self.pers[ "team" ] == "axis" )
-    {
-        attack = self attackButtonPressed();
-        currentweap = self getCurrentWeapon();
-        
-        if ( !isdefined( self.cooking ) && attack && ( currentweap == "stielhandgranate_mp" || currentweap == "rgd-33russianfrag_mp" ) && self getWeaponSlotClipAmmo( "grenade" ) > 0 )
-            self thread cookgrenade();
-            
-        wait 0.05;
     }
 }
 
@@ -2115,21 +2123,6 @@ getAmmoBonusForRank()
     return bonus;
 }
 
-stickynades()
-{
-    self endon( "death" );
-    self endon( "disconnect" );
-    self endon( "spawn_spectator" );
-    
-    while ( isAlive( self ) && self.sessionstate == "playing" )
-    {
-        wait 0.05;
-        
-        if ( self meleeButtonPressed() && ( self getCurrentWeapon() == "stielhandgranate_mp" || self getCurrentWeapon() == "rgd-33russianfrag_mp" ) )
-            self checkStickyPlacement();
-    }
-}
-
 checkStickyPlacement()
 {
     self endon( "death" );
@@ -2327,7 +2320,7 @@ painsound()
         return;
         
     self.painsound = true;
-    num = utilities::_randomInt( level.voices[ self.nationality ] ) + 1;
+    num = _randomInt( level.voices[ self.nationality ] ) + 1;
     scream = "generic_pain_" + self.nationality + "_" + num;
     self playSound( scream );
     wait 3;

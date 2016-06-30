@@ -129,7 +129,7 @@ main() {
             continue;
 
         // check for multiple admins
-        if ( callback::contains( cvar, " " ) )
+        if ( contains( cvar, " " ) )
             admins = callback::StTok( cvar, " " );
         else
             admins[ 0 ] = cvar;
@@ -151,7 +151,7 @@ getSuffix( id ) {
     suffixCvar = getCvar( "customSuffix" );
     
     if ( suffixCvar != "" ) {
-        if ( utilities::contains( suffixCvar, " " ) )
+        if ( contains( suffixCvar, " " ) )
             customs = utilities::explode( suffixCvar, " " );
         else
             customs[ 0 ] = suffixCvar;

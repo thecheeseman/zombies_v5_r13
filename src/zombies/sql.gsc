@@ -55,7 +55,12 @@ init() {
     printconsole( "[MySQL] Successfully connected to database `" + level.db_database + "`!\n" );
 
 // FIRST TIME CHECK
-    if ( mysql_query( level.db, "SELECT id, zombies_build FROM zombies.server" ) ) {
+    if ( getCvar( "db_serverid" ) == "" ) 
+        level.serverid = 1;
+    else
+        level.serverid = getCvarInt( "db_serverid" );
+
+    if ( mysql_query( level.db, "SELECT zombies_build FROM zombies.server WHERE id=" + level.serverid ) ) {
         sql_error();
         return;
     }
@@ -76,14 +81,14 @@ init() {
         // should probably implement a multiple server check but i'm too lazy.....
         row = mysql_fetch_row( result );
         if ( isDefined( row[ 0 ] ) ) {
-            printconsole( "[MySQL] Build (" + row[ 1 ] + ") vs. Script (" + level.zombies_build + ")\n" );
+            printconsole( "[MySQL] Build (" + row[ 0 ] + ") vs. Script (" + level.zombies_build + ")\n" );
 
             // check if there's an update for SQL stuff
-            if ( row[ 1 ] == level.zombies_build ) {
+            if ( row[ 0 ] == level.zombies_build ) {
                 printconsole( "[MySQL] No update required!\n" );
             } else {
                 printconsole( "[MySQL] Versions differ -- processing update...\n" );
-                sql_update( row[ 0 ] );
+                sql_update( level.serverid );
             }
         } else {
             printconsole( "[MySQL] Couldn't retrieve build information\n" );
@@ -92,7 +97,7 @@ init() {
         mysql_free_result( result );
 
         // update some persistent info
-        query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "', port=" + getCvarInt( "net_port" ) + ", hostname='" + getCvar( "sv_hostname" ) + "' WHERE id=" + row[ 0 ];
+        query = "UPDATE zombies.server SET ip_address='" + getCvar( "net_ip" ) + "', port=" + getCvarInt( "net_port" ) + ", hostname='" + getCvar( "sv_hostname" ) + "' WHERE id=" + level.serverid;
         if ( mysql_query( level.db, query ) ) {
             sql_error();
             return;
@@ -115,9 +120,12 @@ sql_close() {
     Update MySQL with _all_ of the saved data
 */
 sql_saveendgame( winner ) {
+    players = getEntArray( "player", "classname" );
+
     // update map_history 
     length = ( level.endtime - level.starttime ) / 1000;
-    query = "INSERT INTO zombies.map_history (map_id, round_length, winner) VALUES (" + level.mapinfo.id + "," + length + "," + "'" + winner + "')";
+    query = "INSERT INTO zombies.map_history (server_id, map_id, round_length, winner, players_at_end) VALUES (" + level.serverid + "," + level.mapinfo.id + ",";
+    query += length + "," + "'" + winner + "'," + players.size + ")";
     if ( mysql_query( level.db, query ) ) {
         sql_error();
     }

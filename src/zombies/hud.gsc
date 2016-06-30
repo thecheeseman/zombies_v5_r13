@@ -192,7 +192,7 @@ cleanUpHud()
 	self utilities::FOVScale( 80 );
 }
 
-runHud()
+setupHud()
 {
 	self addTextHud( "health", 567, 465, "center", "middle", 1, 0.8, 10, &"" );
 	
@@ -358,24 +358,6 @@ runHud()
 			self addTextHud( "missmines", 630, 350, "right", "middle", 1, 1, 10, &"Delay Proxy Time: ^2Always On" );
 	}
 	
-	self thread doHud();
-}
-
-addTextHud( name, x, y, alignX, alignY, alpha, fontScale, sort, label )
-{
-	self.hud[ name ] = newClientHudElem( self );
-	self.hud[ name ].x = x;
-	self.hud[ name ].y = y;
-	self.hud[ name ].alignX = alignX;
-	self.hud[ name ].alignY = alignY;
-	self.hud[ name ].alpha = alpha;
-	self.hud[ name ].fontScale = fontScale;
-	self.hud[ name ].sort = sort;
-	self.hud[ name ].label = label;
-}
-
-doHud()
-{
 	if ( self.pers[ "team" ] == "axis" )
 	{
 		rank = zombies\ranks::getRankByID( "hunter", self.rank );
@@ -415,6 +397,19 @@ doHud()
 	}
 
 	self doHud_runner();
+}
+
+addTextHud( name, x, y, alignX, alignY, alpha, fontScale, sort, label )
+{
+	self.hud[ name ] = newClientHudElem( self );
+	self.hud[ name ].x = x;
+	self.hud[ name ].y = y;
+	self.hud[ name ].alignX = alignX;
+	self.hud[ name ].alignY = alignY;
+	self.hud[ name ].alpha = alpha;
+	self.hud[ name ].fontScale = fontScale;
+	self.hud[ name ].sort = sort;
+	self.hud[ name ].label = label;
 }
 
 doHud_runner() {

@@ -33,7 +33,6 @@ USE `zombies`;
 
 /*
     Server Information
-    This is really just for debug/print purposes
 */
 DROP TABLE IF EXISTS `server`;
 CREATE TABLE `server` (
@@ -62,10 +61,10 @@ CREATE TABLE `maps` (
     `weather_type`      varchar(64) NOT NULL DEFAULT 'stock',
     `hazard`            varchar(64) NOT NULL DEFAULT 'none',
     `has_night`         tinyint(1) unsigned NOT NULL DEFAULT 1,
-    `last_mode`         tinyint(1) unsigned NOT NULL DEFAULT 1,
-    `override_fast_sky` tinyint(1) unsigned NOT NULL DEFAULT 1,
-    `amount_played`     smallint(4) unsigned NOT NULL DEFAULT 0,
-    `seconds_played`    int(11) unsigned NOT NULL DEFAULT 0
+    -- `last_mode`         tinyint(1) unsigned NOT NULL DEFAULT 1,
+    `override_fast_sky` tinyint(1) unsigned NOT NULL DEFAULT 1
+    -- `amount_played`     smallint(4) unsigned NOT NULL DEFAULT 0,
+    -- `seconds_played`    int(11) unsigned NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
     /*
@@ -111,6 +110,27 @@ CREATE TABLE `maps` (
         ( 'simon_hai',          'Hai (Simon)',          'night',        'none',         1 ),
         ( 'toybox_bloodbath',   'Toybox',               'night',        'none',         1 );
 
+    /*
+        Custom maps included in
+        zombiesmappack2016
+    */
+    INSERT INTO `maps`
+        ( map_name,             long_name,              weather_type,   hazard,         has_night ) VALUES
+        ( 'brecourt_winter',    'Brecourt (winter)',    'snowy',        'blizzard',     1 ),
+        ( 'german_town',        'German Town',          'rainy',        'rainstorm',    1 ),
+        ( 'mount35',            'Mount 35',             'snowy',        'blizzard',     1 ),
+        ( 'mp_adlerstein',      'Adlerstein',           'foggy',        'haze',         1 ),
+        ( 'mp_amberville',      'Amberville',           'rainy',        'rainstorm',    1 ),
+        ( 'mp_bazolles_final',  'Bazolles',             'rainy',        'rainstorm',    1 ),
+        ( 'mp_bunkermay_n',     'Bunker Mayhem',        'night',        'none',         1 ),
+        ( 'mp_falaisevilla',    'Falaise Villa',        'rainy',        'rainstorm',    1 ),
+        ( 'mp_maaloy_final',    'Maaloy',               'snowy',        'blizzard',     1 ),
+        ( 'mp_wolfsquare_final','Wolfsquare',           'rainy',        'rainstorm',    1 ),
+        ( 'mp_woodland',        'Woodlands',            'rainy',        'rainstorm',    1 ),
+        ( 'nazifort2',          'Nazi Fort',            'dusty',        'haboob',       1 ),
+        ( 'nuenen',             'Nuenen',               'rainy',        'rainstorm',    1 ),
+        ( 'severnaya_bunker',   'Severnaya Bunker',     'snowy',        'none',         1 );
+
     /* 
         Custom for cp_omahgawd to not override r_fastsky :)
     */
@@ -124,13 +144,16 @@ CREATE TABLE `maps` (
 DROP TABLE IF EXISTS `map_history`;
 CREATE TABLE `map_history` (
     `id`                smallint(3) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `server_id`         tinyint(1) unsigned NOT NULL,
     `map_id`            smallint(3) unsigned NOT NULL,
     `time_ended`        timestamp NOT NULL DEFAULT NOW(),
     `round_length`      smallint(6) unsigned NOT NULL,
     `winner`            varchar(16) NOT NULL,
     `players_at_end`    tinyint(2) unsigned NOT NULL,
+    `last_mode`         tinyint(1) unsigned NOT NULL DEFAULT 1,
 
-    FOREIGN KEY ( map_id ) REFERENCES maps( id ) ON DELETE CASCADE
+    FOREIGN KEY ( map_id ) REFERENCES maps( id ) ON DELETE CASCADE,
+    FOREIGN KEY ( server_id ) REFERENCES server( id )
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*
@@ -170,7 +193,7 @@ CREATE TABLE `achievements` (
     `long_name`         varchar(128) NOT NULL DEFAULT '',
     `description`       varchar(256) NOT NULL DEFAULT '',
     
-    `xp_gained`         smallint(6) NOT NULL DEFAULT 0
+    `xp_gained`         mediumint(6) unsigned NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
     /*
@@ -363,6 +386,8 @@ CREATE TABLE `player_stats` (
 
 -- auto INSERT new rows into zombies.player_stats / zombies.player_achievements when
 -- a new player is added to zombies.players
+DROP TRIGGER IF EXISTS `ins_player_create_stats`;
+
 delimiter #
 CREATE TRIGGER `ins_player_create_stats` AFTER INSERT ON `players` FOR EACH ROW 
 BEGIN
