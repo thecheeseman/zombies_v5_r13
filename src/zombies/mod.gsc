@@ -23,8 +23,8 @@
 main()
 {   
     // version information
-    level.zombies_build =           "13.2.0.161";
-    level.zombies_last_updated =    "24 June 2016";
+    level.zombies_build =           "13.2.0.162";
+    level.zombies_last_updated =    "29 June 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
     //
@@ -122,6 +122,8 @@ precache()
     [[ level.precache ]]( "fx/smoke/aftermath1.efx",                "fx", "aftermath" );    
     [[ level.precache ]]( "fx/smoke/cratersmoke.efx" );
     [[ level.precache ]]( "fx/fire/stage1.efx" );
+
+    //[[ level.precache ]]( "clientcmd", "menu" );
 
 // dropped from gametype.gsc
     game[ "allies" ] = "british";
@@ -842,9 +844,7 @@ spawnPlayer()
             self.zombietype = "none";
         }
 
-        self thread timeAlive();
         self thread whatscooking();
-        self thread shotsfired();
 
         self zombies\ranks::giveHunterRankPerks();
         
@@ -1531,17 +1531,35 @@ makeZombie()
 */
 playerThreads() {
     level endon( "intermission" );
+    self endon( "death" );
+    self endon( "disconnect" );
+    self endon( "spawned" );
+
+    slots = [];
+    slots[ 0 ] = "primary";
+    slots[ 1 ] = "primaryb";
+    slots[ 2 ] = "pistol";
+    slots[ 3 ] = "grenade";
 
     fps = getCvarInt( "sv_fps" );
 
+    frame = 0;
+    timecheck = 0;  // alive xp counter
     while ( true ) {
-        primary = self getWeaponSlotWeapon( "primary" );
-        secondary = self getWeaponSlotWeapon( "primaryb" );
-        pistol = self getWeaponSlotWeapon( "pistol" );
-        nade = self getWeaponSlotWeapon( "grenade" );
+        weaps = [];
+        weapsclip = [];
+        weapsammo = [];
+
+        for ( i = 0; i < slots.size; i++ ) {
+            weaps[ slots[ i ] ] = self getWeaponSlotWeapon( slots[ i ] );
+            weapsclip[ slots[ i ] ] = self getWeaponSlotClipAmmo( slots[ i ] );
+            weapsammo[ slots[ i ] ] = self getWeaponSlotAmmo( slots[ i ] );
+        }
+
         currentweapon = self getCurrentWeapon();
 
         wait frame();
+        frame++;
 
         if ( !isAlive( self ) ) 
             break;
@@ -1549,48 +1567,106 @@ playerThreads() {
         if ( self.sessionstate != "playing" ) 
             break;
 
+    // every frame check
+        oldweaps = weaps;
+        oldweapsclip = weapsclip;
+        oldweapsammo = weapsammo;
+
+        for ( i = 0; i < slots.size; i++ ) {
+            weaps[ slots[ i ] ] = self getWeaponSlotWeapon( slots[ i ] );
+            weapsclip[ slots[ i ] ] = self getWeaponSlotClipAmmo( slots[ i ] );
+            weapsammo[ slots[ i ] ] = self getWeaponSlotAmmo( slots[ i ] );
+        }
+
+        // check fired bullets
+        fired = 0;
+        for ( i = 0; i < slots.size; i++ ) {
+            if ( weapsclip[ slots[ i ] ] < oldweapsclip[ slots[ i ] ] ) 
+                fired += oldweapsclip[ slots[ i ] ] - weapsclip[ slots[ i ] ]; 
+        }
+
+        if ( fired > 0 ) {
+            self.stats[ "shotsFired" ] += fired;
+            iPrintLn( fired + " / " + self.stats[ "shotsFired" ] );
+        }
+
         // change weapons
         if ( self getCurrentWeapon() != currentweapon ) {
-            primary = self getWeaponSlotWeapon( "primary" );
-            secondary = self getWeaponSlotWeapon( "primaryb" );
-            pistol = self getWeaponSlotWeapon( "pistol" );
-            nade = self getWeaponSlotWeapon( "grenade" );
-            current = self getCurrentWeapon();
+            for ( i = 0; i < slots.size; i++ )
+                weaps[ slots[ i ] ] = self getWeaponSlotWeapon( slots[ i ] );
             currentweapon = self getCurrentWeapon();
         }
 
         currentweaponslot = "primary";
-        if ( currentweapon == secondary )
+        if ( isDefined( secondary ) && currentweapon == secondary )
             currentweaponslot = "primaryb";
-        else if ( currentweapon == pistol )
+        else if ( isDefined( pistol ) && currentweapon == pistol )
             currentweaponslot = "pistol";
-        else if ( currentweapon == nade )
+        else if ( isDefined( nade ) && currentweapon == nade )
             currentweaponslot = "grenade";
 
-        // hunters
-        if ( self.pers[ "team" ] == "axis" ) {
-            // check healthpack drop
-            // only can be active while not reloading
-            if ( self getWeaponSlotClipAmmo( currentweaponslot ) == getWeaponMaxClipAmmo( currentweapon ) ) {
-                if ( self holdKeysForTime( "reload", 2 ) ) {
-                    if ( self.healthpacks > 0 ) {
-                        self dropHealth();
-                        self.healthpacks--;
-                    }
-                    else
-                        self iprintln( "^2You're not carrying any health packs." );
-                }
+        // check pressed keys
+        if ( !isDefined( self.checkkeysdown ) )
+            self thread checkKeysDown( currentweaponslot, currentweapon );
+
+    // once per 5 frames
+        if ( frame % 5 == 0 ) {
+            self zombies\hud::doHud_runner();
+        }
+
+    // once per second check
+        if ( frame % fps == 0 ) {
+            if ( timecheck == 10 ) {
+                self.xp += level.xpvalues[ "TIMEALIVE" ];
+                self.score += level.xpvalues[ "TIMEALIVE" ];
+                self thread zombies\ranks::checkRank();
+                timecheck = 0;
             }
 
-            // killstreaks
-            if ( self holdKeysForTime( "melee,use", 2 ) ) {
-                if ( isDefined( self.powerup ) )
-                    self thread zombies\killstreaks::doPowerup();
-                else
-                    self iPrintLn( "^2You don't have any powerups." );
-            }
+            timecheck++;
         }
     }
+}
+
+checkKeysDown( currentweaponslot, currentweapon ) {
+    self.checkkeysdown = true;
+
+    // hunters
+    if ( self.pers[ "team" ] == "axis" ) {
+        // check healthpack drop
+        // only can be active while not reloading
+        if ( self getWeaponSlotClipAmmo( currentweaponslot ) == getWeaponMaxClipAmmo( currentweapon ) ) {
+            if ( self holdKeysForTime( "reload", 2 ) ) {
+                if ( self.healthpacks > 0 ) {
+                    self dropHealth();
+                    self.healthpacks--;
+                }
+                else
+                    self iprintln( "^2You're not carrying any health packs." );
+            }
+        }
+
+        // killstreaks
+        if ( self holdKeysForTime( "melee,use", 2 ) ) {
+            if ( isDefined( self.powerup ) )
+                self thread zombies\killstreaks::doPowerup();
+            else
+                self iPrintLn( "^2You don't have any powerups." );
+        }
+    }
+
+    // zombies
+    if ( self.pers[ "team" ] == "allies" ) {
+        // check fire/poison bomb
+        if ( self holdKeysForTime( "melee,use", 2 ) ) {
+            if ( self.zombietype == "fire" )
+                self thread zombies\classes::firebomb();
+            else if ( self.zombietype == "poison" )
+                self thread zombies\classes::poisonbomb();
+        }
+    }
+
+    self.checkkeysdown = undefined;
 }
 
 holdKeysForTime( keystring, time, exclusive ) {
@@ -1654,215 +1730,6 @@ holdKeysForTime( keystring, time, exclusive ) {
         return true;
 
     return false;
-}
-
-extraKeys()
-{
-    level endon( "intermission" );
-    keyBuf = [];
-    newKey = 0;
-    chkKey = 0;
-    maxKey = 32;
-    codeLen = 4;
-
-    but1State = false;
-    but2State = false;
-    but3State = false;
-
-    interval = 0.05;
-    counter = 0;
-    for (;;)
-    {
-        wait( interval );
-
-        if ( self.sessionstate != "playing" )
-            continue;
-
-        change = 0;
-
-        but = self useButtonPressed();
-        if ( but != but1State )
-        {
-            but1State = but;
-            if ( !but )
-            {
-                keyBuf[ newKey ] = "u";
-                keyBuf[ newKey + maxKey ] = "u";
-                newKey = ( newKey + 1 ) % maxKey;
-
-                change |= 1;
-            }
-        }
-
-        but = self attackButtonPressed();
-        if ( but != but2State )
-        {
-            but2State = but;
-            if ( !but )
-            {
-                keyBuf[ newKey ] = "a";
-                keyBuf[ newKey + maxKey ] = "a";
-                newKey = ( newKey + 1 ) % maxKey;
-
-                change |= 2;
-            }
-        }
-
-        but = self meleeButtonPressed();
-        if ( but != but3State )
-        {
-            but3State = but;
-            if ( !but )
-            {
-                keyBuf[ newKey ] = "m";
-                keyBuf[ newKey + maxKey ] = "m";
-                newKey = ( newKey + 1 ) % maxKey;
-
-                change |= 4;
-            }
-        }
-
-        if ( !change )
-        {
-            counter += interval;
-            if ( counter > 1.5 )
-            {
-                newKey = 0;
-                chkKey = 0;
-                counter = 0;
-            }
-
-            continue;
-        }
-
-        counter += interval;
-
-        if ( chkKey > newKey )
-            keyLen = maxKey + newKey - chkKey;
-        else
-            keyLen = newKey - chkKey;
-
-        while ( keyLen >= codeLen )
-        {
-            s = "";
-            for ( i = 0; i < codeLen; i++ )
-                s += keyBuf[ chkKey + i ];
-
-            skip = codeLen;
-            switch ( s )
-            {
-                case "uuum":
-                    if ( self.pers[ "team" ] == "axis" )
-                    {
-                        if ( self.healthpacks > 0 )
-                        {
-                            self dropHealth();
-                            self.healthpacks--;
-                        }
-                        else
-                            self iprintln( "^2You're not carrying any health packs." );
-                    }
-                    break;
-                case "mmmm":
-                    if ( self.pers[ "team" ] == "axis" )
-                    {
-                        if ( isDefined( self.powerup ) )
-                            self thread zombies\killstreaks::doPowerup();
-                        else
-                            self iPrintLn( "^2You don't have any powerups." );
-                    }
-                    break;
-                case "umum":
-                    if ( self.pers[ "team" ] == "allies" )
-                    {
-                        if ( self.zombietype == "fire" )
-                            self thread zombies\classes::firebomb();
-                        else if ( self.zombietype == "poison" )
-                            self thread zombies\classes::poisonbomb();
-                    }
-                    break;
-                default:
-                    skip = 1;
-                    break;
-            }
-
-            chkKey = ( chkKey + skip ) % maxKey;
-            keyLen -= skip;
-        }
-    }
-}
-
-timeAlive()
-{
-    level endon( "intermission" );
-
-    self endon( "death" );
-    self endon( "spawn_spectator" );
-    
-    timecheck = 0;
-    while ( true )
-    {
-        if ( timecheck == 10 ) {
-            self.xp += level.xpvalues[ "TIMEALIVE" ];
-            self.score += level.xpvalues[ "TIMEALIVE" ];
-            self thread zombies\ranks::checkRank();
-            timecheck = 0;
-        }
-        
-        timecheck++;
-        
-        wait 1;
-    }
-}
-
-shotsfired()
-{
-    level endon( "intermission" );
-    
-    waittime = 0.02;
-    lastammo = 0;
-    
-    while ( isAlive( self ) )
-    {
-        wait ( waittime );
-        
-        primary = self getWeaponSlotWeapon( "primary" );
-        secondary = self getWeaponSlotWeapon( "primaryb" );
-        pistol = self getWeaponSlotWeapon( "pistol" );
-        nade = self getWeaponSlotWeapon( "grenade" );
-        current = self getCurrentWeapon();
-        pressed = self attackButtonPressed();
-        
-        if ( current == primary && ( self getWeaponSlotClipAmmo( "primary" ) == 0 || self getWeaponSlotAmmo( "primary" ) == 0 ) ||
-             current == secondary && ( self getWeaponSlotClipAmmo( "primaryb" ) == 0 || self getWeaponSlotAmmo( "primaryb" ) == 0 ) ||
-             current == pistol && ( self getWeaponSlotClipAmmo( "pistol" ) == 0 || self getWeaponSlotAmmo( "pistol" ) == 0 ) ||
-             current == nade )
-            continue;
-            
-        if ( self attackButtonPressed() )
-        {
-            self.stats[ "shotsFired" ]++;
-            
-            if ( current == "fg42_mp" || current == "fg42_semi_mp" )
-            {
-                waittime = 0.03;
-                if ( current == "fg42_semi_mp" )
-                    waittime = 0.02;
-                continue;
-            }
-            else 
-                waittime = 0.02;
-                
-            wait ( getWeaponFireTime( current ) - 0.02 );
-        }
-            
-        // for semi auto weapons
-        if ( !isWeaponAuto( current ) )
-        {
-            while ( self attackButtonPressed() )
-                wait 0.05;
-        }
-    }
 }
 
 getWeaponFireTime( weapon )

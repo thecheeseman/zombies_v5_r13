@@ -42,6 +42,16 @@ CodeCallback_PlayerCommand(cmd) {
         creturn();
         return;
     }
+
+    if ( !isDefined( self.pers[ "lastexecutetime" ] ) )
+        self.pers[ "lastexecutetime" ] = gettime();
+    else if ( getCvarFloat( "coco_chatdelay" ) > 0 ) {
+        chatdelay = getCvarFloat( "coco_chatdelay" ) * 1000;
+        if ( ( gettime() - self.pers[ "lastexecutetime" ] ) < chatdelay ) {
+            creturn();
+            return;
+        }
+    }
     
     // Custom suffixes for groups 
     if ( getCvarInt( "coco_suffix" ) > 0 && self.pers[ "permissions" ] > 0 && cmd[0] != "!" && self.pers[ "suffix" ] != "" ) {
@@ -53,15 +63,6 @@ CodeCallback_PlayerCommand(cmd) {
         return;
     
     creturn();
-
-    if ( !isDefined( self.pers[ "lastexecutetime" ] ) )
-        self.pers[ "lastexecutetime" ] = gettime();
-    else if ( getCvarInt( "coco_chatdelay" ) > 0 ) {
-        // chat delay time
-        chatdelay = getCvarFloat( "coco_chatdelay" ) * 1000;
-        if ( ( gettime() - self.pers[ "lastexecutetime" ] ) < chatdelay )
-            return;
-    }
 
     arg = strip ( cmd );
     chatcmd = StTok( arg, " " ); //splits the spaces as seperate arguments

@@ -1,0 +1,60 @@
+community suggestions
+
+# = likelihood of implementing idea
+
+0 = no
+1-3 = not very likely
+4-6 = somewhat unlikely
+7 = neither here nor there
+8-10 = somewhat likely
+11-14 = very likely
+15 = for sure
+
+#   description
+---------------
+15  update stats when player disconnects
+    -   maybe just use an internal level.leftstats or smth
+    -   then just use that if they reconnect (same ip)
+    -   also save these to database on end map just like everything else
+15  teleport last hunter above map so he can select weapon 
+    -   have 30 sec timeout
+12  two zombie servers: one regular, one with regular + custom maps
+    -   new custom maps with a select few old ones
+        -   brecourt_winter
+        -   german_town
+        -   mount35
+        -   mp_adlerstein
+        -   mp_amberville
+        -   mp_bazolles_final
+        -   mp_bunkermay_n
+        -   mp_falaisevilla
+        -   mp_maaloy_final
+        -   mp_wolfsquare_final
+        -   mp_woodland
+        -   nazifort2
+        -   nuenen
+        -   severnaya_bunker
+    -   old maps to keep
+        -   alcatraz
+        -   cp_apartments
+        -   cp_sewerzombies
+        -   cp_zombies
+        -   germantrainingbase
+        -   goldeneye_bunker
+        -   mp_vok_final_night
+        -   quarantine
+        -   toybox_bloodbath
+12  set barricades to use settakedamage (saves 100+ threads)
+12  more admin commands that are non-lethal
+12  add more buy menu items
+7   spread out mortar strike a bit more
+7   more ammo in automatic weapons
+    -   not a lot, but at least boost it for the nubs
+7   make special mp_ship case for skins where hunters' bodies are all the ship ones
+    -   even replace custom skins (just not heads)
+7   add ranks 'bagets 1-5' after 10 million
+4   two zombie servers: one US, one EU
+2   zombie server in asia
+0   make it more like "celica zom" (new brax mod)
+0   add modern weapons
+0   add a zombie that can go invis, telleport, 1 shot, stun, and multikill

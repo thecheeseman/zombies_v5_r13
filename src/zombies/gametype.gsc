@@ -394,11 +394,6 @@ spawnPlayer()
     self giveWeapon(self.pers["weapon"]);
     self giveMaxAmmo(self.pers["weapon"]);
     self setSpawnWeapon(self.pers["weapon"]);
-    
-    if(self.pers["team"] == "allies")
-        self setClientCvar("cg_objectiveText", &"");
-    else if(self.pers["team"] == "axis")
-        self setClientCvar("cg_objectiveText", &"");
 
     self thread zombies\mod::spawnPlayer();
 }

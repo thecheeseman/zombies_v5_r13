@@ -276,7 +276,7 @@ run_hazard( event ) {
                 wait 1;
                 
             lasteventtime = gettime();
-            nexteventtime = lasteventtime + 150000;
+            nexteventtime = lasteventtime + 300000;
             nexteventtime += ( _randomInt( 500 ) * 1000 );
         }
         

@@ -27,8 +27,17 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 24/06/16
+#### 08/05/16 - 29/06/16
     
+    13.2.0.162
+    * Moved a lot of code into the new playerThread() function to try and eliminate unnecessary threads
+    + Added (k) and (m) indicators to XP/Points so it won't show exponential notation with numbers >= 1,000,000
+    # Fix crash when players would get removed from the server before spawning
+    + Added Super Jump explanation message on spawn
+    # Fixed crash when server starts for the first time (and mapvote expects a previous map)
+    # Adjust zombies.sql
+    + Added suggestions.txt for community-given suggestions
+
     13.2.0.161
     # Fixed a few areas of code where I wasn't using level.precache
     + Added a secondary mode to the PPSh - slower auto mode (225 damage, but slower firetime)

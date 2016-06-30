@@ -442,8 +442,9 @@ getammo( box )
 			{			
 				self.ammoboxuses++;
 				
-				if ( self.ammoboxuses < 3 )
+				if ( self.ammoboxuses < 3 ) {
 					self iPrintLnBold( "You have " + ( 3 - self.ammoboxuses ) + " more free ammobox uses." );
+				}
 				
 				if ( self.ammoboxuses > 3 )
 				{

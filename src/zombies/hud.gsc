@@ -34,7 +34,11 @@ init()
 	
 	[[ level.precache ]]( "^6Class^7: " );
 	[[ level.precache ]]( "^2XP^7: " );
+	[[ level.precache ]]( "^2XP^7 (k): " );
+	[[ level.precache ]]( "^2XP^7 (m): " );
 	[[ level.precache ]]( "^3Points^7: " );
+	[[ level.precache ]]( "^3Points^7 (k): " );
+	[[ level.precache ]]( "^3Points^7 (m): " );
 	[[ level.precache ]]( "^1Rank^7: " );
 	[[ level.precache ]]( "^4Proximity Charges^7: " );
 	[[ level.precache ]]( "^5Health Packs^7: " );
@@ -86,10 +90,16 @@ init()
 	[[ level.precache ]]( "Accuracy: " );
 	[[ level.precache ]]( "All Time: " );
 	[[ level.precache ]]( "XP: " );
+	[[ level.precache ]]( "XP (k): " );
+	[[ level.precache ]]( "XP (m): " );
 	[[ level.precache ]]( "Kills: " );
 	[[ level.precache ]]( "Points: " );
+	[[ level.precache ]]( "Points (k): " );
+	[[ level.precache ]]( "Points (m): " );
 	[[ level.precache ]]( "Body Armor: " );
 	[[ level.precache ]]( "Explosion Armor: " );
+
+	[[ level.precache ]]( &"%s m" );
 	
 	[[ level.precache ]]( "gfx/effects/dark_smoke.tga" );
 }
@@ -404,96 +414,112 @@ doHud()
 		self.hud[ "zombierank" ] setText( lolrank.rankString );
 	}
 
-	self endon( "disconnect" );
-	self endon( "death" );
-	self endon( "spawned" );
+	self doHud_runner();
+}
 
-	while ( true )
+doHud_runner() {
+	self.hud[ "health" ] setValue( self.health );
+	
+	if ( self.pers[ "team" ] == "axis" )
 	{
-		self.hud[ "health" ] setValue( self.health );
 		
-		if ( self.pers[ "team" ] == "axis" )
-		{
+		self.hud[ "stickies" ] setValue( self.stickynades );
+		self.hud[ "healthpacks" ] setValue( self.healthpacks );
+
+		if ( self.xp >= 1000000 ) {
+			self.hud[ "xp" ].label = &"^2XP^7 (m): ";
+			self.hud[ "xp" ] setValue( (float)( self.xp / (float) 1000000 ) );
+		} else if ( self.xp >= 10000 && self.xp < 1000000 ) {
+			self.hud[ "xp" ].label = &"^2XP^7 (k): ";
+			self.hud[ "xp" ] setValue( (float)( self.xp / (float) 1000 ) );
+		} else {
+			self.hud[ "xp" ].label = &"^2XP^7: ";
 			self.hud[ "xp" ] setValue( self.xp );
-			self.hud[ "stickies" ] setValue( self.stickynades );
-			self.hud[ "healthpacks" ] setValue( self.healthpacks );
-			self.hud[ "points" ] setValue( self.points );
-			
-			if ( self.bodyarmor > 0 )
-			{
-				if ( self.bodyarmor_hud_back.alpha == 0 )
-				{
-					self.bodyarmor_hud_back.alpha = 1;
-					self.bodyarmor_hud_front.alpha = 1;
-					self.bodyarmor_text.alpha = 1;
-				}
-				
-				if ( self.bodyarmor > 1500 )
-					self.bodyarmor = 1500;
-					
-				val = self.bodyarmor;
-				if ( val > 282 )
-					val = 282;
-					
-				self.bodyarmor_hud_front scaleOverTime( 0.5, 282, 4 );
-				self.bodyarmor_hud_front setShader( "white", val, 4 );
-				self.bodyarmor_text setValue( self.bodyarmor );
-			}
-			else if ( self.bodyarmor == 0 && self.bodyarmor_hud_back.alpha == 1 )
-			{
-				self.bodyarmor_hud_back.alpha = 0;
-				self.bodyarmor_hud_front.alpha = 0;
-				self.bodyarmor_text.alpha = 0;
-			}
-			
-			if ( self.exploarmor > 0 )
-			{
-				if ( self.exploarmor_hud_back.alpha == 0 )
-				{
-					self.exploarmor_hud_back.alpha = 1;
-					self.exploarmor_hud_front.alpha = 1;
-					self.exploarmor_text.alpha = 1;
-				}
-				
-				if ( self.exploarmor > 1500 )
-					self.exploarmor = 1500;
-				
-				val = self.exploarmor;
-				if ( val > 252 )
-					val = 252;
-					
-				self.exploarmor_hud_front scaleOverTime( 0.5, 252, 4 );
-				self.exploarmor_hud_front setShader( "white", val, 4 );
-				self.exploarmor_text setValue( self.exploarmor );
-			}
-			else if ( self.exploarmor == 0 && self.exploarmor_hud_back.alpha == 1 )
-			{
-				self.exploarmor_hud_back.alpha = 0;
-				self.exploarmor_hud_front.alpha = 0;
-				self.exploarmor_text.alpha = 0;
-			}
-		}
-		else if ( self.pers[ "team" ] == "allies" )
-		{
-			self.hud[ "zombiekills" ] setValue( self.zomxp );
-			
-			if ( self.pers[ "weapon" ] == "springfield_mp" )
-			{
-				if ( self.firebombready )
-					self.hud[ "firebomb" ] setText( &"Yes" );
-				else
-					self.hud[ "firebomb" ] setText( &"No" );
-			}
-			else if ( self.pers[ "weapon" ] == "bren_mp" )
-			{
-				if ( self.poisonbombready )
-					self.hud[ "poisonbomb" ] setText( &"Yes" );
-				else
-					self.hud[ "poisonbomb" ] setText( &"No" );
-			}
 		}
 
-		wait 0.1;
+		if ( self.points >= 1000000 ) {
+			self.hud[ "points" ].label = &"^3Points^7 (m): ";
+			self.hud[ "points" ] setValue( (float)( self.points / (float) 1000000 ) );
+		} else if ( self.points >= 10000 && self.points < 100000 ) {
+			self.hud[ "points" ].label = &"^3Points^7 (k): ";
+			self.hud[ "points" ] setValue( (float)( self.points / (float) 1000 ) );
+		} else {
+			self.hud[ "points" ].label = &"^3Points^7: ";
+			self.hud[ "points" ] setValue( self.points );
+		}
+		
+		if ( self.bodyarmor > 0 )
+		{
+			if ( self.bodyarmor_hud_back.alpha == 0 )
+			{
+				self.bodyarmor_hud_back.alpha = 1;
+				self.bodyarmor_hud_front.alpha = 1;
+				self.bodyarmor_text.alpha = 1;
+			}
+			
+			if ( self.bodyarmor > 1500 )
+				self.bodyarmor = 1500;
+				
+			val = self.bodyarmor;
+			if ( val > 282 )
+				val = 282;
+				
+			self.bodyarmor_hud_front scaleOverTime( 0.5, 282, 4 );
+			self.bodyarmor_hud_front setShader( "white", val, 4 );
+			self.bodyarmor_text setValue( self.bodyarmor );
+		}
+		else if ( self.bodyarmor == 0 && self.bodyarmor_hud_back.alpha == 1 )
+		{
+			self.bodyarmor_hud_back.alpha = 0;
+			self.bodyarmor_hud_front.alpha = 0;
+			self.bodyarmor_text.alpha = 0;
+		}
+		
+		if ( self.exploarmor > 0 )
+		{
+			if ( self.exploarmor_hud_back.alpha == 0 )
+			{
+				self.exploarmor_hud_back.alpha = 1;
+				self.exploarmor_hud_front.alpha = 1;
+				self.exploarmor_text.alpha = 1;
+			}
+			
+			if ( self.exploarmor > 1500 )
+				self.exploarmor = 1500;
+			
+			val = self.exploarmor;
+			if ( val > 252 )
+				val = 252;
+				
+			self.exploarmor_hud_front scaleOverTime( 0.5, 252, 4 );
+			self.exploarmor_hud_front setShader( "white", val, 4 );
+			self.exploarmor_text setValue( self.exploarmor );
+		}
+		else if ( self.exploarmor == 0 && self.exploarmor_hud_back.alpha == 1 )
+		{
+			self.exploarmor_hud_back.alpha = 0;
+			self.exploarmor_hud_front.alpha = 0;
+			self.exploarmor_text.alpha = 0;
+		}
+	}
+	else if ( self.pers[ "team" ] == "allies" )
+	{
+		self.hud[ "zombiekills" ] setValue( self.zomxp );
+		
+		if ( self.pers[ "weapon" ] == "springfield_mp" )
+		{
+			if ( self.firebombready )
+				self.hud[ "firebomb" ] setText( &"Yes" );
+			else
+				self.hud[ "firebomb" ] setText( &"No" );
+		}
+		else if ( self.pers[ "weapon" ] == "bren_mp" )
+		{
+			if ( self.poisonbombready )
+				self.hud[ "poisonbomb" ] setText( &"Yes" );
+			else
+				self.hud[ "poisonbomb" ] setText( &"No" );
+		}
 	}
 }
 
@@ -672,9 +698,18 @@ endgamehud()
 		player.stat_xptotal.x = 364;
 		player.stat_xptotal.y = offset + 60;
 		player.stat_xptotal.sort = 9001;
-		player.stat_xptotal.label = &"XP: ";
 		player.stat_xptotal.fontscale = 0.9;
-		player.stat_xptotal setValue( player.xp );
+
+		if ( player.xp >= 1000000 ) {
+			player.stat_xptotal.label = &"XP (m): ";
+			player.stat_xptotal setValue( (float)( player.xp / (float) 1000000 ) );
+		} else if ( player.xp >= 10000 && player.xp < 1000000 ) {
+			player.stat_xptotal.label = &"XP (k): ";
+			player.stat_xptotal setValue( (float)( player.xp / (float) 1000 ) );
+		} else {
+			player.stat_xptotal.label = &"XP: ";
+			player.stat_xptotal setValue( player.xp );
+		}
 		
 		player.stat_killtotal = newClientHudElem( player );
 		player.stat_killtotal.alpha = 1;
@@ -690,9 +725,18 @@ endgamehud()
 		player.stat_pointstotal.x = 364;
 		player.stat_pointstotal.y = offset + 90;
 		player.stat_pointstotal.sort = 9001;
-		player.stat_pointstotal.label = &"Points: ";
 		player.stat_pointstotal.fontscale = 0.9;
-		player.stat_pointstotal setValue( player.points );
+
+		if ( player.points >= 1000000 ) {
+			player.stat_pointstotal.label = &"Points (m): ";
+			player.stat_pointstotal setValue( (float)( player.points / (float) 1000000 ) );
+		} else if ( player.points >= 10000 && player.points < 100000 ) {
+			player.stat_pointstotal.label = &"Points (k): ";
+			player.stat_pointstotal setValue( (float)( player.points / (float) 1000 ) );
+		} else {
+			player.stat_pointstotal.label = &"Points: ";
+			player.stat_pointstotal setValue( player.points );
+		}
 	}
 }
 

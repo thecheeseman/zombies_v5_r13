@@ -624,7 +624,7 @@ moveturret( barrel ) {
             self.moveturretnotice.x = 320;
             self.moveturretnotice.y = 320;
             self.moveturretnotice.alpha = 1;
-            self.moveturretnotice setText( &"Hold [F] to move turret" );
+            self.moveturretnotice setText( &"Hold [{+activate}] to move turret" );
         }
         
         while ( self usebuttonpressed() && self isOnGround() && isAlive( self ) )
@@ -1540,6 +1540,7 @@ superJump()
     self endon( "end_respawn" );
     
     self iPrintLn( "Zombie perk: ^2Super jump" );
+    self iPrintLn( "Jump and then press [{+activate}] to activate" );
     
     self.maxhealth += 700;
     self.health = self.maxhealth;

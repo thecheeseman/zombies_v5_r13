@@ -112,7 +112,7 @@ init()
 	
 	[[ level.precache ]]( "xmodel/barrel_black1" );
 	[[ level.precache ]]( "xmodel/crate_misc_red2" );
-	
+
 	level.barricades = 0;
 }
 
@@ -147,7 +147,7 @@ buymenu( response )
 	else
 	{
 		if ( self doItem( response ) )
-		{		
+		{	
 			self iprintlnbold( "You bought ^2" + level.pointsnames[ response ] + "^7 for " + level.points[ response ] + " points." );
 			self.points -= level.points[ response ];
 		} 
@@ -287,7 +287,7 @@ doItem( response )
 			self switchToWeapon( "fraggrenade_mp" );
 			break;
 		case "buy_nightvision":
-			self iPrintLn( "Nightvision is dumb, so don't use it" );
+			//self iPrintLn( "Nightvision is dumb, so don't use it" );
 			return false;
 			/*
 			if ( self.nightvision )
@@ -414,6 +414,9 @@ spawn_barricade( model, clip, trigdistance )
 
 cleanUp()
 {
+	if ( !isDefined( self.barricades ) )
+		return;
+	
 	totalmodels = 0;
 	for ( i = 0; i < self.barricades.size; i++ )
 	{
@@ -497,8 +500,9 @@ beDestroyed( owner, type, hitboxsize ) {
 	    }
 	}
 
-	if ( isDefined( attacker ) )
+	if ( isDefined( attacker ) ) {
 		iPrintLn( attacker.name + " ^7destroyed a barricade!" );
+	}
 
 	self delete();
 }

@@ -285,7 +285,7 @@ pick_maps() {
             skip = true;
 
         // don't add second to last map
-        if ( row[ 0 ] == lastmap )
+        if ( isDefined( lastmap ) && row[ 0 ] == lastmap )
             skip = true;            
 
         if ( !skip )
