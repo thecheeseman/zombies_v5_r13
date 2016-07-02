@@ -122,10 +122,14 @@ sql_close() {
 sql_saveendgame( winner ) {
     players = getEntArray( "player", "classname" );
 
+    lm = level.mapinfo.last_mode + 1;
+    if ( lm == 2 )
+        lm = 0;
+
     // update map_history 
     length = ( level.endtime - level.starttime ) / 1000;
-    query = "INSERT INTO zombies.map_history (server_id, map_id, round_length, winner, players_at_end) VALUES (" + level.serverid + "," + level.mapinfo.id + ",";
-    query += length + "," + "'" + winner + "'," + players.size + ")";
+    query = "INSERT INTO zombies.map_history (server_id, map_id, round_length, winner, players_at_end, last_mode) VALUES (" + level.serverid + ", " + level.mapinfo.id + ", ";
+    query += length + ", " + "'" + winner + "', " + players.size + ", " + lm + ")";
     if ( mysql_query( level.db, query ) ) {
         sql_error();
     }

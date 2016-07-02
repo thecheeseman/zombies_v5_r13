@@ -1,0 +1,772 @@
+#include "ui_mp/menudef.h"
+
+#define ORIGIN_MENUTABS				96 64
+#define ORIGIN_MENUWINDOW			96 96
+#define ORIGIN_MENUWINDOW2			96 220
+#define ORIGIN_WEAPONIMAGE			296 104
+#define ORIGIN_WEAPONTEXT			296 208
+#define ORIGIN_WEAPONPROPERTIESTEXT		296 320
+#define ORIGIN_WEAPONACCURACY			392 312
+#define ORIGIN_WEAPONDAMAGE			392 326
+#define ORIGIN_WEAPONMOBILITY			392 340
+
+{
+	menuDef
+	{
+		name			"weapon_hunters"
+		fullscreen		0
+		rect			0 0 640 480
+		focuscolor		1 1 1 1
+		disablecolor		0 0 0 0
+		style			WINDOW_STYLE_EMPTY
+		onEsc 
+		{
+			scriptMenuResponse "close";
+			close weapon_hunters;
+		}
+		onOpen 
+		{
+			scriptMenuResponse "open";
+			show kar98k_info;
+			show weapon_propertiestext;
+		}
+		onClose
+		{
+			scriptMenuResponse "close";
+			hide m1carbine_info;
+			hide m1garand_info;
+			hide thompson_info;
+			hide bar_info;
+			hide springfield_info;
+			hide kar98k_info;
+			hide mp40_info;
+			hide mp44_info;
+			hide kar98ksniper_info;
+		}
+
+// WINDOW BACKGROUND
+		itemDef
+		{
+			name			"window_background"
+			visible			1
+			rect			0 0 448 288
+			origin			ORIGIN_MENUWINDOW
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@window_background.tga"
+			decoration
+		}
+
+// MENU TABS
+		itemDef 
+		{
+			name			"button_mainmenu"
+			visible			1
+			rect			0 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_left_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_MAIN_MENU"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				close weapon_hunters;
+				open main;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_team"
+			visible			1
+			rect			89 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_TEAM"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "team";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_weapon"
+			visible			1
+			rect			179 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_selected.tga"
+			text			"@ZOM_CLIENT_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			decoration
+		}
+		itemDef
+		{
+			name			"button_viewmap"
+			visible			1
+			rect			269 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_VIEW_MAP"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "viewmap";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_callvote"
+			visible			1
+			rect			358 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_right_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_CALL_VOTE"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		42
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			cvartest		"scr_allow_vote"
+			hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "callvote";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+
+// MENU CHOICES
+		//GERMAN WEAPON SELECTION
+		itemDef
+		{
+			name			"german_selection"
+			visible 		1
+			rect			0 0 224 64
+			origin			110 120
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_COMBAT_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		
+		itemDef 
+		{
+			name			"button_kar98k"
+			visible			1
+			rect			16 24 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_1_COMBAT_ENGINEER"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_kar98k"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "kar98k_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				hide springfield_info;
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				play "mouse_over";
+				show kar98k_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "1" { play "mouse_click"; scriptMenuResponse "kar98k_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_mp40"
+			visible			1
+			rect			16 48 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_2_COMBAT_MEDIC"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_mp40"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "mp40_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide kar98k_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				hide springfield_info;
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				play "mouse_over";
+				show mp40_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "2" { play "mouse_click"; scriptMenuResponse "mp40_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_mp44"
+			visible			1
+			rect			16 72 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_3_COMBAT_SUPPORT"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_mp44"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "mp44_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide kar98k_info;
+				hide mp40_info;
+				hide kar98ksniper_info;
+				hide springfield_info;
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				play "mouse_over";
+				show mp44_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "3" { play "mouse_click"; scriptMenuResponse "mp44_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_kar98ksniper"
+			visible			1
+			rect			16 96 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_4_COMBAT_SNIPER"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_kar98ksniper"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "kar98k_sniper_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide springfield_info;
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				play "mouse_over";
+				show kar98ksniper_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "4" { play "mouse_click"; scriptMenuResponse "kar98k_sniper_mp"; close weapon_hunters }
+		
+		//AMERICAN WEAPON SELECTION
+		itemDef
+		{
+			name			"american_selection"
+			visible 		1
+			rect			0 0 224 64
+			origin			110 240
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_REGULAR_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef 
+		{
+			name			"button_m1carbine"
+			visible			1
+			rect			16 24 160 23
+			origin			ORIGIN_MENUWINDOW2
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_5_RECON"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_m1carbine"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "m1carbine_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				hide springfield_info;
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				play "mouse_over";
+				show m1carbine_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "5" { play "mouse_click"; scriptMenuResponse "m1carbine_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_m1garand"
+			visible			1
+			rect			16 48 160 23
+			origin			ORIGIN_MENUWINDOW2
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_6_ENGINEER"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_m1garand"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "m1garand_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide m1carbine_info;
+				hide thompson_info;
+				hide bar_info;
+				hide springfield_info;
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				play "mouse_over";
+				show m1garand_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "6" { play "mouse_click"; scriptMenuResponse "m1garand_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_thompson"
+			visible			1
+			rect			16 72 160 23
+			origin			ORIGIN_MENUWINDOW2
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_7_MEDIC"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_thompson"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "thompson_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide bar_info;
+				hide springfield_info;
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				play "mouse_over";
+				show thompson_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "7" { play "mouse_click"; scriptMenuResponse "thompson_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_bar"
+			visible			1
+			rect			16 96 160 23
+			origin			ORIGIN_MENUWINDOW2
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_8_SUPPORT"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_bar"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "bar_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide springfield_info;
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				play "mouse_over";
+				show bar_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "8" { play "mouse_click"; scriptMenuResponse "bar_mp"; close weapon_hunters }
+		
+		itemDef 
+		{
+			name			"button_springfield"
+			visible			1
+			rect			16 120 160 23
+			origin			ORIGIN_MENUWINDOW2
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_9_SNIPER"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_springfield"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "springfield_mp";
+				close weapon_hunters;
+			}
+			onFocus
+			{
+				hide m1carbine_info;
+				hide m1garand_info;
+				hide thompson_info;
+				hide bar_info;
+				hide kar98k_info;
+				hide mp40_info;
+				hide mp44_info;
+				hide kar98ksniper_info;
+				play "mouse_over";
+				show springfield_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "9" { play "mouse_click"; scriptMenuResponse "springfield_mp"; close weapon_hunters }
+
+// WEAPON IMAGES
+		//GERMAN WEAPON IMAGES
+		itemDef
+		{
+			name			"kar98k_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@kar98.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"mp40_info"
+			visible 		0
+			rect			0 10 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@mp40.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"mp44_info"
+			visible 		0
+			rect			0 4 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@mp44.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"kar98ksniper_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@kar98scoped.tga"
+			decoration
+		}
+		
+		//AMERICAN WEAPON IMAGES
+		itemDef
+		{
+			name			"m1carbine_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@m1carbine.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"m1garand_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@m1garand.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"thompson_info"
+			visible 		0
+			rect			0 4 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@thompson.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"bar_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@bar.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"springfield_info"
+			visible 		0
+			rect			0 4 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@springfield.tga"
+			decoration
+		}
+
+// WEAPON DESCRIPTIONS
+		//GERMAN DESCRIPTIONS
+		itemDef
+		{
+			name			"kar98k_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_COMBAT_ENGINEER_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"mp40_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_COMBAT_MEDIC_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"mp44_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_COMBAT_SUPPORT_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"kar98ksniper_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_COMBAT_SNIPER_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		
+		//AMERICAN DESCRIPTIONS
+		itemDef
+		{
+			name			"m1carbine_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_RECON_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"m1garand_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_ENGINEER_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"thompson_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_MEDIC_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"bar_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_SUPPORT_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"springfield_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_SNIPER_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+	}
+}

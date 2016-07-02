@@ -22,19 +22,21 @@ init() {
     [[ level.precache ]]( "xmodel/USAirborneHelmet_Medic" );
     [[ level.precache ]]( "xmodel/mg42_bipod" );
 
-    [[ level.precache ]]( "Sentry status: " );
-    [[ level.precache ]]( "Sentry health: " );
-    [[ level.precache ]]( "Sentry kills: " );
-    [[ level.precache ]]( "Firing" );
-    [[ level.precache ]]( "Reloading" );
-    [[ level.precache ]]( "Disabled" );
-    [[ level.precache ]]( "Idle" );
-    [[ level.precache ]]( "Hold [{+activate}] to move turret" );
-    [[ level.precache ]]( "Invisibility status: " );
-    [[ level.precache ]]( "Ready" );
-    [[ level.precache ]]( "Recharging" );
-    [[ level.precache ]]( "Invisible" );
-    [[ level.precache ]]( "Cooldown" );
+    [[ level.precache ]]( &"ZOM_CLASSES_SENTRY_STATUS" );
+    [[ level.precache ]]( &"ZOM_CLASSES_SENTRY_HEALTH" );
+    [[ level.precache ]]( &"ZOM_CLASSES_SENTRY_KILLS" );
+    [[ level.precache ]]( &"ZOM_CLASSES_FIRING" );
+    [[ level.precache ]]( &"ZOM_CLASSES_RELOADING" );
+    [[ level.precache ]]( &"ZOM_CLASSES_DISABLED" );
+    [[ level.precache ]]( &"ZOM_CLASSES_IDLE" );
+    [[ level.precache ]]( &"ZOM_CLASSES_HOLD_ACTIVATE_TO_MOVE" );
+    [[ level.precache ]]( &"ZOM_CLASSES_INVISIBILITY_STATUS" );
+    [[ level.precache ]]( &"ZOM_CLASSES_READY" );
+    [[ level.precache ]]( &"ZOM_CLASSES_RECHARGING" );
+    [[ level.precache ]]( &"ZOM_CLASSES_INVISIBLE" );
+    [[ level.precache ]]( &"ZOM_CLASSES_COOLDOWN" );
+    [[ level.precache ]]( &"ZOM_CLASSES_POISONED" );
+    [[ level.precache ]]( &"ZOM_CLASSES_ON_FIRE" );
 
     [[ level.precache ]]( "fx/muzzleflashes/mg42flash.efx",         "fx", "sentry_fire" );
     [[ level.precache ]]( "fx/fire/barrelfire.efx",                 "fx", "sentry_onfire" );
@@ -624,7 +626,7 @@ moveturret( barrel ) {
             self.moveturretnotice.x = 320;
             self.moveturretnotice.y = 320;
             self.moveturretnotice.alpha = 1;
-            self.moveturretnotice setText( &"Hold [{+activate}] to move turret" );
+            self.moveturretnotice setText( &"ZOM_CLASSES_HOLD_ACTIVATE_TO_MOVE" );
         }
         
         while ( self usebuttonpressed() && self isOnGround() && isAlive( self ) )
@@ -1128,7 +1130,7 @@ sentry_hud( mg, type )
     self.sentry_hud_notice.alpha = 1;
     self.sentry_hud_notice.sort = 25;
     self.sentry_hud_notice.fontscale = 0.7;
-    self.sentry_hud_notice.label = &"Sentry status: ";
+    self.sentry_hud_notice.label = &"ZOM_CLASSES_SENTRY_STATUS";
     
     self.sentry_hud_health_back = newClientHudElem( self );
     self.sentry_hud_health_back.x = 550;
@@ -1157,7 +1159,7 @@ sentry_hud( mg, type )
     self.sentry_hud_health.alpha = 1;
     self.sentry_hud_health.sort = 25;
     self.sentry_hud_health.fontscale = 0.7;
-    self.sentry_hud_health.label = &"Sentry health: ";
+    self.sentry_hud_health.label = &"ZOM_CLASSES_SENTRY_HEALTH";
     
     self.sentry_hud_kills = newClientHudElem( self );
     self.sentry_hud_kills.x = 492;
@@ -1167,7 +1169,7 @@ sentry_hud( mg, type )
     self.sentry_hud_kills.alpha = 1;
     self.sentry_hud_kills.sort = 25;
     self.sentry_hud_kills.fontscale = 0.7;
-    self.sentry_hud_kills.label = &"Sentry kills: ";
+    self.sentry_hud_kills.label = &"ZOM_CLASSES_SENTRY_KILLS";
     
     while ( isAlive( self ) && isDefined( self.mg ) )
     {       
@@ -1175,7 +1177,7 @@ sentry_hud( mg, type )
         {
             self.sentry_hud_front.alpha = 0;
             self.sentry_hud_notice.color = ( 0, 1, 0 );
-            self.sentry_hud_notice setText( &"Firing" );
+            self.sentry_hud_notice setText( &"ZOM_CLASSES_FIRING" );
         }        
         else if ( isDefined( mg.reloading ) )
         {
@@ -1183,19 +1185,19 @@ sentry_hud( mg, type )
             self.sentry_hud_front.color = ( 1, 0, 0 );
             self.sentry_hud_front setShader( "white", mg.timeup * 10.2, 8 );
             self.sentry_hud_notice.color = ( 1, 1, 1 );
-            self.sentry_hud_notice setText( &"Reloading" );
+            self.sentry_hud_notice setText( &"ZOM_CLASSES_RELOADING" );
         }        
         else if ( isDefined( mg.disabled ) )
         {
             self.sentry_hud_front.alpha = 0;
             self.sentry_hud_notice.color = ( 1, 0, 0 );
-            self.sentry_hud_notice setText( &"Disabled" );
+            self.sentry_hud_notice setText( &"ZOM_CLASSES_DISABLED" );
         }
         else
         {
             self.sentry_hud_front.alpha = 0;
             self.sentry_hud_notice.color = ( 1, 1, 1 );
-            self.sentry_hud_notice setText( &"Idle" );
+            self.sentry_hud_notice setText( &"ZOM_CLASSES_IDLE" );
         }            
         
         self.sentry_hud_health setValue( self.mg.health );
@@ -1248,7 +1250,7 @@ sniper() {
     self.invis_hud_notice.alpha = 1;
     self.invis_hud_notice.sort = 25;
     self.invis_hud_notice.fontscale = 0.7;
-    self.invis_hud_notice.label = &"Invisibility status: ";
+    self.invis_hud_notice.label = &"ZOM_CLASSES_INVISIBILITY_STATUS";
 
     self.hiddenhud = newClientHudElem( self );
     self.hiddenhud.x = 0;
@@ -1260,7 +1262,7 @@ sniper() {
 
     self.invisible = false;
 
-    self.invis_hud_notice setText( &"Ready" );
+    self.invis_hud_notice setText( &"ZOM_CLASSES_READY" );
 
     if ( self.subclass == "combat" )
         self sniper_combat();
@@ -1338,14 +1340,14 @@ sniper_combat() {
                 timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, false ) );
 
                 self.invis_hud_front.color = ( 1, 0, 0 );
-                self.invis_hud_notice setText( &"Cooldown" );
+                self.invis_hud_notice setText( &"ZOM_CLASSES_COOLDOWN" );
 
                 donetime = gettime();
                 while ( ( gettime() - donetime ) < 5000 )
                     wait 0.05;
 
                 reloading = true;
-                self.invis_hud_notice setText( &"Recharging" );
+                self.invis_hud_notice setText( &"ZOM_CLASSES_RECHARGING" );
             }
         }
     }
@@ -1420,7 +1422,7 @@ sniper_support() {
             timeup = ( reloadtime * 20 ) - ( self sniper_goinvisible( reloadtime, true ) );
 
             self.invis_hud_front.color = ( 1, 0, 0 );
-            self.invis_hud_notice setText( &"Cooldown" );
+            self.invis_hud_notice setText( &"ZOM_CLASSES_COOLDOWN" );
 
             donetime = gettime();
             while ( ( gettime() - donetime ) < 5000 )
@@ -1428,7 +1430,7 @@ sniper_support() {
 
             stoppedtime = gettime();
             reloading = true;
-            self.invis_hud_notice setText( &"Recharging" );
+            self.invis_hud_notice setText( &"ZOM_CLASSES_RECHARGING" );
         }
     }
 }
@@ -1443,7 +1445,7 @@ sniper_goinvisible( time, trackmoving ) {
     self iPrintLn( "You are now ^5invisible^7!" );
     self.invisible = true;
 
-    self.invis_hud_notice setText( &"Invisible" );
+    self.invis_hud_notice setText( &"ZOM_CLASSES_INVISIBLE" );
 
     self.hiddenhud.alpha = 0.2;
     self detachall();
@@ -1666,7 +1668,7 @@ bePoisoned( dude )
     self.poisonhud.alpha = 0.1;
     self.poisonhud.sort = 1;
     
-    self iPrintLnBold( "You have been ^2poisoned^7!" );
+    self iPrintLnBold( &"ZOM_CLASSES_POISONED" );
     
     while ( isAlive( self ) && self.ispoisoned )
     {
@@ -1790,7 +1792,7 @@ firemonitor( dude )
 
 firedeath( dude )
 {
-    self iPrintLnBold( "You are on ^1fire^7!" );
+    self iPrintLnBold( &"ZOM_CLASSES_ON_FIRE" );
     
     while ( self.onfire )
     {

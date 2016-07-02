@@ -26,7 +26,10 @@ init() {
 }
 
 dump_precache() {
+    [[ level.logwrite ]]( "----------------------------------------\n" );
     [[ level.logwrite ]]( "begin dump_precache() " );
+
+    counts = [];
 
     stringcount = 0;
     for ( i = 0; i < level.precachedItems.size; i++ ) {
@@ -43,9 +46,26 @@ dump_precache() {
         } else {
             [[ level.logwrite ]]( "precache[ " + i + " ]\t:  precache" + p.type + "( \"" + p.item + "\" )" );
         }
+
+        if ( !isDefined( counts[ p.type ] ) )
+            counts[ p.type ] = 0;
+
+        counts[ p.type ]++;
     }
 
+    [[ level.logwrite ]]( "----------------------------------------" );
+    [[ level.logwrite ]]( "precache() totals" );
+    [[ level.logwrite ]]( "fx: " + counts[ "fx" ] );
+    [[ level.logwrite ]]( "headicons: " + counts[ "headicon" ] );
+    [[ level.logwrite ]]( "items: " + counts[ "item" ] );
+    [[ level.logwrite ]]( "localizedstrings: " + counts[ "localized-string" ] );
+    [[ level.logwrite ]]( "menus: " + counts[ "menu" ] );
+    [[ level.logwrite ]]( "models: " + counts[ "model" ] );
+    [[ level.logwrite ]]( "shaders: " + counts[ "shader" ] );
+    [[ level.logwrite ]]( "shellshocks: " + counts[ "shellshock" ] );
+    [[ level.logwrite ]]( "statusicons: " + counts[ "statusicon" ] );
     [[ level.logwrite ]]( "end dump_precache() " );
+    [[ level.logwrite ]]( "----------------------------------------" );
 }   
 
 precachedItem( item, type, name ) {

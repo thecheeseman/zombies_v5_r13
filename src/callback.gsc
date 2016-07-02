@@ -293,11 +293,11 @@ suffixMsg ( msg ) {
 StTok( s, delimiter ) {
     return utilities::explode( s, delimiter );
 }
-/*
+
 strip( s ) {
     return utilities::strip( s );
 }
-
+/*
 contains( sString, sOtherString ) {
     return utilities::contains( sString, sOtherString );
 }

@@ -218,7 +218,7 @@ chatcmd_ebot( tok ) {
 }
 
 chatcmd_login( tok ) {
-    tok = strip( tok );
+    tok = utilities::strip( tok );
     if ( tok == "" ) {
         self playerMsg( "Please enter a password: !login [password]" );
         return;

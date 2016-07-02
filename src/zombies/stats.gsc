@@ -288,8 +288,8 @@ getMyStats() {
 				continue;
 
 			arr = utilities::explode( fnv, ":" );
-			field = utilities::strreplacer( strip( arr[ 0 ] ), "alphanumeric" );
-			value = utilities::strreplacer( strip( arr[ 1 ] ), "alphanumeric" );
+			field = utilities::strreplacer( utilities::strip( arr[ 0 ] ), "alphanumeric" );
+			value = utilities::strreplacer( utilities::strip( arr[ 1 ] ), "alphanumeric" );
 
 			if ( field == fnv && field != "eof" && field != "#" ) {
 				//fse( "invalid formatting in file " + lutname );

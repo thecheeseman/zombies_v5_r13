@@ -27,8 +27,24 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 30/06/16
+#### 08/05/16 - 02/07/16
     
+    13.2.0.165-167
+    # Fixed a problem where SQL wasn't notified about the last map mode (day/night)
+    * Increased Armour killstreak from 100 to 250
+    + Preparation for multi-language support
+    * Replaced nearly all strings printed or on the HUD with localized ones
+    * Continued work on botcode
+    # Re-replaced the utilities::strip function as it isn't working on zomextended
+    + Added manual bot control in zomextended
+    + Add localization for client
+    + Add clientside
+
+    13.2.0.164
+    + Added client with a few custom menus
+    # Fixed autodownloading in zomextended
+    + Added clientside support in zomextended
+
     13.2.0.163
     + Added new weather type "foggy" with hazard "haze"
     * Updated SQL queries to reflect multiple server possibilities

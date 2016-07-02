@@ -1,0 +1,61 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "F:\projects\mk\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           HOLD_ACTIVATE_TO_MOVE
+LANG_ENGLISH        "Hold [{+activate}] to move turret"
+
+REFERENCE           SENTRY_STATUS
+LANG_ENGLISH        "Sentry status: "
+
+REFERENCE           SENTRY_HEALTH
+LANG_ENGLISH        "Sentry health: "
+
+REFERENCE           SENTRY_KILLS
+LANG_ENGLISH        "Sentry kills: "
+
+REFERENCE           FIRING
+LANG_ENGLISH        "Firing"
+
+REFERENCE           RELOADING
+LANG_ENGLISH        "Reloading"
+
+REFERENCE           DISABLED
+LANG_ENGLISH        "Disabled"
+
+REFERENCE           IDLE
+LANG_ENGLISH        "Idle"
+
+REFERENCE           INVISIBILITY_STATUS
+LANG_ENGLISH        "Invisibility status: "
+
+REFERENCE           READY
+LANG_ENGLISH        "Ready"
+
+REFERENCE           COOLDOWN
+LANG_ENGLISH        "Cooldown"
+
+REFERENCE           RECHARGING
+LANG_ENGLISH        "Recharging"
+
+REFERENCE           INVISIBLE
+LANG_ENGLISH        "Invisible"
+
+REFERENCE           POISONED
+LANG_ENGLISH        "You have been ^2poisoned^7!"
+
+REFERENCE           ON_FIRE
+LANG_ENGLISH        "You are on ^1fire^7!"
+
+ENDMARKER

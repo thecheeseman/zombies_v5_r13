@@ -24,7 +24,7 @@ init()
 	[[ level.precache ]]( "xmodel/crate_champagne3" );
 	[[ level.precache ]]( "xmodel/ammo_stielhandgranate1" );
 	[[ level.precache ]]( "gfx/hud/objective.tga" );
-	[[ level.precache ]]( "Hold [{+activate}] to get ammo/health" );
+	[[ level.precache ]]( &"ZOM_AMMOBOXES_HOLD_ACTIVATE" );
 }
 
 main() {	
@@ -391,7 +391,7 @@ getammo( box )
 			self.ammonotice.x = 320;
 			self.ammonotice.y = 320;
 			self.ammonotice.alpha = 1;
-			self.ammonotice setText( &"Hold [{+activate}] to get ammo/health" );
+			self.ammonotice setText( &"ZOM_AMMOBOXES_HOLD_ACTIVATE" );
 		}
 		
 		while ( !self.givenammo && self usebuttonpressed() && self isOnGround() && isAlive( self ) )
@@ -443,14 +443,14 @@ getammo( box )
 				self.ammoboxuses++;
 				
 				if ( self.ammoboxuses < 3 ) {
-					self iPrintLnBold( "You have " + ( 3 - self.ammoboxuses ) + " more free ammobox uses." );
+					self iPrintLn( "You have " + ( 3 - self.ammoboxuses ) + " more free ammobox uses." );
 				}
 				
 				if ( self.ammoboxuses > 3 )
 				{
 					if ( self.points < 50 )
 					{
-						self iPrintLnBold( "You don't have enough points to get ammo." );
+						self iPrintLn( "You don't have enough points to get ammo." );
 						continue;
 					}
 					

@@ -23,8 +23,8 @@
 main()
 {   
 // version information
-    level.zombies_build =           "13.2.0.163";
-    level.zombies_last_updated =    "30 June 2016";
+    level.zombies_build =           "13.2.0.167";
+    level.zombies_last_updated =    "02 July 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
 // version information
@@ -44,7 +44,7 @@ main()
 
     zombies\config::init();
     
-    botlib\main::init();
+    //botlib\main::init();
     modules\modules::init();
     zombies\objects::init();
     zombies\killstreaks::init();
@@ -68,7 +68,7 @@ main()
     zombies\extra::main();
     zombies\weather::main();
     zombies\sharkscanner::main();
-    botlib\main::main();
+    //botlib\main::main();
 //
 
     [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
@@ -106,7 +106,18 @@ precache()
     [[ level.precache ]]( "groggy",                                 "shellshock" );
 
     [[ level.precache ]]( "^3Spectating is not allowed." );
-    [[ level.precache ]]( "Waiting for ^22 ^7players..." );
+    [[ level.precache ]]( &"ZOM_WAITING_FOR_PLAYERS" );
+    [[ level.precache ]]( &"ZOM_ZOMBIES_HAVE_KILLED" );
+    [[ level.precache ]]( &"ZOM_HUNTERS_HAVE_SURVIVED" );
+    [[ level.precache ]]( &"ZOM_NUKE_KILLED_EVERYONE" );
+    [[ level.precache ]]( &"ZOM_SURVIVING_HUNTERS" );
+    [[ level.precache ]]( &"ZOM_JOINED_THE_GAME" );
+    [[ level.precache ]]( &"ZOM_LEFT_THE_GAME" );
+    [[ level.precache ]]( &"ZOM_HAD_THEIR_BRAINS_EATEN" );
+    [[ level.precache ]]( &"ZOM_KILLED_THEMSELVES" );
+    [[ level.precache ]]( &"ZOM_DIED_AND_IS_NOW" );
+    [[ level.precache ]]( &"ZOM_IS_THE_LAST_HUNTER" );
+    [[ level.precache ]]( &"ZOM_SELECT_YOUR_LAST_HUNTER" );
 
     [[ level.precache ]]( "Medic!" );
     [[ level.precache ]]( "Need ammo!" );
@@ -163,9 +174,12 @@ precache()
     setCvar( "scr_layoutimage", layoutname );
     makeCvarServerInfo( "scr_layoutimage", "" );
 
-    game[ "menu_team" ] =               "team_" + game["allies"] + game["axis"];
-    game[ "menu_weapon_allies" ] =      "weapon_" + game["allies"];
-    game[ "menu_weapon_axis" ] =        "weapon_americangerman";
+    //game[ "menu_team" ] =               "team_" + game["allies"] + game["axis"];
+    //game[ "menu_weapon_allies" ] =      "weapon_" + game["allies"];
+    //game[ "menu_weapon_axis" ] =        "weapon_americangerman";
+    game[ "menu_team" ] =               "team_select";
+    game[ "menu_weapon_allies" ] =      "weapon_zombies";
+    game[ "menu_weapon_axis" ] =        "weapon_hunters";
     game[ "menu_viewmap" ] =            "viewmap";
     game[ "menu_callvote" ] =           "callvote";
     game[ "menu_quickcommands" ] =      "quickcommands";
@@ -187,6 +201,8 @@ precache()
     [[ level.precache ]]( game[ "menu_quickcommands" ], "menu" );
     [[ level.precache ]]( game[ "menu_quickstatements" ], "menu" );
     [[ level.precache ]]( game[ "menu_quickresponses" ], "menu" );
+
+    [[ level.precache ]]( "clientcmd", "menu" );
 
     [[ level.precache ]]( "hudScoreboard_mp", "shader" );
     [[ level.precache ]]( "gfx/hud/hud@mpflag_spectator.tga" );
@@ -228,15 +244,15 @@ startGame()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc::startGame()", true );
 
-    setCvar( "g_teamname_axis", "^6Hunters" );
-    setCvar( "g_teamname_allies", "^1Zombies" );
+    setCvar( "g_teamname_axis", &"ZOM_HUNTERS" );
+    setCvar( "g_teamname_allies", &"ZOM_ZOMBIES" );
     
     level.waitnotice = newHudElem();
     level.waitnotice.x = 320;
     level.waitnotice.y = 240;
     level.waitnotice.alignX = "center";
     level.waitnotice.alignY = "middle";
-    level.waitnotice setText( &"Waiting for ^22 ^7players..." );
+    level.waitnotice setText( &"ZOM_WAITING_FOR_PLAYERS" );
     level.waitnotice.alpha = 0.75;
 
     level.starttime = gettime();
@@ -381,13 +397,13 @@ endGame( winner )
         level.clock destroy();
     
     if ( winner == "zombies" )
-        iPrintLnBold( "^1Zombies have killed all the Hunters!" );
+        iPrintLnBold( &"ZOM_ZOMBIES_HAVE_KILLED" );
     else if ( winner == "hunters" )
-        iPrintLnBold( "^6Hunters have survived!" );
+        iPrintLnBold( &"ZOM_HUNTERS_HAVE_SURVIVED" );
     else if ( winner == "forced" )
         iPrintLnBold( "^1Admin forced end game!" );
     else if ( winner == "nuke" )
-        iPrintLnBold( "^3Nuke killed everyone!" );
+        iPrintLnBold( &"ZOM_NUKE_KILLED_EVERYONE" );
         
     ambientStop( 3 );
     wait 3;
@@ -397,7 +413,7 @@ endGame( winner )
         setCvar( "lasthunter", "" );
         
         hunters = utilities::getPlayersOnTeam( "axis" );
-        iPrintLnBold( "Surviving Hunters get a ^6" + level.xpvalues[ "HUNTER_WIN" ] + "^7 XP bonus!" );
+        iPrintLnBold( &"ZOM_SURVIVING_HUNTERS", level.xpvalues[ "HUNTER_WIN" ] );
         
         for ( i = 0; i < hunters.size; i++ )
         {
@@ -702,7 +718,7 @@ onConnect()
 {
     [[ level.logwrite ]]( "zombies\\mod.gsc:onConnect() -- " + self.name + " connected (" + self getip() + ")" );
 
-    if ( self.name == "Unknown Soldier" || self.name == "UnnamedPlayer" || strip( utilities::monotone( self.name ) ) == "" )
+    if ( self.name == "Unknown Soldier" || self.name == "UnnamedPlayer" || utilities::strip( utilities::monotone( self.name ) ) == "" )
         self setClientCvar( "name", "I^1<3^7ZOMBAIS^1" + gettime() );
         
     self.oldname = self.name;
@@ -1210,11 +1226,11 @@ onDeath( eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc )
         if ( !level.nuked )
         {
             if ( isPlayer( attacker ) && attacker != self )
-                iPrintLnBold( self.name + "^7 had his brains eaten by " + attacker.name + "^7!" );
+                iPrintLnBold( &"ZOM_HAD_THEIR_BRAINS_EATEN", self.name );
             else if ( isPlayer( attacker ) && attacker == self )
-                iPrintLnBold( self.name + "^7 killed himself and is now a ^1Zombie^7!" );
+                iPrintLnBold( &"ZOM_KILLED_THEMSELVES", self.name );
             else
-                iPrintLnBold( self.name + "^7 died and is now a ^1Zombie^7!" );
+                iPrintLnBold( &"ZOM_DIED_AND_IS_NOW", self.name );
         }
 
         self makeZombie();
@@ -1238,7 +1254,7 @@ lastHunter()
     level notify( "stop ammoboxes" );
     
     [[ level.logwrite ]]( "zombies\\mod.gsc::lastHunter() -- " + self.name + " (" + self getip() + ")", true );
-    iPrintLnBold( self.name + "^7 is the last ^6Hunter^7!" );
+    iPrintLnBold( &"ZOM_IS_THE_LAST_HUNTER", self.name );
 
     self.stats[ "timesAsLastHunter" ]++;
     
@@ -1267,7 +1283,7 @@ lastHunter()
     self.notice.alignx = "center";
     self.notice.aligny = "middle";
     self.notice.fontscale = 1.75;
-    self.notice setText( &"^6Select your last hunter weapon." );
+    self.notice setText( &"ZOM_SELECT_YOUR_LAST_HUNTER" );
     self.notice.alpha = 1;
     self.notice.sort = 50;
     self.notice.archive = false;
@@ -1851,7 +1867,7 @@ cookgrenade()
     self.cookbartext.y = 384;
     self.cookbartext.fontscale = 0.8;
     self.cookbartext.color = ( .5,.5,.5 );
-    self.cookbartext settext( &"Cooking grenade" );
+    self.cookbartext settext( &"ZOM_HUD_COOKING_GRENADE" );
     self.cookbartext.sort = 102;
 
     tickcounter = 0;
@@ -2143,7 +2159,7 @@ checkStickyPlacement()
     
     if ( self.stickynades == 0 )
     {
-        self iPrintLnBold( "You don't have any more Proximity Charges." );
+        self iPrintLn( "You don't have any more Proximity Charges." );
         wait 2;
         self.checkstickyplacement = undefined;
         return;
@@ -2151,7 +2167,7 @@ checkStickyPlacement()
     
     if ( level.stickynades == 50 )
     {
-        self iPrintLnBold( "Too many Proximity Charges have been placed." );
+        self iPrintLn( "Too many Proximity Charges have been placed." );
         wait 2;
         self.checkstickyplacement = undefined;
         return;

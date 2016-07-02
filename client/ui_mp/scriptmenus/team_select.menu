@@ -1,0 +1,290 @@
+#include "ui_mp/menudef.h"
+
+#define ORIGIN_MENUTABS				96 64
+#define ORIGIN_MENUWINDOW			96 96
+
+{
+	menuDef
+	{
+		name			"team_select"
+		fullscreen		0
+		rect			0 0 640 480
+		focuscolor		1 1 1 1
+		disablecolor		0 0 0 0
+		style			WINDOW_STYLE_EMPTY
+		onEsc 
+		{
+			scriptMenuResponse "close";
+			close team_select;
+		}
+		onOpen 
+		{
+			scriptMenuResponse "open";
+		}
+		onClose
+		{
+			scriptMenuResponse "close";
+		}
+
+// WINDOW BACKGROUND
+		itemDef
+		{
+			name			"window_background"
+			visible			1
+			rect			0 0 448 288
+			origin			ORIGIN_MENUWINDOW
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@window_background.tga"
+			decoration
+		}
+
+// MENU TABS
+		itemDef 
+		{
+			name			"button_mainmenu"
+			visible			1
+			rect			0 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_left_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_MAIN_MENU"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				close team_select;
+				open main;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_team"
+			visible			1
+			rect			89 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_selected.tga"
+			text			"@MPMENU_TEAM"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			decoration
+		}
+		itemDef
+		{
+			name			"button_weapon"
+			visible			1
+			rect			179 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			cvartest		"scr_showweapontab"
+			showCvar		{ "1" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "weapon";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_viewmap"
+			visible			1
+			rect			269 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_VIEW_MAP"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "viewmap";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_callvote"
+			visible			1
+			rect			358 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_right_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_CALL_VOTE"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		42
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			cvartest		"scr_allow_vote"
+			showCvar		{ "1" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "callvote";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+
+// MENU CHOICES
+/*
+		itemDef 
+		{
+			name			"button_british"
+			visible			1
+			rect			16 24 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_1_PLAY"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "allies";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "1" { play "mouse_click"; scriptMenuResponse "allies"; close team_select }
+
+		itemDef 
+		{
+			name			"button_german"
+			visible			1
+			rect			16 48 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_2_GERMAN"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "axis";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "2" { play "mouse_click"; scriptMenuResponse "axis"; close team_select }
+		*/
+		itemDef 
+		{
+			name			"button_autoassign"
+			visible			1
+			rect			16 24 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_1_AUTOASSIGN"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "autoassign";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "1" { play "mouse_click"; scriptMenuResponse "autoassign"; close team_select }
+		
+		itemDef 
+		{
+			name			"button_spectate"
+			visible			1
+			rect			16 48 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_2_SPECTATE"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "spectator";
+				close team_select;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "2" { play "mouse_click"; scriptMenuResponse "spectator"; close team_select }
+
+// MESSAGE OF THE DAY
+		itemDef
+		{
+			name			"text_motd"
+			visible			1
+			rect			208 24 216 216
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			autowrapped
+			//cvar			"scr_motd"
+			text 			"@ZOM_CLIENT_MOTD"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textaligny		20
+			decoration
+		}
+	}
+}

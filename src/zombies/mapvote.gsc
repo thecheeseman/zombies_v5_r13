@@ -20,10 +20,11 @@ init()
 {
     [[ level.precache ]]( "hudStopwatch", "shader" );
     [[ level.precache ]]( "levelshots/unknownmap.dds" );
-    [[ level.precache ]]( &"Time Left: " );
-    [[ level.precache ]]( &"Vote in progress... please wait..." );
-    [[ level.precache ]]( &"You have voted for: " );
-    [[ level.precache ]]( &"Winner: " );
+//    [[ level.precache ]]( &"Time Left: " );
+//    [[ level.precache ]]( &"Vote in progress... please wait..." );
+    [[ level.precache ]]( &"ZOM_MAPVOTE_YOU_HAVE_VOTED" );
+    [[ level.precache ]]( &"ZOM_MAPVOTE_WINNER" );
+    [[ level.precache ]]( &"ZOM_MAPVOTE_PRESS_ATTACK" );
 
     level.mapvote = spawnstruct();
     level.mapvote.time =                zombies\config::cvardef( "mv_time", 20, 5, 30, "int" );
@@ -181,7 +182,7 @@ parse_map_rotation() {
         return;
 
     // grab rotation
-    mv_maprotation = strip( getCvar( "mv_maprotation" ) );
+    mv_maprotation = utilities::strip( getCvar( "mv_maprotation" ) );
     if ( mv_maprotation == "" ) {
         return;
     }
@@ -545,7 +546,7 @@ spawn_hud() {
 
     // Winner:
     level.mv_txt_winner_is =    spawn_hud_element( "global", 320, 102, 30, 0, 1.5 );
-    level.mv_txt_winner_is setText( &"Winner: " );
+    level.mv_txt_winner_is setText( &"ZOM_MAPVOTE_WINNER" );
 
     // map winner
     level.mv_txt_winner =       spawn_hud_element( "global", 320, 126, 30, 0, 2, ( 0, 1, 0 ) );
@@ -587,7 +588,7 @@ spawn_player_hud() {
 
     // text
     self.mv_txt_voted_for = self spawn_hud_element( "client", 320, 102, 30, 0, 1.5 );
-    self.mv_txt_voted_for setText( &"You have voted for: " );
+    self.mv_txt_voted_for setText( &"ZOM_MAPVOTE_YOU_HAVE_VOTED" );
     self.mv_txt_ply_vote =  self spawn_hud_element( "client", 320, 126, 30, 0, 2, ( 0, 1, 0 ) );
 
     // selector

@@ -58,7 +58,7 @@ Callback_PlayerConnect()
     self waittill("begin");
     self.statusicon = "";
 
-    iprintln( self.name + "^7 joined the game." );
+    iprintln( &"ZOM_JOINED_THE_GAME", self.name );
 /*
     self.loadingstats = true;
 
@@ -86,6 +86,8 @@ Callback_PlayerConnect()
         return;
     }
 
+    self setClientCvar( "cg_objectiveText", &"ZOM_OBJECTIVE" );
+
     self setClientCvar( "g_scriptMainMenu", game[ "menu_team" ] );
     self setClientCvar( "scr_showweapontab", "0" );
 
@@ -106,7 +108,7 @@ Callback_PlayerDisconnect()
         return;
     }
 
-    iprintln( self.name + "^7 left the game." );
+    iprintln( &"ZOM_LEFT_THE_GAME", self.name );
     
     self thread zombies\mod::onDisconnect();
 }

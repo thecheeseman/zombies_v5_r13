@@ -109,6 +109,14 @@ init()
 	level.potentialwinlistprimes[ 14 ] = 313;	// 0.31%
 	level.potentialwinlistprimes[ 15 ] = 503;	// 0.19%
 	level.potentialwinlistprimes[ 16 ] = 701;	// 0.14%
+
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_DONT_HAVE_ENOUGH" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_BOUGHT" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_CANNOT_HOLD" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_ALREADY_HAVE" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_PLEASE_MOVE_OUT" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_CANT_PLACE" );
+	[[ level.precache ]]( &"ZOM_BUYMENU_YOU_SPENT" );
 	
 	[[ level.precache ]]( "xmodel/barrel_black1" );
 	[[ level.precache ]]( "xmodel/crate_misc_red2" );
@@ -129,13 +137,13 @@ buymenu( response )
 		
 	if ( !isDefined( level.points[ response ] ) )
 	{
-		self iPrintLnBold( "No such item exists: " + response );
+		self iPrintLn( "No such item exists: " + response );
 		return;
 	}
 	
 	if ( self.points < level.points[ response ] )
 	{
-		self iPrintLnBold( "You don't have enough points to buy that item (needed: " + level.points[ response ] + ")" );
+		self iPrintLnBold( &"ZOM_BUYMENU_YOU_DONT_HAVE_ENOUGH", level.points[ response ] );
 		return;
 	}
 	
@@ -148,7 +156,8 @@ buymenu( response )
 	{
 		if ( self doItem( response ) )
 		{	
-			self iprintlnbold( "You bought ^2" + level.pointsnames[ response ] + "^7 for " + level.points[ response ] + " points." );
+			self iPrintLnBold( &"ZOM_BUYMENU_YOU_BOUGHT", level.pointsnames[ response ] );
+			self iPrintLn( "-" + level.points[ response ] + " points." );
 			self.points -= level.points[ response ];
 		} 
 	}
@@ -161,7 +170,7 @@ doItem( response )
 		case "buy_armor_10":
 			if ( self.bodyarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Body Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Body Armor!" );
 				return false;
 			}
 			self.bodyarmor += 100;
@@ -169,7 +178,7 @@ doItem( response )
 		case "buy_armor_25":
 			if ( self.bodyarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Body Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Body Armor" );
 				return false;
 			}
 			self.bodyarmor += 250;
@@ -177,7 +186,7 @@ doItem( response )
 		case "buy_armor_50":
 			if ( self.bodyarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Body Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Body Armor" );
 				return false;
 			}
 			self.bodyarmor += 500;
@@ -185,7 +194,7 @@ doItem( response )
 		case "buy_explo_10":
 			if ( self.exploarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Explosion Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Explosion Armor" );
 				return false;
 			}
 			self.exploarmor += 100;
@@ -193,7 +202,7 @@ doItem( response )
 		case "buy_explo_25":
 			if ( self.exploarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Explosion Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Explosion Armor" );
 				return false;
 			}
 			self.exploarmor += 250;
@@ -201,7 +210,7 @@ doItem( response )
 		case "buy_explo_50":
 			if ( self.exploarmor >= 1500 )
 			{
-				self iprintlnbold( "You cannot hold any more ^2Explosion Armor^7!" );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_CANNOT_HOLD", "Explosion Armor" );
 				return false;
 			}
 			self.exploarmor += 500;
@@ -209,12 +218,12 @@ doItem( response )
 		case "buy_damage_10":
 			if ( self.damagearmor == 0.10 )
 			{
-				self iprintlnbold( "You already have ^210% Damage Increase^7." );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_ALREADY_HAVE", "10% Damage Increase" );
 				return false;
 			}
 			if ( self.damagearmor > 0.10 )
 			{
-				self iprintlnbold( "You already have a HIGHER value Damage Increase." );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_ALREADY_HAVE", "higher-value Damage Increase" );
 				return false;
 			}
 			
@@ -223,7 +232,7 @@ doItem( response )
 		case "buy_damage_25":
 			if ( self.damagearmor == 0.25 )
 			{
-				self iprintlnbold( "You already have ^225% Damage Increase^7." );
+				self iprintlnbold( &"ZOM_BUYMENU_YOU_ALREADY_HAVE", "25% Damage Increase" );
 				return false;
 			}
 			
@@ -239,19 +248,19 @@ doItem( response )
 		case "buy_barrel":
 			if ( level.barricades > level.cvars[ "MAX_BARRICADES" ] )
 			{
-				self iPrintLnBold( "Too many barricades in map." );
+				self iPrintLn( "Too many barricades in map." );
 				return false;
 			}
 
 			if ( isDefined( self.insidebarricade ) ) {
-				self iPrintLnBold( "Please move out of your barricade before placing a new one." );
+				self iPrintLnBold( &"ZOM_BUYMENU_PLEASE_MOVE_OUT" );
 				return false;
 			}
 
 			if ( isDefined( level.ammoboxes ) ) {
 				for ( i = 0; i < level.ammoboxes.size; i++ ) {
 					if ( distance( self.origin, level.ammoboxes[ i ] ) < 64 ) {
-						self iPrintLnBold( "You can't place barricades that close to an ammobox" );
+						self iPrintLnBold( &"ZOM_BUYMENU_YOU_CANT_PLACE" );
 						return false;
 					}
 				}
@@ -294,7 +303,7 @@ doRandom()
 {
 	rnd = _randomInt( 10000 );
 	
-	self iPrintLnBold( "You spent 100 points for a random item and got..." );
+	self iPrintLnBold( &"ZOM_BUYMENU_YOU_SPENT", 100 );
 
 	won = "nothing";
 	for ( i = 0; i < level.potentialwinlistprimes.size; i++ ) {

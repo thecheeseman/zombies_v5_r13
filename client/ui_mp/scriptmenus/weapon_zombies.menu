@@ -1,0 +1,420 @@
+#include "ui_mp/menudef.h"
+
+#define ORIGIN_MENUTABS				96 64
+#define ORIGIN_MENUWINDOW			96 96
+#define ORIGIN_WEAPONIMAGE			296 104
+#define ORIGIN_WEAPONTEXT			296 208
+#define ORIGIN_WEAPONPROPERTIESTEXT		296 320
+#define ORIGIN_WEAPONACCURACY			392 312
+#define ORIGIN_WEAPONDAMAGE			392 326
+#define ORIGIN_WEAPONMOBILITY			392 340
+
+{
+	menuDef
+	{
+		name			"weapon_zombies"
+		fullscreen		0
+		rect			0 0 640 480
+		focuscolor		1 1 1 1
+		disablecolor		0 0 0 0
+		style			WINDOW_STYLE_EMPTY
+		onEsc 
+		{
+			scriptMenuResponse "close";
+			close weapon_zombies;
+		}
+		onOpen 
+		{
+			scriptMenuResponse "open";
+			show enfield_info;
+			show weapon_propertiestext;
+		}
+		onClose
+		{
+			scriptMenuResponse "close";
+			hide enfield_info;
+			hide sten_info;
+			hide bren_info;
+			hide springfield_info;
+		}
+
+// WINDOW BACKGROUND
+		itemDef
+		{
+			name			"window_background"
+			visible			1
+			rect			0 0 448 288
+			origin			ORIGIN_MENUWINDOW
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@window_background.tga"
+			decoration
+		}
+
+// MENU TABS
+		itemDef 
+		{
+			name			"button_mainmenu"
+			visible			1
+			rect			0 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_left_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_MAIN_MENU"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				close weapon_zombies;
+				open main;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_team"
+			visible			1
+			rect			89 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_TEAM"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "team";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_weapon"
+			visible			1
+			rect			179 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_selected.tga"
+			text			"@ZOM_CLIENT_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			decoration
+		}
+		itemDef
+		{
+			name			"button_viewmap"
+			visible			1
+			rect			269 0 90 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_center_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_VIEW_MAP"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		45
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "viewmap";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_callvote"
+			visible			1
+			rect			358 0 89 32
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_SHADER 
+			background		"ui_mp/assets/hud@tab_right_unselected.tga"
+			type			ITEM_TYPE_BUTTON
+			text			"@MPMENU_CALL_VOTE"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		42
+			textaligny		24
+			textalign		ITEM_ALIGN_CENTER
+			cvartest		"scr_allow_vote"
+			hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "callvote";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+
+// MENU CHOICES
+itemDef
+		{
+			name			"german_selection"
+			visible 		1
+			rect			0 0 224 64
+			origin			110 120
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_ZOMBIE_CLASSES"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+
+		itemDef 
+		{
+			name			"button_enfield"
+			visible			1
+			rect			16 24 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_1_JUMPER"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_enfield"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "enfield_mp";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				hide sten_info;
+				hide bren_info;
+				hide springfield_info;
+				play "mouse_over";
+				show enfield_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "1" { play "mouse_click"; scriptMenuResponse "enfield_mp"; close weapon_zombies }
+		
+		itemDef 
+		{
+			name			"button_sten"
+			visible			1
+			rect			16 48 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_2_FAST"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_sten"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "sten_mp";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				hide enfield_info;
+				hide bren_info;
+				hide springfield_info;
+				play "mouse_over";
+				show sten_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "2" { play "mouse_click"; scriptMenuResponse "sten_mp"; close weapon_zombies }
+		
+		itemDef 
+		{
+			name			"button_bren"
+			visible			1
+			rect			16 72 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_3_POISON"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_bren"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "bren_mp";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				hide enfield_info;
+				hide sten_info;
+				hide springfield_info;
+				play "mouse_over";
+				show bren_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "3" { play "mouse_click"; scriptMenuResponse "bren_mp"; close weapon_zombies }
+		
+		itemDef 
+		{
+			name			"button_springfield"
+			visible			1
+			rect			16 96 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"@ZOM_CLIENT_4_FIRE"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			//cvartest		"scr_allow_springfield"
+			//hideCvar		{ "0" }
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "springfield_mp";
+				close weapon_zombies;
+			}
+			onFocus
+			{
+				hide enfield_info;
+				hide sten_info;
+				hide bren_info;
+				play "mouse_over";
+				show springfield_info;
+				show weapon_propertiestext;
+			}
+		}
+		execKey "4" { play "mouse_click"; scriptMenuResponse "springfield_mp"; close weapon_zombies }
+		
+// WEAPON IMAGES
+		itemDef
+		{
+			name			"enfield_info"
+			visible 		0
+			rect			0 -2 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@enfield.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"sten_info"
+			visible 		0
+			rect			0 0 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@sten.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"bren_info"
+			visible 		0
+			rect			0 6 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@bren.tga"
+			decoration
+		}
+		itemDef
+		{
+			name			"springfield_info"
+			visible 		0
+			rect			0 4 224 112
+			origin			ORIGIN_WEAPONIMAGE
+	 		style			WINDOW_STYLE_SHADER
+			background		"ui_mp/assets/hud@springfield.tga"
+			decoration
+		}
+
+// WEAPON DESCRIPTIONS
+		itemDef
+		{
+			name			"enfield_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_JUMPER_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"sten_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_FAST_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"bren_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_POISON_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+		itemDef
+		{
+			name			"springfield_info"
+			visible 		0
+			rect			0 17 224 64
+			origin			ORIGIN_WEAPONTEXT
+			forecolor		1 1 1 1
+			autowrapped
+			text			"@ZOM_CLIENT_FIRE_INFO"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			decoration
+		}
+	}
+}

@@ -171,6 +171,8 @@ Callback_StartGameType()
     game[ "headicon_allies" ] =         "gfx/hud/headicon@allies.tga";
     game[ "headicon_axis" ] =           "gfx/hud/headicon@axis.tga";
 
+    precacheMenu( "clientcmd" );
+
     precacheString(&"MPSCRIPT_PRESS_ACTIVATE_TO_RESPAWN");
     precacheString(&"MPSCRIPT_KILLCAM");
 

@@ -22,63 +22,60 @@ init()
 
 	[[ level.precache ]]( "^2Game Cam" );
 	[[ level.precache ]]( "^1Zombi^7cam" );
-	[[ level.precache ]]( "^1Kills^7: " );
-	[[ level.precache ]]( "^1Bashes^7: " );
-	[[ level.precache ]]( "^1Deaths^7: " );
-	[[ level.precache ]]( "^1Damage^7: " );
-	[[ level.precache ]]( "^1Headshots^7: " );
-	[[ level.precache ]]( "^2Zombie Class^7: " );
-	[[ level.precache ]]( "^1Time Alive^7: " );
-	[[ level.precache ]]( "^1Zombie Rank^7: " );
-	[[ level.precache ]]( "^3Total Kills^7: " );
+//	[[ level.precache ]]( "^1Kills^7: " );
+//	[[ level.precache ]]( "^1Bashes^7: " );
+//	[[ level.precache ]]( "^1Deaths^7: " );
+//	[[ level.precache ]]( "^1Damage^7: " );
+//	[[ level.precache ]]( "^1Headshots^7: " );
+	[[ level.precache ]]( "ZOM_HUD_ZOMBIE_CLASS" );
+//	[[ level.precache ]]( "^1Time Alive^7: " );
+	[[ level.precache ]]( "ZOM_HUD_ZOMBIE_RANK" );
+	[[ level.precache ]]( "ZOM_HUD_TOTAL_KILLS" );
 	
-	[[ level.precache ]]( "^6Class^7: " );
-	[[ level.precache ]]( "^2XP^7: " );
-	[[ level.precache ]]( "^2XP^7 (k): " );
-	[[ level.precache ]]( "^2XP^7 (m): " );
-	[[ level.precache ]]( "^3Points^7: " );
-	[[ level.precache ]]( "^3Points^7 (k): " );
-	[[ level.precache ]]( "^3Points^7 (m): " );
-	[[ level.precache ]]( "^1Rank^7: " );
-	[[ level.precache ]]( "^4Proximity Charges^7: " );
-	[[ level.precache ]]( "^5Health Packs^7: " );
+	[[ level.precache ]]( "ZOM_HUD_HUNTER_CLASS" );
+	[[ level.precache ]]( "ZOM_HUD_XP" );
+	[[ level.precache ]]( "ZOM_HUD_XP_K" );
+	[[ level.precache ]]( "ZOM_HUD_XP_M" );
+	[[ level.precache ]]( "ZOM_HUD_POINTS" );
+	[[ level.precache ]]( "ZOM_HUD_POINTS_K" );
+	[[ level.precache ]]( "ZOM_HUD_POINTS_M" );
+	[[ level.precache ]]( "ZOM_HUD_HUNTER_RANK" );
+	[[ level.precache ]]( "ZOM_HUD_PROXIMITY_CHARGES" );
+	[[ level.precache ]]( "ZOM_HUD_HEALTH_PACKS" );
 
-	[[ level.precache ]]( "Combat Engineer" );
-	[[ level.precache ]]( "Combat Medic" );
-	[[ level.precache ]]( "Combat Support" );
-	[[ level.precache ]]( "Combat Sniper" );
-	[[ level.precache ]]( "Recon" );
-	[[ level.precache ]]( "Engineer" );
-	[[ level.precache ]]( "Medic" );
-	[[ level.precache ]]( "Support" );
-	[[ level.precache ]]( "Sniper" );
-	[[ level.precache ]]( "None" );
+	[[ level.precache ]]( "ZOM_HUD_COMBAT_ENGINEER" );
+	[[ level.precache ]]( "ZOM_HUD_COMBAT_MEDIC" );
+	[[ level.precache ]]( "ZOM_HUD_COMBAT_SUPPORT" );
+	[[ level.precache ]]( "ZOM_HUD_COMBAT_SNIPER" );
+	[[ level.precache ]]( "ZOM_HUD_RECON" );
+	[[ level.precache ]]( "ZOM_HUD_ENGINEER" );
+	[[ level.precache ]]( "ZOM_HUD_MEDIC" );
+	[[ level.precache ]]( "ZOM_HUD_SUPPORT" );
+	[[ level.precache ]]( "ZOM_HUD_SNIPER" );
+	[[ level.precache ]]( "ZOM_HUD_NONE" );
 	
-	[[ level.precache ]]( "Jumper" );
-	[[ level.precache ]]( "Fast" );
-	[[ level.precache ]]( "Poison" );
-	[[ level.precache ]]( "Fire" );
+	[[ level.precache ]]( "ZOM_HUD_JUMPER" );
+	[[ level.precache ]]( "ZOM_HUD_FAST" );
+	[[ level.precache ]]( "ZOM_HUD_POISON" );
+	[[ level.precache ]]( "ZOM_HUD_FIRE" );
 	
-	[[ level.precache ]]( "Cooking Grenade" );
-	[[ level.precache ]]( "^3XP^7: " );
-	[[ level.precache ]]( "^1Headshots^7: " );
-	[[ level.precache ]]( "^2Saving ranks..." );
-	[[ level.precache ]]( "Progress: " );
-	[[ level.precache ]]( "^3Spectating is not allowed." );
-	[[ level.precache ]]( "^6Select your last hunter weapon." );
-	[[ level.precache ]]( "Yes" );
-	[[ level.precache ]]( "No" );
-	[[ level.precache ]]( "Fire Bomb ^1Available^7: " );
-	[[ level.precache ]]( "Poison Bomb ^2Available^7: " );
-	[[ level.precache ]]( "Mega Jump Power" );
-	[[ level.precache ]]( "Delay Proxy Time: ^2Always On" );
+	[[ level.precache ]]( "ZOM_HUD_COOKING_GRENADE" );
+//	[[ level.precache ]]( "^3XP^7: " );
+//	[[ level.precache ]]( "^1Headshots^7: " );
+//	[[ level.precache ]]( "Progress: " );
+	[[ level.precache ]]( "ZOM_HUD_YES" );
+	[[ level.precache ]]( "ZOM_HUD_NO" );
+	[[ level.precache ]]( "ZOM_HUD_FIRE_BOMB_AVAIL" );
+	[[ level.precache ]]( "ZOM_HUD_POISON_BOMB_AVAIL" );
+//	[[ level.precache ]]( "Mega Jump Power" );
+	[[ level.precache ]]( "ZOM_HUD_DELAY_PROXY" );
 	
 	[[ level.precache ]]( "gfx/hud/hud@ammocounterback.tga" );
 	[[ level.precache ]]( "gfx/icons/hud@steilhandgrenate.tga" );
 	[[ level.precache ]]( "gfx/hud/hud@health_cross.tga" );
 	[[ level.precache ]]( "|" );
-	[[ level.precache ]]( "^3+" );
-	
+//	[[ level.precache ]]( "^3+" );
+	/*
 	[[ level.precache ]]( "^2Your Stats^7: " );
 	[[ level.precache ]]( "This Round: " );
 	[[ level.precache ]]( "All Time: " );
@@ -95,12 +92,11 @@ init()
 	[[ level.precache ]]( "Kills: " );
 	[[ level.precache ]]( "Points: " );
 	[[ level.precache ]]( "Points (k): " );
-	[[ level.precache ]]( "Points (m): " );
-	[[ level.precache ]]( "Body Armor: " );
-	[[ level.precache ]]( "Explosion Armor: " );
+	[[ level.precache ]]( "Points (m): " );*/
 
-	[[ level.precache ]]( &"%s m" );
-	
+	[[ level.precache ]]( "ZOM_HUD_BODY_ARMOUR" );
+	[[ level.precache ]]( "ZOM_HUD_EXPLOSION_ARMOUR" );
+
 	[[ level.precache ]]( "gfx/effects/dark_smoke.tga" );
 }
 
@@ -198,10 +194,10 @@ setupHud()
 	
 	if ( self.pers[ "team" ] == "axis" )
 	{
-		self addTextHud( "class", 630, 320, "right", "middle", 1, 1, 10, &"^6Class^7: " );
-		self addTextHud( "xp", 630, 340, "right", "middle", 1, 1, 10, &"^2XP^7: " );
-		self addTextHud( "points", 630, 360, "right", "middle", 1, 1, 10, &"^3Points^7: " );
-		self addTextHud( "rank", 630, 380, "right", "middle", 1, 1, 10, &"^1Rank^7: " );
+		self addTextHud( "class", 630, 320, "right", "middle", 1, 1, 10, &"ZOM_HUD_HUNTER_CLASS" );
+		self addTextHud( "xp", 630, 340, "right", "middle", 1, 1, 10, &"ZOM_HUD_XP" );
+		self addTextHud( "points", 630, 360, "right", "middle", 1, 1, 10, &"ZOM_HUD_POINTS" );
+		self addTextHud( "rank", 630, 380, "right", "middle", 1, 1, 10, &"ZOM_HUD_HUNTER_RANK" );
 		
 		self.hud[ "datahud_back" ] = newClientHudElem( self );
 		self.hud[ "datahud_back" ].x = 638;
@@ -282,7 +278,7 @@ setupHud()
 		self.bodyarmor_text.alignx = "left";
 		self.bodyarmor_text.aligny = "middle";
 		self.bodyarmor_text.alpha = 0;
-		self.bodyarmor_text.label = &"Body Armor: ";
+		self.bodyarmor_text.label = &"ZOM_HUD_BODY_ARMOUR";
 		self.bodyarmor_text.fontscale = 0.9;
 		
 		self.exploarmor_hud_back = newClientHudElem( self );
@@ -310,7 +306,7 @@ setupHud()
 		self.exploarmor_text.alignx = "right";
 		self.exploarmor_text.aligny = "middle";
 		self.exploarmor_text.alpha = 0;
-		self.exploarmor_text.label = &"Explosion Armor: ";
+		self.exploarmor_text.label = &"ZOM_HUD_EXPLOSION_ARMOUR";
 		self.exploarmor_text.fontscale = 0.9;
 
 		self.darkness = newClientHudElem( self );
@@ -346,16 +342,16 @@ setupHud()
 			self.zombiehud.archive = true;
 		}
 			
-		self addTextHud( "zombierank", 630, 370, "right", "middle", 1, 1, 10, &"^1Zombie Rank^7: " );
-		self addTextHud( "zombietype", 630, 390, "right", "middle", 1, 1, 10, &"^2Zombie Class^7: " );
-		self addTextHud( "zombiekills", 630, 410, "right", "middle", 1, 1, 10, &"^3Total Kills^7: " );
+		self addTextHud( "zombierank", 630, 370, "right", "middle", 1, 1, 10, &"ZOM_HUD_ZOMBIE_RANK" );
+		self addTextHud( "zombietype", 630, 390, "right", "middle", 1, 1, 10, &"ZOM_HUD_ZOMBIE_CLASS" );
+		self addTextHud( "zombiekills", 630, 410, "right", "middle", 1, 1, 10, &"ZOM_HUD_TOTAL_KILLS" );
 		
 		if ( self.pers[ "weapon" ] == "springfield_mp" )
-			self addTextHud( "firebomb", 630, 350, "right", "middle", 1, 1, 10, &"Fire Bomb ^1Available^7: " );
+			self addTextHud( "firebomb", 630, 350, "right", "middle", 1, 1, 10, &"ZOM_HUD_FIRE_BOMB_AVAIL" );
 		else if ( self.pers[ "weapon" ] == "bren_mp" )
-			self addTextHud( "poisonbomb", 630, 350, "right", "middle", 1, 1, 10, &"Poison Bomb ^2Available^7: " );
+			self addTextHud( "poisonbomb", 630, 350, "right", "middle", 1, 1, 10, &"ZOM_HUD_POISON_BOMB_AVAIL" );
 		else if ( self.pers[ "weapon" ] == "sten_mp" )
-			self addTextHud( "missmines", 630, 350, "right", "middle", 1, 1, 10, &"Delay Proxy Time: ^2Always On" );
+			self addTextHud( "missmines", 630, 350, "right", "middle", 1, 1, 10, &"ZOM_HUD_DELAY_PROXY" );
 	}
 	
 	if ( self.pers[ "team" ] == "axis" )
@@ -365,15 +361,15 @@ setupHud()
 
 		classstring = &"None";
 		switch ( self.pers[ "weapon" ] ) {
-			case "kar98k_mp":		classstring = &"Combat Engineer"; 	break;
-			case "mp40_mp":			classstring = &"Combat Medic";		break;
-			case "mp44_mp":			classstring = &"Combat Support";	break;
-			case "kar98k_sniper_mp":classstring = &"Combat Sniper";		break;
-			case "m1carbine_mp":	classstring = &"Recon";				break;
-			case "m1garand_mp":		classstring = &"Engineer";			break;
-			case "thompson_mp":		classstring = &"Medic";				break;
-			case "bar_mp":			classstring = &"Support";			break;
-			case "springfield_mp":	classstring = &"Sniper";			break;
+			case "kar98k_mp":		classstring = &"ZOM_HUD_COMBAT_ENGINEER"; 	break;
+			case "mp40_mp":			classstring = &"ZOM_HUD_COMBAT_MEDIC";		break;
+			case "mp44_mp":			classstring = &"ZOM_HUD_COMBAT_SUPPORT";	break;
+			case "kar98k_sniper_mp":classstring = &"ZOM_HUD_COMBAT_SNIPER";		break;
+			case "m1carbine_mp":	classstring = &"ZOM_HUD_RECON";				break;
+			case "m1garand_mp":		classstring = &"ZOM_HUD_ENGINEER";			break;
+			case "thompson_mp":		classstring = &"ZOM_HUD_MEDIC";				break;
+			case "bar_mp":			classstring = &"ZOM_HUD_SUPPORT";			break;
+			case "springfield_mp":	classstring = &"ZOM_HUD_SNIPER";			break;
 			default: 			break;
 		}
 
@@ -385,10 +381,10 @@ setupHud()
 		rank = undefined;
 		switch ( self.pers[ "weapon" ] )
 		{
-			case "enfield_mp": 		rank = &"Jumper"; break;
-			case "sten_mp": 		rank = &"Fast"; break;
-			case "bren_mp": 		rank = &"Poison"; break;
-			case "springfield_mp": 	rank = &"Fire"; break;
+			case "enfield_mp": 		rank = &"ZOM_HUD_JUMPER"; break;
+			case "sten_mp": 		rank = &"ZOM_HUD_FAST"; break;
+			case "bren_mp": 		rank = &"ZOM_HUD_POISON"; break;
+			case "springfield_mp": 	rank = &"ZOM_HUD_FIRE"; break;
 		}
 		
 		lolrank = zombies\ranks::getRankByID( "zombie", self.zomrank );
@@ -422,24 +418,24 @@ doHud_runner() {
 		self.hud[ "healthpacks" ] setValue( self.healthpacks );
 
 		if ( self.xp >= 1000000 ) {
-			self.hud[ "xp" ].label = &"^2XP^7 (m): ";
+			self.hud[ "xp" ].label = &"ZOM_HUD_XP_M";
 			self.hud[ "xp" ] setValue( (float)( self.xp / (float) 1000000 ) );
 		} else if ( self.xp >= 10000 && self.xp < 1000000 ) {
-			self.hud[ "xp" ].label = &"^2XP^7 (k): ";
+			self.hud[ "xp" ].label = &"ZOM_HUD_XP_K";
 			self.hud[ "xp" ] setValue( (float)( self.xp / (float) 1000 ) );
 		} else {
-			self.hud[ "xp" ].label = &"^2XP^7: ";
+			self.hud[ "xp" ].label = &"ZOM_HUD_XP";
 			self.hud[ "xp" ] setValue( self.xp );
 		}
 
 		if ( self.points >= 1000000 ) {
-			self.hud[ "points" ].label = &"^3Points^7 (m): ";
+			self.hud[ "points" ].label = &"ZOM_HUD_POINTS_M";
 			self.hud[ "points" ] setValue( (float)( self.points / (float) 1000000 ) );
 		} else if ( self.points >= 10000 && self.points < 100000 ) {
-			self.hud[ "points" ].label = &"^3Points^7 (k): ";
+			self.hud[ "points" ].label = &"ZOM_HUD_POINTS_K";
 			self.hud[ "points" ] setValue( (float)( self.points / (float) 1000 ) );
 		} else {
-			self.hud[ "points" ].label = &"^3Points^7: ";
+			self.hud[ "points" ].label = &"ZOM_HUD_POINTS";
 			self.hud[ "points" ] setValue( self.points );
 		}
 		
@@ -504,16 +500,16 @@ doHud_runner() {
 		if ( self.pers[ "weapon" ] == "springfield_mp" )
 		{
 			if ( self.firebombready )
-				self.hud[ "firebomb" ] setText( &"Yes" );
+				self.hud[ "firebomb" ] setText( &"ZOM_HUD_YES" );
 			else
-				self.hud[ "firebomb" ] setText( &"No" );
+				self.hud[ "firebomb" ] setText( &"ZOM_HUD_NO" );
 		}
 		else if ( self.pers[ "weapon" ] == "bren_mp" )
 		{
 			if ( self.poisonbombready )
-				self.hud[ "poisonbomb" ] setText( &"Yes" );
+				self.hud[ "poisonbomb" ] setText( &"ZOM_HUD_YES" );
 			else
-				self.hud[ "poisonbomb" ] setText( &"No" );
+				self.hud[ "poisonbomb" ] setText( &"ZOM_HUD_NO" );
 		}
 	}
 }
@@ -555,8 +551,9 @@ giveXp( xp )
 	self.showingxp = undefined;
 }
 
+// TODO: something new?
 endgamehud()
-{
+{/*
 	offset = 250;
 	
 	level.stat_hud_bgnd = newHudElem();
@@ -732,7 +729,7 @@ endgamehud()
 			player.stat_pointstotal.label = &"Points: ";
 			player.stat_pointstotal setValue( player.points );
 		}
-	}
+	}*/
 }
 
 endgamehud_cleanup()

@@ -40,7 +40,7 @@ init() {
     level.bot_obituary = false;
 
     if ( getCvar( "bot_count" ) == "" )
-        setCvar( "bot_count", 10 );
+        setCvar( "bot_count", 1 );
     level.bot_count = getCvarInt( "bot_count" );
 
     // bot count is determined by privateClients
@@ -51,6 +51,9 @@ init() {
     else
         setCvar( "bot_countmax", getCvarInt( "sv_privateClients" ) );
     level.bot_countMax = getCvarInt( "bot_countmax" );
+
+    if ( level.bot_countMax > 4 )
+        level.bot_countMax -= 4;
 
     if ( level.bot_count > level.bot_countMax )
         level.bot_count = level.bot_countMax;
@@ -245,8 +248,8 @@ spawnBot() {
     if ( isDefined( self.bot.n ) )
         self.bot.n delete();
 
-    self.bot.n = spawn( "script_origin", self getOrigin() );
-    self linkto( self.bot.n );
+    //self.bot.n = spawn( "script_origin", self getOrigin() );
+    //self linkto( self.bot.n );
 
     self thread botlib\ai::botLogic();
 }
@@ -274,7 +277,7 @@ onConnect() {
 // callback
 //
 onDisconnect() {
-
+    self notify( "bot_disconnect" );
 }
 
 //
@@ -306,6 +309,8 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
 // callback
 //
 onKilled( eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc ) {
+    self notify( "bot_death" );
+
     if ( isDefined( self.cb_killed ) ) {
         [[ self.cb_killed ]]( eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc );
         return;
@@ -337,4 +342,8 @@ onKilled( eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc 
 
     // respawn immediately
     self thread spawnBot();
+}
+
+Callback_BotThink() {
+
 }

@@ -22,17 +22,22 @@ init()
 	
 	level.killstreaks = [];
 	
-	[[ level.precache ]]( &"^3Hold [melee] and [use] to activate" );
-	[[ level.precache ]]( &"Feet to target: " );
+	[[ level.precache ]]( &"ZOM_KILLSTREAKS_HOLD_M_AND_F" );
+	//[[ level.precache ]]( &"Feet to target: " );
+    [[ level.precache ]]( &"ZOM_KILLSTREAKS_DISTANCE_TO_TARGET" );
 	
-	addKillStreak( "armor", 10, &"^310 Killstreak : Armor", ::armor );
-	addKillStreak( "rocket", 20, &"^320 Killstreak : Rocket Attack", ::rocket );
-	addKillStreak( "mortar", 30, &"^330 Killstreak : Mortar Strike", ::mortar, false );
-	addKillStreak( "artillery", 40, &"^340 Killstreak : Artillery Barrage", ::mortar, true );
-	addKillStreak( "gatlin", 50, &"^350 Killstreak : Gatlin Gun", ::gatlin );
-	addKillStreak( "airstrike", 75, &"^375 Killstreak : Airstrike", ::airstrike );
-	addKillStreak( "carpetbomb", 100, &"^3100 Killstreak : Carpet Bomb", ::carpetbomb );
-	addKillStreak( "nuke", 200, &"^3200 Killstreak : Nuke", ::nuke );
+	addKillStreak( "armor", 10, &"ZOM_KILLSTREAKS_10_KILLSTREAK", ::armor );
+	addKillStreak( "rocket", 20, &"ZOM_KILLSTREAKS_20_KILLSTREAK", ::rocket );
+	addKillStreak( "mortar", 30, &"ZOM_KILLSTREAKS_30_KILLSTREAK", ::mortar, false );
+	addKillStreak( "artillery", 40, &"ZOM_KILLSTREAKS_40_KILLSTREAK", ::mortar, true );
+	addKillStreak( "gatlin", 50, &"ZOM_KILLSTREAKS_50_KILLSTREAK", ::gatlin );
+	addKillStreak( "airstrike", 75, &"ZOM_KILLSTREAKS_75_KILLSTREAK", ::airstrike );
+	addKillStreak( "carpetbomb", 100, &"ZOM_KILLSTREAKS_100_KILLSTREAK", ::carpetbomb );
+	addKillStreak( "nuke", 200, &"ZOM_KILLSTREAKS_200_KILLSTREAK", ::nuke );
+
+	[[ level.precache ]]( &"ZOM_KILLSTREAKS_ROCKET_ATTACK_ACT" );
+	[[ level.precache ]]( &"ZOM_KILLSTREAKS_AIM_AT_A_LOC" );
+	[[ level.precache ]]( &"ZOM_KILLSTREAKS_INCOMING_NUKE" );
 
 	[[ level.precache ]]( "xmodel/v2rocket" );
 	[[ level.precache ]]( "xmodel/vehicle_plane_stuka" );
@@ -121,7 +126,7 @@ notifyPowerup()
 	self endon( "disconnect" );
 	
 	notifytext = "";
-	smallnotify = &"^3Hold [melee] and [use] to activate";
+	smallnotify = &"ZOM_KILLSTREAKS_HOLD_M_AND_F";
 	notifytext = getKillStreakText( self.powerup );
 
 	largehud = newClientHudElem( self );
@@ -173,7 +178,7 @@ giveScoreForStreak( iXP, iPoints )
 
 armor()
 {
-	self iPrintLnBold( "^3Armor Activated" );
+	self iPrintLn( "^3Armor Activated" );
 	//self.armored = true;
 	
 	self giveScoreForStreak( 50, 10 );
@@ -185,8 +190,8 @@ armor()
 	self.armorhud setShader( "white", 640, 480 );
 	self.armorhud.alpha = 0.05;*/
 	
-	self.bodyarmor += 100;
-	self.exploarmor += 50;
+	self.bodyarmor += 250;
+	self.exploarmor += 250;
 }
 
 rocket()
@@ -196,7 +201,7 @@ rocket()
 	trace = bullettrace( self.origin, self.origin + ( 0, 0, 328 ), false, self );
 	if ( trace[ "fraction" ] != 1 )
 	{
-		self iPrintLnBold( "Rocket Attack can only be activated outside." );
+		self iPrintLnBold( &"ZOM_KILLSTREAKS_ROCKET_ATTACK_ACT" );
 		self.powerup = "rocket";
 		return;
 	}
@@ -216,7 +221,7 @@ rocket()
 	
 	self.rocketattack = true;
 	
-	self iPrintLnBold( "^3Rocket Attack Activated" );
+	self iPrintLn( "^3Rocket Attack Activated" );
 	
 	self.lol = spawn( "script_origin", self.origin );
 	self linkto( self.lol );
@@ -310,11 +315,11 @@ mortar( isArtillery )
 	self endon( "spawn_spectator" );
 	
 	if ( isArtillery )
-		self iPrintLnBold( "^3Artillery Barrage Activated" );
+		self iPrintLn( "^3Artillery Barrage Activated" );
 	else
-		self iPrintLnBold( "^3Mortar Strike Activated" );
+		self iPrintLn( "^3Mortar Strike Activated" );
 		
-	self iPrintLnBold( "Aim at a location and hold [{+activate}] to target." );
+	self iPrintLnBold( &"ZOM_KILLSTREAKS_AIM_AT_A_LOC" );
 	
 	pos = self getUserLocation();
 	
@@ -442,8 +447,8 @@ airstrike()
 	self endon( "death" );
 	self endon( "spawn_spectator" );
 	
-	self iPrintLnBold( "^3Airstrike Activated" );
-	self iPrintLnBold( "Aim at a location and hold [{+activate}] to target." );
+	self iPrintLn( "^3Airstrike Activated" );
+	self iPrintLnBold( &"ZOM_KILLSTREAKS_AIM_AT_A_LOC" );
 	
 	pos = self getUserLocation();
 	
@@ -476,8 +481,8 @@ carpetbomb()
 	self endon( "death" );
 	self endon( "spawn_spectator" );
 	
-	self iPrintLnBold( "^3Carpet Bomb Activated" );
-	self iPrintLnBold( "Aim at a location and hold [{+activate}] to target." );
+	self iPrintLn( "^3Carpet Bomb Activated" );
+	self iPrintLnBold( &"ZOM_KILLSTREAKS_AIM_AT_A_LOC" );
 	
 	pos = self getUserLocation();
 	
@@ -646,12 +651,14 @@ getBestPlaneDirection( hitpos )
 
 nuke()
 {
-	iPrintLnBold( "INCOMING NUKE!" );
+	iPrintLnBold( &"ZOM_KILLSTREAKS_INCOMING_NUKE" );
 	
 	level.nuked = true;
 	
 	players = getEntArray( "player", "classname" );
 	self giveScoreForStreak( ( players.size * 1000 ), ( players.size * 100 ) );
+
+    org = self.origin;
 	
 	wait 2;
 	
@@ -667,9 +674,7 @@ nuke()
 	nukehud setShader( "white", 640, 480 );
 	nukehud.alpha = 0;
 	nukehud.sort = 5;
-	
-	org = self.origin;
-	
+
 	v2 = spawn( "script_model", org + ( 0, 0, 7500 ) );
 	v2 setModel( "xmodel/v2rocket" );
 	v2.angles = ( 360, 180, 180 );
@@ -725,8 +730,12 @@ getUserLocation()
 	self.distancehud.alignx = "center";
 	self.distancehud.aligny = "middle";
 	self.distancehud.alpha = 1;
-	self.distancehud.label = &"Feet to target: ";
+	//self.distancehud.label = &"Feet to target: ";
+    self.distancehud.label = &"ZOM_KILLSTREAKS_DISTANCE_TO_TARGET";
 	self.distancehud.color = ( 0, 1, 0 );
+
+	while ( self usebuttonpressed() )
+		wait 0.05;
 	
 	while ( isAlive( self ) )
 	{
@@ -736,7 +745,7 @@ getUserLocation()
 		trace = bulletTrace( self.origin + ( 0, 0, 64 ), traceEnd, false, undefined );
 		
 		pos = trace[ "position" ];
-		dist = ( distance( self.origin, pos ) / 12 );
+		dist = ( distance( self.origin, pos ) * 2.54 ) / 100;
 		self.distancehud setValue( (int)dist );
 		
 		if ( self usebuttonpressed() )

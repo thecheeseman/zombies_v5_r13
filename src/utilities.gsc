@@ -749,7 +749,7 @@ startsWith( string, start ) {
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility
-/*strip(s) {
+strip(s) {
     if(!isDefined(s) || s == "")
         return "";
 
@@ -778,7 +778,7 @@ startsWith( string, start ) {
     }
         
     return s3;
-}*/
+}
 
 // !! REPLACED WITH BUILT-IN FUNCTION !!
 // this is only here for compatibility

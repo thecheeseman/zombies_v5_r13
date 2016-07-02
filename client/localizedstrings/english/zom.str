@@ -1,0 +1,65 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "F:\projects\mk\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           OBJECTIVE
+LANG_ENGLISH        "^6Hunters^7: Try and survive the timelimit\n^1Zombies^7: Try and kill all the Hunters"
+
+REFERENCE           GAMETYPE
+LANG_ENGLISH        "^1zom^7bies"
+
+REFERENCE           HUNTERS
+LANG_ENGLISH        "^6Hunters"
+
+REFERENCE           ZOMBIES
+LANG_ENGLISH        "^1Zombies"
+
+REFERENCE           WAITING_FOR_PLAYERS
+LANG_ENGLISH        "Waiting for [^22^7] players..."
+
+REFERENCE           ZOMBIES_HAVE_KILLED
+LANG_ENGLISH        "^1Zombies^7 have killed all the ^6Hunters^7!"
+
+REFERENCE           HUNTERS_HAVE_SURVIVED
+LANG_ENGLISH        "^6Hunters^7 have survived!"
+
+REFERENCE           NUKE_KILLED_EVERYONE
+LANG_ENGLISH        "^3Nuke^7 killed everyone!"
+
+REFERENCE           SURVIVING_HUNTERS
+LANG_ENGLISH        "Surviving ^6Hunters^7 get a ^6%s^7 XP bonus!"
+
+REFERENCE           JOINED_THE_GAME
+LANG_ENGLISH        "%s^7 joined the game."
+
+REFERENCE           LEFT_THE_GAME
+LANG_ENGLISH        "%s^7 left the game."
+
+REFERENCE           HAD_THEIR_BRAINS_EATEN
+LANG_ENGLISH        "%s^7 had their brains eaten by a ^1Zombie^7!"
+
+REFERENCE           KILLED_THEMSELVES
+LANG_ENGLISH        "%s^7 killed themselves and are now a ^1Zombie^7!"
+
+REFERENCE           DIED_AND_IS_NOW
+LANG_ENGLISH        "%s^7 died and is now a ^1Zombie^7!"
+
+REFERENCE           IS_THE_LAST_HUNTER
+LANG_ENGLISH        "%s^7 is the ^6Last Hunter^7!"
+
+REFERENCE           SELECT_YOUR_LAST_HUNTER
+LANG_ENGLISH        "Select your ^6Last Hunter^7 weapon."
+
+
+ENDMARKER
