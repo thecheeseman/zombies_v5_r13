@@ -306,14 +306,14 @@ create_weather_event( sType, iTransitionTime, iLength ) {
             event.fogtype = "expfog";
             event.fogcolor = ( 0.69804, 0.6, 0.43137 );
             event.fogdistfar = 0.0009;
-            event.fogdistclose = 0.008;
+            event.fogdistclose = 0.002;
             event.fogdistrandom = false;
             break;
         case "blizzard":
             event.fogtype = "expfog";
             event.fogcolor = ( 1, 1, 1 );
             event.fogdistfar = 0.0007;
-            event.fogdistclose = 0.007;
+            event.fogdistclose = 0.004;
             event.fogdistrandom = false;
             break;
         case "rainstorm":

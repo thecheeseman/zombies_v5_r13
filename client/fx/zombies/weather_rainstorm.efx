@@ -1,0 +1,125 @@
+Particle
+{
+	flags				useAlpha
+
+	life				16000
+
+	rotation			360 -360
+
+	rotationDelta		3 -3
+
+	velocity			0 33 33 0 -33 -33
+
+	cullrange			1000
+
+	rgb
+	{
+		start			0.53725 0.62745 0.6902
+		end				0.53725 0.62745 0.6902
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		parm			4
+		flags			linear
+	}
+
+	size
+	{
+		start			0
+		end				1000
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/medium_smoke
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	life				24000
+
+	rotation			360 -360
+
+	rotationDelta		3 -3
+
+	velocity			0 63 63 0 -63 -63
+
+	cullrange			2500
+
+	rgb
+	{
+		start			0.53725 0.62745 0.6902
+		end				0.53725 0.62745 0.6902
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		parm			4
+		flags			linear
+	}
+
+	size
+	{
+		start			0
+		end				2500
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/medium_smoke
+	]
+}
+
+Particle
+{
+	flags				useAlpha
+
+	life				36000
+
+	rotation			360 -360
+
+	rotationDelta		3 -3
+
+	velocity			0 103 103 0 -103 -103
+
+	cullrange			5500
+
+	rgb
+	{
+		start			0.53725 0.62745 0.6902
+		end				0.53725 0.62745 0.6902
+		flags			linear
+	}
+
+	alpha
+	{
+		start			0.7
+		end				0
+		parm			4
+		flags			linear
+	}
+
+	size
+	{
+		start			0
+		end				5500
+		flags			linear
+	}
+
+	shaders
+	[
+		gfx/effects/medium_smoke
+	]
+}

@@ -1,0 +1,148 @@
+Tail
+{
+	flags				usePhysics
+
+	spawnFlags			orgOnSphere axisFromSphere evenDistribution
+
+	count				6
+
+	life				800
+
+	bounce				0.2
+
+	velocity			100 100 100 -100 -100 -100
+
+	gravity				-200
+
+	size
+	{
+		start			2
+	}
+
+	length
+	{
+		start			7
+		flags			linear
+	}
+
+	rgb
+	{
+		start			0.2 1 0.2
+		end				0.2 1 0.2
+	}
+
+	shaders
+	[
+		gfx/hud/hud@health_cross
+	]
+}
+
+Tail
+{
+	name				Copy of Unnamed Tail 0
+
+	flags				usePhysics impactKills
+
+	spawnFlags			orgOnSphere axisFromSphere evenDistribution
+
+	count				6
+
+	life				800
+
+	bounce				0.2
+
+	velocity			100 100 100 -100 -100 -100
+
+	gravity				-200
+
+	alpha
+	{
+		end				0
+	}
+
+	size
+	{
+		start			3
+	}
+
+	length
+	{
+		start			12
+		flags			linear
+	}
+
+	rgb
+	{
+		start			0.2 1 0.2
+		end				0.2 1 0.2
+	}
+
+	shaders
+	[
+		gfx/hud/hud@health_cross
+	]
+}
+
+Tail
+{
+	name				Copy of Unnamed Tail 1
+
+	flags				usePhysics impactKills
+
+	spawnFlags			orgOnSphere axisFromSphere evenDistribution
+
+	count				6
+
+	life				800
+
+	bounce				0.2
+
+	velocity			100 100 100 -100 -100 -100
+
+	gravity				-200
+
+	alpha
+	{
+		end				0
+	}
+
+	size
+	{
+		start			3
+	}
+
+	length
+	{
+		start			25
+		flags			linear
+	}
+
+	rgb
+	{
+		start			0.2 1 0.2
+		end				0.2 1 0.2
+	}
+
+	shaders
+	[
+		gfx/hud/hud@health_cross
+	]
+}
+
+Light
+{
+	life				800
+
+	rgb
+	{
+		start			0.2 1 0.2
+		end				0.2 1 0.2
+	}
+
+	size
+	{
+		start			300
+		flags			linear
+	}
+}
+

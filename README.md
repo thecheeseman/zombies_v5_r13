@@ -29,6 +29,10 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
 #### Revision 13.2
 #### 08/05/16 - 02/07/16
     
+    13.2.0.168
+    * Changed fog dist a bit in weather
+    + Added new client-side EFX for weather / ammo+health
+
     13.2.0.165-167
     # Fixed a problem where SQL wasn't notified about the last map mode (day/night)
     * Increased Armour killstreak from 100 to 250
