@@ -44,6 +44,9 @@ init() {
 }
 
 setup() {
+    self.statusicon = "";
+    self.headicon = "";
+
     if ( self.pers[ "team" ] == "axis" ) {
         self.oldclass = self.class;
 
@@ -74,6 +77,9 @@ setup() {
 
                     self setMoveSpeedScale( 1.15 );
                     self thread healthbag();
+
+                    self.statusicon = "gfx/hud/hud@health_cross.tga";
+                    self.headicon = "gfx/hud/hud@health_cross.tga";
                 }
 
                 self thread regen_health();
@@ -99,6 +105,9 @@ setup() {
                     self.stickynades = 0;
 
                     self thread ammobox();
+
+                    self.statusicon = "gfx/hud/hud@weaponmode_full.dds";
+                    self.headicon = "gfx/hud/hud@weaponmode_full.dds";
                 }
 
                 break;
@@ -142,11 +151,19 @@ setup() {
                 self.zombietype = "fast";
                 self setMoveSpeedScale( 1.75 );
                 self utilities::FOVScale( 110 );
+
+                self.maxhealth -= 250;
+                self.health = self.maxhealth;
+
                 self thread fastZombie();
                 break;
             case "bren_mp":
                 self.zombietype = "poison";
                 self setMoveSpeedScale( 1 );
+
+                self.maxhealth += 450;
+                self.health = self.maxhealth;
+
                 self thread poisonZombie();
                 break;
             case "springfield_mp":
@@ -1550,9 +1567,6 @@ superJump()
     self iPrintLn( "Zombie perk: ^2Super jump" );
     self iPrintLn( "Jump and then press [{+activate}] to activate" );
     
-    self.maxhealth += 700;
-    self.health = self.maxhealth;
-    
     wait 1;
 
     doublejumped = false;
@@ -1593,18 +1607,13 @@ blockjump()
 fastZombie()
 {
     self iPrintLn( "Zombie perk: ^2Super speed/bash" );
-    
-    self.maxhealth += 400;
-    self.health = self.maxhealth;
+
     self.missmines = true;
 }
 
 poisonZombie()
 {
     self iPrintLn( "Zombie perk: ^2Poison" );
-    
-    self.maxhealth += 900;
-    self.health = self.maxhealth;
 }
 
 poisonbomb()
@@ -1696,10 +1705,7 @@ fireZombie()
     self endon( "end_respawn" );
     
     self iPrintLn( "Zombie perk: ^2Fire" );
-    
-    self.maxhealth += 600;
-    self.health = self.maxhealth;
-    
+     
     self thread firemonitor( self );
     
     self waittill( "death" );

@@ -174,7 +174,7 @@ setupValues()
     level.cvars[ "BOMB_DAMAGE_MIN" ] =          (int)cvardef( "zom_bomb_damage_min", 10, 0, 100000, "int" );
     level.cvars[ "BOMB_TIME" ] =                (int)cvardef( "zom_bomb_time", 8, 0, 100000, "int" );
     
-    level.cvars[ "MAX_BARRICADES" ] =           (int)cvardef( "zom_max_barricades", 200, 0, 10000, "int" );
+    level.cvars[ "MAX_BARRICADES" ] =           (int)cvardef( "zom_max_barricades", 100, 0, 10000, "int" );
 
     level.cvars[ "JUMPER_DAMAGE" ] =            (int)cvardef( "zom_jumper_damage", 200, 0, 100000, "int" );
     level.cvars[ "JUMPER_FALLDAMAGE" ] =        (int)cvardef( "zom_jumper_falldamage", 1, 0, 1, "int" );

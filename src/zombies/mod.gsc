@@ -23,8 +23,8 @@
 main()
 {   
 // version information
-    level.zombies_build =           "13.2.0.168";
-    level.zombies_last_updated =    "03 July 2016";
+    level.zombies_build =           "13.2.0.170";
+    level.zombies_last_updated =    "05 July 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
 // version information
@@ -79,10 +79,14 @@ main()
 precache()
 {
     [[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga",     "headicon" );
+    [[ level.precache ]]( "gfx/hud/hud@health_cross.tga",           "headicon" );
+    [[ level.precache ]]( "gfx/hud/hud@weaponmode_full.dds",        "headicon" );
     [[ level.precache ]]( "gfx/hud/headicon@re_objcarrier.tga",     "statusicon" );
     [[ level.precache ]]( "gfx/hud/headicon@axis.tga",              "statusicon" );
     [[ level.precache ]]( "gfx/hud/headicon@allies.tga",            "statusicon" );
     [[ level.precache ]]( "gfx/hud/hud@death_m1carbine.tga",        "statusicon" );
+    [[ level.precache ]]( "gfx/hud/hud@health_cross.tga",           "statusicon" );
+    [[ level.precache ]]( "gfx/hud/hud@weaponmode_full.dds",        "statusicon" );
     [[ level.precache ]]( "gfx/hud/hud@objective_bel.tga" );
     [[ level.precache ]]( "gfx/hud/hud@objectivegoal.tga" );
     [[ level.precache ]]( "gfx/hud/hud@fire_ready.tga" );
@@ -751,6 +755,7 @@ onConnect()
     self.maxhealthpacks = 0;
     self.bodyarmor = 0;
     self.exploarmor = 0;
+    self.maxarmor = 0;
     self.damagearmor = 0;
     self.ammoboxuses = 0;
     self.megajump = 0;
@@ -894,7 +899,7 @@ spawnPlayer()
         self ammoLimiting();
     } else {
         if ( level.firstzombie ) {
-            self.maxhealth = 2000;
+            self.maxhealth += 1000;
             self.health = self.maxhealth;
         }
     }
@@ -2049,6 +2054,7 @@ getWeaponMaxWeaponAmmo( weapon )
         case "kar98k_mp": 
         case "kar98k_sniper_mp": 
         case "springfield_mp": 
+            return 50; break;
         case "mp40_mp": 
             return 192; break;
         case "mp44_mp": 

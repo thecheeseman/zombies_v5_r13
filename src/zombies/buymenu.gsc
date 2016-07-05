@@ -417,9 +417,9 @@ cleanUp()
 beDestroyed( owner, type, hitboxsize ) {
 	self endon( "stop destroy" );
 
-	self.health = 2000;
+	self.health = 1000;
 	if ( type == "xmodel/barrel_black1" ) {
-		self.health = 5000;
+		self.health = 2500;
 	}
 
 	attacker = undefined;

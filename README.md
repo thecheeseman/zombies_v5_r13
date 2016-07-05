@@ -27,8 +27,20 @@ Feel free to contact me on Steam at [thecheeseman999](http://steamcommunity.com/
     #   fix
 
 #### Revision 13.2
-#### 08/05/16 - 02/07/16
+#### 08/05/16 - 05/07/16
     
+    13.2.0.170
+    * Updated weather hazards to include the new EFX
+    - Removed the MP44/ Bar OP damage
+    + Added new Ranks / Rank perks
+    + Added ability to control bot melee / jump
+    * Reduced Jumper falldamage to 15% (was 25%)
+    + Added a new "try spawnpoint" system 
+    * Changed headicons to show important classes
+
+    13.2.0.169
+    * Reduced barricade health by half
+
     13.2.0.168
     * Changed fog dist a bit in weather
     + Added new client-side EFX for weather / ammo+health

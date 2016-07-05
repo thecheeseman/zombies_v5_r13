@@ -1,0 +1,157 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "F:\projects\mk\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           1_PLAY
+LANG_ENGLISH        "^21. Play"
+
+REFERENCE           MOTD
+LANG_ENGLISH        "^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)\nby ^3Cheese\n\nHOW TO PLAY\n^6Hunters^7: Try and survive the timelimit\n^1Zombies^7: Try and kill all the Hunters\n\n^6Hunters^7 are able to use any weapon of their choice; ^1Zombies^7 can only melee or throw grenades. Both ^6Hunters^7 and ^1Zombies^7 have a myriad of classes available to them. Choose wisely!\n\nPlay fair and have fun!"
+LANG_SPANISH        "^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)\ncreado por ^3Cheese\n\nHCOMO JUGAR\n^6Cazadores^7: Trata de sobrevivir el limite de tiempo\n^1Zombis^7: Trata de matar a todos los cazadores\n\nLos ^6Cazadores^7 son capaces de utilizar cualquier arma de su eleccion; ^1Zombis^7 solo puede melee o lanzar granadas. Tanto los ^6Cazadores^7 y los ^1Zombis^7 tienen muchas clases para elegir. Elija sabiamente!\n\nJuega limpio y divertirse!"
+
+//
+//
+// Hunter Classes
+//
+//
+REFERENCE           CLASSES
+LANG_ENGLISH        "Classes"
+LANG_SPANISH        "Clases"
+
+REFERENCE           COMBAT_CLASSES
+LANG_ENGLISH        "^1Combat Classes"
+LANG_SPANISH        "^1Las Clases de Combate"
+
+REFERENCE           1_COMBAT_ENGINEER
+LANG_ENGLISH        "1. Combat Engineer"
+LANG_SPANISH        "1. Combate Ingeniero"
+
+REFERENCE           2_COMBAT_MEDIC
+LANG_ENGLISH        "2. Combat Medic"
+LANG_SPANISH        "2. Combate Medico"
+
+REFERENCE           3_COMBAT_SUPPORT
+LANG_ENGLISH        "3. Combat Support"
+LANG_SPANISH        "3. Combate Apoyo"
+
+REFERENCE           4_COMBAT_SNIPER
+LANG_ENGLISH        "4. Combat Sniper"
+LANG_SPANISH        "4. Combate Francotirador"
+
+REFERENCE           REGULAR_CLASSES
+LANG_ENGLISH        "^2Regular Classes"
+LANG_SPANISH        "^2Las Clases Regulares"
+
+REFERENCE           5_RECON
+LANG_ENGLISH        "5. Recon"
+LANG_SPANISH        "#same"
+
+REFERENCE           6_ENGINEER
+LANG_ENGLISH        "6. Engineer"
+LANG_SPANISH        "6. Ingeniero"
+
+REFERENCE           7_MEDIC
+LANG_ENGLISH        "7. Medic"
+LANG_SPANISH        "7. Medico"
+
+REFERENCE           8_SUPPORT
+LANG_ENGLISH        "8. Support"
+LANG_SPANISH        "8. Apoyo"
+
+REFERENCE           9_SNIPER
+LANG_ENGLISH        "9. Sniper"
+LANG_SPANISH        "9. Francotirador"
+
+REFERENCE           COMBAT_ENGINEER_INFO
+LANG_ENGLISH        "Combat Engineer\nWeapon: Kar98k\nSpecial Ability: Portable Sentry\n\nSentry can be placed by taking out your grenade and pressing the [USE] key twice. Can be replenished by going to an ammobox."
+LANG_SPANISH        "Combate Ingeniero\nArma: Kar98k\nHabilidad Especial: Portatiles Sentry\n\nSentry puede ser colocado por el cambio a su granada y pulsando la tecla [USO] dos veces. Puede ser repuesto por ir a un ammobox."
+
+REFERENCE           COMBAT_MEDIC_INFO
+LANG_ENGLISH        "Combat Medic\nWeapon: MP40\nSpecial Ability: Bleeding Bullets\n\nCombat Medic does bleeding damage to Zombies, causing them to bleed for 5 seconds after being hit. This ability also heals the Combat Medic at the same time."
+LANG_SPANISH        "Combate Medico\nArma: MP40\nHabilidad Especial: Sangrado Balas\n\nEl Combate Medico no sangrado daños a los Zombis, y lo hace sangrar durante 5 segundos después de ser golpeado. Esta capacidad también cura el Combate Medico al mismo tiempo."
+
+REFERENCE           COMBAT_SUPPORT_INFO
+LANG_ENGLISH        "Combat Support\nWeapon: MP44\nSpecial Ability: RAGE MODE\n\nThe Combat Support will enter RAGE MODE when nearby friendlies die, allowing him to deal an incredible amount of damage and become nearly invulnerable for a short time."
+LANG_SPANISH        "Combate Apoyo\nArma: MP44\nHabilidad Especial: Modo de Rabia\n\nEl Combate Apoyo entrara en Modo de Rabia cuando amistosos cercana mueren, lo que le permite tratar una increible cantidad de daño y se vuelven casi invulnerable durante un breve periodo de tiempo."
+
+REFERENCE           COMBAT_SNIPER_INFO
+LANG_ENGLISH        "Combat Sniper\nWeapon: Kar98k Sniper\nSpecial Ability: Invisibility\n\nDouble-tap [USE] to go invisible for up to 10 seconds. Invisibility is disabled upon attacking." 
+LANG_SPANISH        "Combate Francotirador\nArma: Kar98k Sniper\nHabilidad Especial: Invisibilidad\n\nPulse dos veces [USO] para ir invisible para un máximo de 10 segundos. La invisibilidad se desactiva al atacar." 
+
+REFERENCE           RECON_INFO
+LANG_ENGLISH        "Recon\nWeapon: M1A1 Carbine\nSpecial Ability: Double Jump\n\nJump and then press [USE] to double-jump in mid air."
+LANG_SPANISH        "Recon\nArma: M1A1 Carbine\nHabilidad Especial: Doble Salto\n\nSalto y pulse [USO] para doble salto en el aire."
+
+REFERENCE           ENGINEER_INFO
+LANG_ENGLISH        "Engineer\nWeapon: M1Garand\nSpecial Ability: Sentry\n\nUnlike the Combat Engineer, this Sentry is twice as powerful and deadly. Can be repaired, but not replenished."
+LANG_SPANISH        "Ingeniero\nArma: M1Garand\nHabilidad Especial: Sentry\n\nA diferencia del Combate Ingeniero, esto Sentry es dos veces más potente y mortal. Se puede reparar, pero no se ha repuesto."
+
+REFERENCE           MEDIC_INFO
+LANG_ENGLISH        "Medic\nWeapon: M1A1 Thompson\nSpecial Ability: Health Bag\n\nThe Medic is able to heal nearby Hunters of any ailment: poison, fire, and repair any wounds that have been dealt (does not include emotional scarring)."
+LANG_SPANISH        "Medico\nArma: M1A1 Thompson\nHabilidad Especial: Bolsa de Salud\n\nEl Medico es capaz de curar a los Cazadores cercanas de cualquier dolencia: veneno, fuego, y reparar las heridas que se han tratado (no incluye cicatrices emocionales)."
+
+REFERENCE           SUPPORT_INFO
+LANG_ENGLISH        "Support\nWeapon: BAR\nSpecial Ability: Ammo Bag\n\nThe Support can give nearby Hunters fresh ammo."
+LANG_SPANISH        "Apoyo\nArma: BAR\nHabilidad Especial: Bolsa de Municiones\n\nEl Apoyo puede dar a los Cazadores cercana mas municion."
+
+REFERENCE           SNIPER_INFO
+LANG_ENGLISH        "Sniper\nWeapon: Springfield\nSpecial Ability: Inivisiblity\n\nUnlike the Combat Sniper, this invisibility is only toggled by standing still. Lasts for 30 seconds."
+LANG_SPANISH        "Francotirador\nArma: Springfield\nHabilidad Especial: Inivisiblidad\n\nA diferencia del Combate Francotirador, esta invisibilidad solamente se activan y desactivan mediante parado. Tiene una duracion de 30 segundos."
+
+//
+//
+// Zombie Classes
+//
+//
+
+REFERENCE           ZOMBIE_CLASSES
+LANG_ENGLISH        "^1Zombie Classes"
+LANG_SPANISH        "^1Las Clases de Zombis"
+
+REFERENCE           1_JUMPER
+LANG_ENGLISH        "1. Jumper"
+LANG_SPANISH        "1. Saltador"
+
+REFERENCE           2_FAST
+LANG_ENGLISH        "2. Fast"
+LANG_SPANISH        "2. Rapido"
+
+REFERENCE           3_POISON
+LANG_ENGLISH        "3. Poison"
+LANG_SPANISH        "3. Veneno"
+
+REFERENCE           4_FIRE
+LANG_ENGLISH        "4. Fire"
+LANG_SPANISH        "4. Fuego"
+
+REFERENCE           JUMPER_INFO
+LANG_ENGLISH        "Jumper\nWeapon: Lee-Enfield\nSpecial Ability: Super Jump\n\nJump and then press [USE] to Super Jump in mid air."
+LANG_SPANISH        "Saltador\nArma: Lee-Enfield\nHabilidad Especial: Super Salto\n\nSalto y pulse [USO] Super Salto en el aire."
+
+REFERENCE           FAST_INFO
+LANG_ENGLISH        "Fast\nWeapon: Sten\nSpecial Ability: Super Speed\n\nThe Fast Zombie is the fastest entity in the game -- it can easily overtake both Hunters and Zombies alike. Can melee at 5x per second."
+LANG_SPANISH        "Rapido\nArma: Sten\nHabilidad Especial: Super Velocidad\n\nEl Zombi Rapida es la entidad mas rapido del juego - que puede facilmente superar a los dos Cazadores y los Zombis por igual. Puede melee en 5x por segundo."
+
+REFERENCE           POISON_INFO
+LANG_ENGLISH        "Poison\nWeapon: Bren\nSpecial Ability: Poison\n\nInflict poison upon a Hunter by meleeing them or hitting them with a grenade. They will die if not treated quickly."
+LANG_SPANISH        "Veneno\nArma: Bren\nHabilidad Especial: Veneno\n\nInfligir veneno sobre un Cazador por melee ellos o lanzar una granada contra ellos. Ellos moriran si no se trata rapidamente."
+
+REFERENCE           FIRE_INFO
+LANG_ENGLISH        "Fire\nWeapon: Springfield\nSpecial Ability: Fire\n\nCatch Hunters on fire by getting near them. Spreads to other Hunters."
+LANG_SPANISH        "Fuego\nArma: Springfield\nHabilidad Especial: Fuego\n\nLos Cazadores coger en el fuego por conseguir cerca de ellos. Se extiende a otras Cazadores."
+
+
+ENDMARKER
+
+

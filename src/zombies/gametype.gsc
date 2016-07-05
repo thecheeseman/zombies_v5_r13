@@ -156,7 +156,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
         if ( !level.cvars[ "JUMPER_FALLDAMAGE" ] )
             return;
 
-        iDamage *= 0.25;
+        iDamage *= 0.15;
     }
 
     if ( isPlayer( eAttacker ) && eAttacker.sessionteam == "spectator" && ( sMeansOfDeath == "MOD_GRENADE" || sMeansOfDeath == "MOD_GRENADE_SPLASH" ) )
@@ -197,6 +197,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
     }
 
     if ( isPlayer( eAttacker ) && eAttacker != self ) {
+        /*
         if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "mp44_mp" && 
             ( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
             iDamage = 115;
@@ -205,7 +206,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
         if ( eAttacker.pers[ "team" ] == "axis" && sWeapon == "bar_mp" && 
             ( sHitLoc != "right_hand" && sHitLoc != "left_hand" && sHitLoc != "right_foot" && sHitLoc != "left_foot" ) ) {
             iDamage = 100;
-        }
+        }*/
 
         if ( eAttacker.pers[ "team" ] == "allies" && sWeapon == "springfield_mp" )
             iDamage /= 4;
@@ -369,24 +370,10 @@ spawnPlayer()
     self.reflectdamage = undefined;
     
     if ( self.pers[ "team" ] == "allies" )
-    {
-        spawnpoints = getentarray( "mp_teamdeathmatch_spawn", "classname" );
-        if ( getCvar( "mapname" ) == "toybox_bloodbath" )
-            spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
-            
-        spawnpoint = zombies\spawnlogic::getSpawnpoint_NearTeam(spawnpoints);
-    }
+        self tryspawn_spawnpoint( "spawn", "nearteam" );
     else if ( self.pers[ "team" ] == "axis" )
-    {
-        spawnpoints = getentarray( "mp_deathmatch_spawn", "classname" );
-        spawnpoint = zombies\spawnlogic::getSpawnpoint_Random(spawnpoints);
-    }
+        self tryspawn_spawnpoint( "spawn", "random" );
     
-    if(isdefined(spawnpoint))
-        self spawn(spawnpoint.origin, spawnpoint.angles);
-    else
-        maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
-
     self.statusicon = "";
     self.maxhealth = 100;
     self.health = self.maxhealth;
@@ -400,7 +387,72 @@ spawnPlayer()
     self thread zombies\mod::spawnPlayer();
 }
 
-spawnSpectator(origin, angles)
+/*
+    try and spawn at _any_ possible spawnpoint
+    if there are none, throw an error
+*/
+tryspawn_spawnpoint( type, spawnlogic ) {
+    if ( !isDefined( type ) || ( isDefined( type ) && type != "spawn" && type != "intermission" ) )
+        type = "spawn";
+
+    if ( !isDefined( spawnlogic ) )
+        spawnlogic = "random";
+
+    spn = [];
+
+    if ( type == "intermission" ) {
+        spn[ spn.size ] = "mp_teamdeathmatch_intermission";
+        spn[ spn.size ] = "mp_deathmatch_intermission";
+        spn[ spn.size ] = "mp_searchanddestroy_intermission";
+        spn[ spn.size ] = "mp_retreival_intermission";
+    }
+
+    spn[ spn.size ] = "mp_teamdeathmatch_spawn";
+    spn[ spn.size ] = "mp_deathmatch_spawn";
+    spn[ spn.size ] = "mp_searchanddestroy_spawn_allied";
+    spn[ spn.size ] = "mp_searchanddestroy_spawn_axis";
+    spn[ spn.size ] = "mp_retrieval_spawn_allied";
+    spn[ spn.size ] = "mp_retrieval_spawn_axis";
+
+    spawnpoints = undefined;
+    for ( i = 0; i < spn.size; i++ ) {
+        spawnpointname = spn[ i ];
+        spawnpoints = getEntArray( spawnpointname, "classname" );
+
+        if ( spawnpoints.size > 0 )
+            break;
+    }
+
+    if ( !isDefined( spawnpoints ) || spawnpoints.size == 0 )
+        maps\mp\_utility::error( "NO SPAWNPOINTS IN MAP" );
+
+    spawnpoint = undefined;
+    switch ( spawnlogic ) {
+        case "farthest":
+            spawnpoint = zombies\spawnlogic::getSpawnpoint_Farthest( spawnpoints );
+            break;
+        case "nearteam":
+            spawnpoint = zombies\spawnlogic::getSpawnpoint_NearTeam( spawnpoints );
+            break;
+        case "middlethird":
+            spawnpoint = zombies\spawnlogic::getSpawnpoint_MiddleThird( spawnpoints );
+            break;
+        case "semirandom":
+            spawnpoint = zombies\spawnlogic::getSpawnpoint_SemiRandom( spawnpoints );
+            break;
+        case "random":  
+        default:
+            spawnpoint = zombies\spawnlogic::getSpawnpoint_Random( spawnpoints );
+            break;
+    }
+    
+    if ( !isDefined( spawnpoint ) )
+        maps\mp\_utility::error( "NO SPAWNPOINTS IN MAP" );
+
+    self spawn( spawnpoint.origin, spawnpoint.angles );
+}
+
+spawnSpectator()
 {
     self notify("spawned");
     self notify("end_respawn");
@@ -414,24 +466,8 @@ spawnSpectator(origin, angles)
 
     if(self.pers["team"] == "spectator")
         self.statusicon = "";
-    
-    if(isdefined(origin) && isdefined(angles))
-        self spawn(origin, angles);
-    else
-    {
-        if ( getCvar( "mapname" ) != "toybox_bloodbath" )
-            spawnpointname = "mp_teamdeathmatch_intermission";
-        else
-            spawnpointname = "mp_deathmatch_intermission";
-            
-        spawnpoints = getentarray(spawnpointname, "classname");
-        spawnpoint = maps\mp\gametypes\_spawnlogic::getSpawnpoint_Random(spawnpoints);
-    
-        if(isdefined(spawnpoint))
-            self spawn(spawnpoint.origin, spawnpoint.angles);
-        else
-            maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
-    }
+
+    self tryspawn_spawnpoint( "intermission", "random" );
     
     self thread zombies\mod::spawnSpectator();
 }
@@ -448,18 +484,7 @@ spawnIntermission()
     self.archivetime = 0;
     self.reflectdamage = undefined;
 
-    if ( getCvar( "mapname" ) != "toybox_bloodbath" )
-        spawnpointname = "mp_teamdeathmatch_intermission";
-    else
-        spawnpointname = "mp_deathmatch_intermission";
-        
-    spawnpoints = getentarray(spawnpointname, "classname");
-    spawnpoint = maps\mp\gametypes\_spawnlogic::getSpawnpoint_Random(spawnpoints);
-    
-    if(isdefined(spawnpoint))
-        self spawn(spawnpoint.origin, spawnpoint.angles);
-    else
-        maps\mp\_utility::error("NO " + spawnpointname + " SPAWNPOINTS IN MAP");
+    self tryspawn_spawnpoint( "intermission", "random" );
         
     self thread zombies\mod::spawnIntermission();
 }

@@ -79,10 +79,12 @@ botLogic() {
     fps = getCvarInt( "sv_fps" );
     stance = "stand";
 
-    self bot_setweapon( weaponToInt( self getCurrentWeapon() ) );  // necessary for the brand new clientcmds 
+    self bot_setweapon( weaponToInt( self getCurrentWeapon() ) );   // necessary for the brand new clientcmds 
+                                                                    // otherwise it will look like they're not holding any weaps
 
     frame = 0;
     while ( true ) {
+        /*
         wait frame();
 
         frame++;
@@ -207,6 +209,6 @@ botLogic() {
                 self setPlayerAngles( vectorToAngles( closestwp - self.origin ) );
                 self bot_move( FORWARD );
             }
-        }
+        }*/
     }
 }

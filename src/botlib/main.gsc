@@ -178,8 +178,8 @@ addBot() {
 //
 setupBot() {
 //
-    self renameBot( "zombiebot" );
-    self setClientCvar( "name", "zombiebot" );
+    self renameBot( "a zombie" );
+    self setClientCvar( "name", "a zombie" );
 //
 
     self.bot = spawnstruct();

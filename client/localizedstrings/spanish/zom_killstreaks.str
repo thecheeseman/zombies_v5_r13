@@ -1,0 +1,68 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "F:\projects\mk\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           HOLD_M_AND_F
+LANG_ENGLISH        "^3Hold [melee] AND [use] to activate"
+LANG_SPANISH        "^3Pulse [MELEE] y [USO] para activar"
+
+REFERENCE           DISTANCE_TO_TARGET
+LANG_ENGLISH        "Distance to target (m): "
+LANG_SPANISH        "Distancia al Objectivo (m): "
+
+REFERENCE           10_KILLSTREAK
+LANG_ENGLISH        "^310 Killstreak : Armour"
+LANG_SPANISH        "#same"
+
+REFERENCE           20_KILLSTREAK
+LANG_ENGLISH        "^320 Killstreak : Rocket Attack"
+LANG_SPANISH        "#same"
+
+REFERENCE           30_KILLSTREAK
+LANG_ENGLISH        "^330 Killstreak : Mortar Strike"
+LANG_SPANISH        "#same"
+
+REFERENCE           40_KILLSTREAK
+LANG_ENGLISH        "^340 Killstreak : Artillery Barrage"
+LANG_SPANISH        "#same"
+
+REFERENCE           50_KILLSTREAK
+LANG_ENGLISH        "^350 Killstreak : Gatlin Gun"
+LANG_SPANISH        "#same"
+
+REFERENCE           75_KILLSTREAK
+LANG_ENGLISH        "^375 Killstreak : Airstrike"
+LANG_SPANISH        "#same"
+
+REFERENCE           100_KILLSTREAK
+LANG_ENGLISH        "^3100 Killstreak : Carpet Bomb"
+LANG_SPANISH        "#same"
+
+REFERENCE           200_KILLSTREAK
+LANG_ENGLISH        "^3200 Killstreak : Nuke"
+LANG_SPANISH        "#same"
+
+REFERENCE           ROCKET_ATTACK_ACT
+LANG_ENGLISH        "Rocket Attack can only be activated outside."
+LANG_SPANISH        "Rocket Attack solo puede activarse exterior."
+
+REFERENCE           AIM_AT_A_LOC
+LANG_ENGLISH        "Aim at a location and hold [{+activate}] to target."
+LANG_SPANISH        "Apuntar y pulsar la tecla [{+activate}] seleccione ubicacion."
+
+REFERENCE           INCOMING_NUKE
+LANG_ENGLISH        "INCOMING NUKE!"
+LANG_SPANISH        "NUKE ENTRANTE!"
+
+ENDMARKER

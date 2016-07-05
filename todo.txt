@@ -84,7 +84,7 @@ TODO
                     Speed modifier:     +0%
                     Damage increase:    +0%
                     Starting armour:    215
-                - 3     Private II              293             362
+                - 3     Private First Class     293             362
                     Health:             195
                     Ammo bonus:         1x
                     Proximity mines:    2
@@ -92,7 +92,7 @@ TODO
                     Speed modifier:     +0%
                     Damage increase:    +0%
                     Starting armour:    205
-                - 4     Private First Class     656             658
+                - 4     Lance Corporal          656             658
                     Health:             210
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -237,7 +237,14 @@ TODO
                 - 27    Holy fuck tits          5,732,010       1,295,872
                 - 28    You're kidding me       7,027,883       1,505,869
                 - 29    Fuck me in my asshole   8,853,852       1,733,989
-                - 30    I AM THE SUPERVISOR     10,267,741      N/A
+                - 30    I AM THE SUPERVISOR     10,267,741      1,979,545
+                - 31    Bagets I                12,247,287      2,241,603
+                - 32    Bagets II               14,488,890      2,519,011
+                - 33    Bagets III              17,007,902      2,810,430
+                - 34    Bagets IV               19,818,332      3,114,370
+                - 35    Bagets V                22,932,702      3,429,227
+                - 36    God of Zombies          26,361,929      3,638,071
+                - 37    Ultimum Ordinis Venator 30,000,000      N/A
         - Zombies
             - tnl = 1
             - factor = 0.85753
@@ -355,7 +362,7 @@ TODO
         - survive entire round as hunter with no shooting (can bash)
     - Misc
         - weather
-            - hazard's like previous versions
+           ✓ hazard's like previous versions
         - cp bot / cheese bot
             ✓ rocket
                 ✓ centre bunker blocking :)
@@ -385,8 +392,8 @@ TODO
         - sharkscanner for depot / dawnville
         ✓ no more last hunter buy menu
         ✓ music at end?
-            - "codtheme" for when zombies/nuke win
-            - "pegasusbridge_credits" when hunters win
+            ✓ "codtheme" for when zombies/nuke win
+            ✓ "pegasusbridge_credits" when hunters win
         ✓ Vsay menu
             ✓ "Grenade!" to "Need ammo!"
             ✓ "Sniper!" to "Need a Medic!"

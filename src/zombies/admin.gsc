@@ -216,8 +216,12 @@ givePoints( value )
         return;
     }
     
-    if ( isDefined( player ) )
+    if ( isDefined( player ) ) {
         player.points += amount;
+
+        if ( player.points < 0 )
+            player.points = 0;
+    }
 }
 
 updateXP( value )

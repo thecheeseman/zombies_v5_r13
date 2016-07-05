@@ -59,7 +59,7 @@ REFERENCE           IS_THE_LAST_HUNTER
 LANG_ENGLISH        "%s^7 is the ^6Last Hunter^7!"
 
 REFERENCE           SELECT_YOUR_LAST_HUNTER
-LANG_ENGLISH        "Select your ^6Last Hunter^7 weapon."
+LANG_ENGLISH        "Select your ^6Last Hunter^7 weapon"
 
 
 ENDMARKER

@@ -22,6 +22,11 @@ init()
 
 	[[ level.precache ]]( "fx/atmosphere/thunderhead.efx" );
 	[[ level.precache ]]( "fx/atmosphere/lowlevelburst.efx" );
+    [[ level.precache ]]( "fx/zombies/weather_blizzard.efx" );
+    [[ level.precache ]]( "fx/zombies/weather_haboob.efx" );
+    [[ level.precache ]]( "fx/zombies/weather_haze.efx" );
+    [[ level.precache ]]( "fx/zombies/weather_radioactive.efx" );
+    [[ level.precache ]]( "fx/zombies/weather_rainstorm.efx" );
 
     level.mapinfo = mapinfo_struct();
 
@@ -306,7 +311,7 @@ create_weather_event( sType, iTransitionTime, iLength ) {
             event.fogtype = "expfog";
             event.fogcolor = ( 0.69804, 0.6, 0.43137 );
             event.fogdistfar = 0.0009;
-            event.fogdistclose = 0.002;
+            event.fogdistclose = 0.004;
             event.fogdistrandom = false;
             break;
         case "blizzard":
@@ -366,6 +371,8 @@ weather_event_runner( event ) {
     level endon( "endgame" );
 
     level.weatherEvent = true;
+
+    printconsole( "[weather.gsc] Staring hazard : " + event.type );
     
     // transition to event's starting point
     set_fog( event.fogtype, 0, event.fogdistfar, event.fogcolor, event.starttime );
@@ -381,6 +388,7 @@ weather_event_runner( event ) {
     
     // transition to event itself
     set_fog( event.fogtype, 0, event.fogdistclose, event.fogcolor, event.starttime );
+    thread start_fx( event );
     wait ( event.starttime );
 
     level.fogdist = 128;
@@ -394,7 +402,10 @@ weather_event_runner( event ) {
 
     // transition back to start point
     set_fog( event.fogtype, 0, event.fogdistfar, event.fogcolor, event.starttime );
+    level notify( "weather_stop_fx" );
     wait ( event.starttime );
+
+    printconsole( "[weather.gsc] Hazard completed" );
 
     level.fogdist = olddist;
     
@@ -408,6 +419,76 @@ weather_event_runner( event ) {
         level.weatherQueue[ i - 1 ] = undefined;
         
         thread weather_event_runner( next );
+    }
+}
+
+start_fx( event ) {
+    level endon( "weather_stop_fx" );
+
+    if ( !isDefined( level._effect[ "weather_" + event.type ] ) ) {
+        printconsole( "[weather.gsc] No effect for event type '" + event.type + "'" );
+        return;
+    }
+
+    effect = level._effect[ "weather_" + event.type ];
+
+    spn = [];
+
+    spn[ spn.size ] = "mp_teamdeathmatch_spawn";
+    spn[ spn.size ] = "mp_deathmatch_spawn";
+    spn[ spn.size ] = "mp_searchanddestroy_spawn_allied";
+    spn[ spn.size ] = "mp_searchanddestroy_spawn_axis";
+    spn[ spn.size ] = "mp_retrieval_spawn_allied";
+    spn[ spn.size ] = "mp_retrieval_spawn_axis";
+
+    spawnpoints = undefined;
+    for ( i = 0; i < spn.size; i++ ) {
+        spawnpointname = spn[ i ];
+        spawnpoints = getEntArray( spawnpointname, "classname" );
+
+        if ( spawnpoints.size > 0 )
+            break;
+    }
+
+    if ( !isDefined( spawnpoints ) || spawnpoints.size == 0 )
+        maps\mp\_utility::error( "NO SPAWNPOINTS IN MAP" );
+
+    highestz = -9999999;
+    for ( i = 0; i < spawnpoints.size; i++ ) {
+        o = spawnpoints[ i ].origin;
+        trace = bullettrace( o, o + ( 0, 0, 10000 ), false, undefined );
+
+        if ( trace[ "position" ][ 2 ] > highestz )
+            highestz = trace[ "position" ][ 2 ];
+    }
+
+    while ( true ) {
+        spots = [];
+
+        for ( i = 0; i < spawnpoints.size; i++ ) {
+            loc = ( spawnpoints[ i ].origin[ 0 ], spawnpoints[ i ].origin[ 1 ], highestz - 128 );
+
+            if ( spots.size == 0 ) {
+                playFx( effect, loc );
+                spots[ spots.size ] = loc;
+                continue;
+            }
+
+            inrange = false;
+            for ( j = 0; j < spots.size; j++ ) {
+                if ( distance( spots[ j ], loc ) < 1024 ) {
+                    inrange = true;
+                    break;
+                }
+            }
+
+            if ( !inrange ) {
+                playFx( effect, loc );
+                spots[ spots.size ] = loc;
+            }
+        }
+
+        wait 10;
     }
 }
 

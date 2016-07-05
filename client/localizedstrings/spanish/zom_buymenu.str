@@ -1,0 +1,44 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "F:\projects\mk\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           YOU_DONT_HAVE_ENOUGH
+LANG_ENGLISH        "You don't have enough points for that item (need %s)."
+LANG_SPANISH        "Usted no tiene suficientes punots para ese elemento (necesario %s)."
+
+REFERENCE           YOU_BOUGHT
+LANG_ENGLISH        "You bought ^2%s^7!"
+LANG_SPANISH        "Usted compro ^2%s^7!"
+
+REFERENCE           YOU_CANNOT_HOLD
+LANG_ENGLISH        "You cannot hold any more ^2%s^7!"
+LANG_SPANISH        "No se puede sostener mas ^2%s^7!"
+
+REFERENCE           YOU_ALREADY_HAVE
+LANG_ENGLISH        "You already have ^2%s^7!"
+LANG_SPANISH        "Ya tiene ^2%s^7!"
+
+REFERENCE           PLEASE_MOVE_OUT
+LANG_ENGLISH        "Please move out of your barricade before placing a new one."
+LANG_SPANISH        "Por favor, mueva hacia fuera de la barricada antes de poner una nueva."
+
+REFERENCE           YOU_CANT_PLACE
+LANG_ENGLISH        "You can't place barricades that close to an ammobox."
+LANG_SPANISH        "No se puede colocar una barricada que cercana de un ammobox."
+
+REFERENCE           YOU_SPENT_RND
+LANG_ENGLISH        "You spent ^2%s^7 points for a random item and got..."
+LANG_SPANISH        "Usted paso de ^2%s^7 puntos para un elemento de azar y tiene..."
+
+ENDMARKER
