@@ -293,6 +293,10 @@ onDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoin
     if ( isPlayer( eAttacker ) && eAttacker.pers[ "team" ] == self.pers[ "team" ] && !level.bot_friendlyFire )
         return;
 
+    self botlib\util::setBotAngles( eAttacker.origin - self.origin, 2 );
+    self.bot.hasplayer = true;
+    self.bot.target = eAttacker;
+
     // Don't do knockback if the damage direction was not specified
     if ( !isDefined( vDir ) )
         iDFlags |= level.iDFLAGS_NO_KNOCKBACK;

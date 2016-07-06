@@ -52,7 +52,7 @@ TODO
             - Healing teammate: 10 points
             - Giving ammo to teammate: 10 points
     - Weapon damage overhaul
-    - Rank overhaul
+    ✓ Rank overhaul
         ✓ lua code used to generate ranks
             total = 0
             for i=1,levels do
@@ -60,15 +60,15 @@ TODO
                 total = total + tnl
                 tnl = tnl * ( 1 + math.pow( factor, i ) )
             end
-        - Change max armour/explosion armour to 1000 - self.maxhealth
+        ✓ Change max armour/explosion armour to 1000 - self.maxhealth
             - i.e. Demi-God (610 health) only can have 390 max armour 
             - starting players (175 health) can have 825 max
-        - Hunters
+        ✓ Hunters
             - tnl = 100
             - factor = 0.93481944
-            - levels = 30
-                - #     Title                   XP              XP to next rank
-                - 1     Enlisted                0               100
+            ✓ levels = 30
+                ✓ #     Title                   XP              XP to next rank
+                ✓ 1     Enlisted                0               100
                     Health:             175
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -76,7 +76,7 @@ TODO
                     Speed modifier:     +0%
                     Damage increase:    +0%
                     Starting armour:    225
-                - 2     Private                 100             193
+                ✓ 2     Private                 100             193
                     Health:             185
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -84,7 +84,7 @@ TODO
                     Speed modifier:     +0%
                     Damage increase:    +0%
                     Starting armour:    215
-                - 3     Private First Class     293             362
+                ✓ 3     Private First Class     293             362
                     Health:             195
                     Ammo bonus:         1x
                     Proximity mines:    2
@@ -92,7 +92,7 @@ TODO
                     Speed modifier:     +0%
                     Damage increase:    +0%
                     Starting armour:    205
-                - 4     Lance Corporal          656             658
+                ✓ 4     Lance Corporal          656             658
                     Health:             210
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -100,7 +100,7 @@ TODO
                     Speed modifier:     +2%
                     Damage increase:    +5%
                     Starting armour:    190
-                - 5     Corporal                1,314           1,161
+                ✓ 5     Corporal                1,314           1,161
                     Health:             235
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -108,7 +108,7 @@ TODO
                     Speed modifier:     +2%
                     Damage increase:    +5%
                     Starting armour:    165
-                - 6     Sergeant                2,476           1,991
+                ✓ 6     Sergeant                2,476           1,991
                     Health:             260
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -116,7 +116,7 @@ TODO
                     Speed modifier:     +2%
                     Damage increase:    +5%
                     Starting armour:    140
-                - 7     Master Sergeant         4,467           3,320
+                ✓ 7     Master Sergeant         4,467           3,320
                     Health:             285
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -124,7 +124,7 @@ TODO
                     Speed modifier:     +2%
                     Damage increase:    +5%
                     Starting armour:    115
-                - 8     Sergeant Major          7,788           5,391
+                ✓ 8     Sergeant Major          7,788           5,391
                     Health:             310
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -132,7 +132,7 @@ TODO
                     Speed modifier:     +5%
                     Damage increase:    +9%
                     Starting armour:    90
-                - 9     2nd Lieutenant          13,179          8,535
+                ✓ 9     2nd Lieutenant          13,179          8,535
                     Health:             340
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -140,7 +140,7 @@ TODO
                     Speed modifier:     +5%
                     Damage increase:    +9%
                     Starting armour:    60
-                - 10    1st Lieutenant          21,715          13,189
+                ✓ 10    1st Lieutenant          21,715          13,189
                     Health:             365
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -148,7 +148,7 @@ TODO
                     Speed modifier:     +5%
                     Damage increase:    +9%
                     Starting armour:    35
-                - 11    Captain                 34,904          19,911
+                ✓ 11    Captain                 34,904          19,911
                     Health:             390
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -156,7 +156,7 @@ TODO
                     Speed modifier:     +5%
                     Damage increase:    +9%
                     Starting armour:    10
-                - 12    Major                   54,816          29,398
+                ✓ 12    Major                   54,816          29,398
                     Health:             415
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -164,7 +164,7 @@ TODO
                     Speed modifier:     +8%
                     Damage increase:    +13%
                     Starting armour:    0
-                - 13    Lieutenant Colonel      84,214          42,491
+                ✓ 13    Lieutenant Colonel      84,214          42,491
                     Health:             440
                     Ammo bonus:         1x
                     Proximity mines:    1
@@ -172,7 +172,7 @@ TODO
                     Speed modifier:     +8%
                     Damage increase:    +13%
                     Starting armour:    0
-                - 14    Colonel                 126,706         60,183
+                ✓ 14    Colonel                 126,706         60,183
                     Health:             465
                     Ammo bonus:         1x
                     Proximity mines:    2
@@ -180,7 +180,7 @@ TODO
                     Speed modifier:     +8%
                     Damage increase:    +13%
                     Starting armour:    0
-                - 15    Brigadier General       186,890         83,607
+                ✓ 15    Brigadier General       186,890         83,607
                     Health:             480
                     Ammo bonus:         1x
                     Proximity mines:    3
@@ -188,7 +188,7 @@ TODO
                     Speed modifier:     +8%
                     Damage increase:    +13%
                     Starting armour:    0
-                - 16    Major General           270,497         114,027
+                ✓ 16    Major General           270,497         114,027
                     Health:             505
                     Ammo bonus:         1x
                     Proximity mines:    4
@@ -196,7 +196,7 @@ TODO
                     Speed modifier:     +12%
                     Damage increase:    +18%
                     Starting armour:    0
-                - 17    Lieutenant General      384,525         152,811
+                ✓ 17    Lieutenant General      384,525         152,811
                     Health:             530
                     Ammo bonus:         1x
                     Proximity mines:    5
@@ -204,7 +204,7 @@ TODO
                     Speed modifier:     +12%
                     Damage increase:    +18%
                     Starting armour:    0
-                - 18    General                 537,337         201,399
+                ✓ 18    General                 537,337         201,399
                     Health:             555
                     Ammo bonus:         1x
                     Proximity mines:    6
@@ -212,7 +212,7 @@ TODO
                     Speed modifier:     +12%
                     Damage increase:    +18%
                     Starting armour:    0
-                - 19    General of the Army     738,737         261,262
+                ✓ 19    General of the Army     738,737         261,262
                     Health:             580
                     Ammo bonus:         1x
                     Proximity mines:    7
@@ -220,7 +220,7 @@ TODO
                     Speed modifier:     +12%
                     Damage increase:    +18%
                     Starting armour:    0
-                - 20    Demi-god                1,000,000       333,857
+                ✓ 20    Demi✓god                1,000,000       333,857
                     Health:             610
                     Ammo bonus:         1x
                     Proximity mines:    8
@@ -228,94 +228,94 @@ TODO
                     Speed modifier:     +15%
                     Damage increase:    +22%
                     Starting armour:    0
-                - 21    God                     1,333,858       420,577
-                - 22    NOT CHUCK NORRIS        1,754,435       522,701
-                - 23    FUUUUU!!1               2,277,136       641,349
-                - 24    No-life                 2,918,486       777,442
-                - 25    Just stop playing       3,695,928       931,659
-                - 26    Srsly, wtf mang         4,627,587       1,104,422
-                - 27    Holy fuck tits          5,732,010       1,295,872
-                - 28    You're kidding me       7,027,883       1,505,869
-                - 29    Fuck me in my asshole   8,853,852       1,733,989
-                - 30    I AM THE SUPERVISOR     10,267,741      1,979,545
-                - 31    Bagets I                12,247,287      2,241,603
-                - 32    Bagets II               14,488,890      2,519,011
-                - 33    Bagets III              17,007,902      2,810,430
-                - 34    Bagets IV               19,818,332      3,114,370
-                - 35    Bagets V                22,932,702      3,429,227
-                - 36    God of Zombies          26,361,929      3,638,071
-                - 37    Ultimum Ordinis Venator 30,000,000      N/A
-        - Zombies
+                ✓ 21    God                     1,333,858       420,577
+                ✓ 22    NOT CHUCK NORRIS        1,754,435       522,701
+                ✓ 23    FUUUUU!!1               2,277,136       641,349
+                ✓ 24    No✓life                 2,918,486       777,442
+                ✓ 25    Just stop playing       3,695,928       931,659
+                ✓ 26    Srsly, wtf mang         4,627,587       1,104,422
+                ✓ 27    Holy fuck tits          5,732,010       1,295,872
+                ✓ 28    You're kidding me       7,027,883       1,505,869
+                ✓ 29    Fuck me in my asshole   8,853,852       1,733,989
+                ✓ 30    I AM THE SUPERVISOR     10,267,741      1,979,545
+                ✓ 31    Bagets I                12,247,287      2,241,603
+                ✓ 32    Bagets II               14,488,890      2,519,011
+                ✓ 33    Bagets III              17,007,902      2,810,430
+                ✓ 34    Bagets IV               19,818,332      3,114,370
+                ✓ 35    Bagets V                22,932,702      3,429,227
+                ✓ 36    God of Zombies          26,361,929      3,638,071
+                ✓ 37    Ultimum Ordinis Venator 30,000,000      N/A
+        ✓ Zombies
             - tnl = 1
             - factor = 0.85753
             - levels = 50
-                - #     Title                       Kills           Kills to next rank
-                - 1     Innocent                    0               1
+                ✓ #     Title                       Kills           Kills to next rank
+                ✓ 1     Innocent                    0               1
                     Health:             750
                     Speed modifier:     +0%
                     Damage increase:    +0%
-                - 2     Harmless                    1               1
+                ✓ 2     Harmless                    1               1
                     Health:             750
                     Speed modifier:     +0%
                     Damage increase:    +0%
-                - 3     Menacing                    2               3
+                ✓ 3     Menacing                    2               3
                     Health:             750
                     Speed modifier:     +0%
                     Damage increase:    +0%
-                - 4     Noxious                     6               5
+                ✓ 4     Noxious                     6               5
                     Health:             750
                     Speed modifier:     +0%
                     Damage increase:    +0%
-                - 5     Malignant                   11              8
+                ✓ 5     Malignant                   11              8
                     Health:             750
                     Speed modifier:     +0%
                     Damage increase:    +0%
-                - 6     Damaging                    19              11
-                - 7     Sinister                    31              16
-                - 8     Toxic                       47              22
-                - 9     Crippling                   70              28
-                - 10    Corroding                   98              35
-                - 11    Ominous                     134             43
-                - 12    Calamitous                  178             51
-                - 13    Ranksacker                  230             59
-                - 14    Bomber                      289             67
-                - 15    Cancer                      357             75
-                - 16    Demolisher                  433             83
-                - 17    Vandal                      517             90
-                - 18    Eradicator                  607             97
-                - 19    Savage                      704             103
-                - 20    Exterminator                808             108
-                - 21    Slaughterer                 917             113
-                - 22    Radiator                    1,031           118
-                - 23    Butcher                     1,149           122
-                - 24    Guerilla                    1,272           126
-                - 25    Annihilator                 1,398           129
-                - 26    Liquidator                  1,527           131
-                - 27    Slayer                      1,659           134
-                - 28    Hunter                      1,793           136
-                - 29    Cannibal                    1,930           138
-                - 30    Ruthless                    2,068           139
-                - 31    Fuckin' Lethal              2,208           141
-                - 32    Unrelenting                 2,349           142
-                - 33    Reaper                      2,492           143
-                - 34    Evil                        2,635           144
-                - 35    Malefic                     2,780           145
-                - 36    Devastating                 2,925           145
-                - 37    Desecrator                  3,071           146
-                - 38    Smasher                     3,218           147
-                - 39    Wrecker                     3,365           147
-                - 40    Extinguisher                3,512           147
-                - 41    Decimator                   3,660           148
-                - 42    Obliterator                 3,808           148
-                - 43    Depriver                    3,957           148
-                - 44    Plunderer                   4,105           148
-                - 45    Marauder                    4,254           149
-                - 46    Tormentor                   4,403           149
-                - 47    1337                        4,552           149
-                - 48    Godly                       4,702           149
-                - 49    Monster                     4,851           149
-                - 50    Harbinger of your Salvation 5,000           95,000
-                - 51    FUCKING BRUCE LEE           100,000          
+                ✓ 6     Damaging                    19              11
+                ✓ 7     Sinister                    31              16
+                ✓ 8     Toxic                       47              22
+                ✓ 9     Crippling                   70              28
+                ✓ 10    Corroding                   98              35
+                ✓ 11    Ominous                     134             43
+                ✓ 12    Calamitous                  178             51
+                ✓ 13    Ranksacker                  230             59
+                ✓ 14    Bomber                      289             67
+                ✓ 15    Cancer                      357             75
+                ✓ 16    Demolisher                  433             83
+                ✓ 17    Vandal                      517             90
+                ✓ 18    Eradicator                  607             97
+                ✓ 19    Savage                      704             103
+                ✓ 20    Exterminator                808             108
+                ✓ 21    Slaughterer                 917             113
+                ✓ 22    Radiator                    1,031           118
+                ✓ 23    Butcher                     1,149           122
+                ✓ 24    Guerilla                    1,272           126
+                ✓ 25    Annihilator                 1,398           129
+                ✓ 26    Liquidator                  1,527           131
+                ✓ 27    Slayer                      1,659           134
+                ✓ 28    Hunter                      1,793           136
+                ✓ 29    Cannibal                    1,930           138
+                ✓ 30    Ruthless                    2,068           139
+                ✓ 31    Fuckin' Lethal              2,208           141
+                ✓ 32    Unrelenting                 2,349           142
+                ✓ 33    Reaper                      2,492           143
+                ✓ 34    Evil                        2,635           144
+                ✓ 35    Malefic                     2,780           145
+                ✓ 36    Devastating                 2,925           145
+                ✓ 37    Desecrator                  3,071           146
+                ✓ 38    Smasher                     3,218           147
+                ✓ 39    Wrecker                     3,365           147
+                ✓ 40    Extinguisher                3,512           147
+                ✓ 41    Decimator                   3,660           148
+                ✓ 42    Obliterator                 3,808           148
+                ✓ 43    Depriver                    3,957           148
+                ✓ 44    Plunderer                   4,105           148
+                ✓ 45    Marauder                    4,254           149
+                ✓ 46    Tormentor                   4,403           149
+                ✓ 47    1337                        4,552           149
+                ✓ 48    Godly                       4,702           149
+                ✓ 49    Monster                     4,851           149
+                ✓ 50    Harbinger of your Salvation 5,000           95,000
+                ✓ 51    FUCKING BRUCE LEE           100,000          
     - Class updates
         - Medic & Support
             - turn ammobox / medicbag into placeable entity like Sentries

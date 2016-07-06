@@ -57,4 +57,5 @@ community suggestions
 2   zombie server in asia
 0   make it more like "celica zom" (new brax mod)
 0   add modern weapons
+0   add a knife hunters can use
 0   add a zombie that can go invis, telleport, 1 shot, stun, and multikill

@@ -1723,11 +1723,5 @@ bots_thinkLogic() {
 }
 */
 shit() {
-    if ( self isBot() )
-        return;
 
-    while ( true ) {
-        iPrintLn( self getStance() );
-        wait 1;
-    }
 }

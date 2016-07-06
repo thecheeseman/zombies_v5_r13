@@ -23,8 +23,8 @@
 main()
 {   
 // version information
-    level.zombies_build =           "13.2.0.170";
-    level.zombies_last_updated =    "05 July 2016";
+    level.zombies_build =           "13.2.0.171";
+    level.zombies_last_updated =    "06 July 2016";
     level.zombies_version =         "^1R^713.^22 ^7(^3dev^7)";
     level.zombies_full_version_tag ="^1Zom^7bies ^1R^713.^22 ^7(^3dev^7)";
 // version information
@@ -44,7 +44,7 @@ main()
 
     zombies\config::init();
     
-    //botlib\main::init();
+    botlib\main::init();
     modules\modules::init();
     zombies\objects::init();
     zombies\killstreaks::init();
@@ -68,7 +68,7 @@ main()
     zombies\extra::main();
     zombies\weather::main();
     zombies\sharkscanner::main();
-    //botlib\main::main();
+    botlib\main::main();
 //
 
     [[ level.logwrite ]]( "^^---------- mod.gsc::Main() ----------^^" );
